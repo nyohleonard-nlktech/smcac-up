@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-surface">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contenu des modules — SMCAC Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c" },
+          "error": "#b3261e",
+          "success": "#2c5e2c"
+        },
+        fontFamily: {
+          "display": ["Newsreader", "Georgia", "serif"],
+          "headline": ["Newsreader", "Georgia", "serif"],
+          "body": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .status {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .status.error {
+    display: block;
+    background-color: #fbeceb;
+    border: 1px solid #f1c9c6;
+    color: #b3261e;
+  }
+  .status.success {
+    display: block;
+    background-color: #eef4ee;
+    border: 1px solid #cfe3cf;
+    color: #2c5e2c;
+  }
+  .card-empty {
+    padding: 2rem;
+    text-align: center;
+    color: #49554e;
+    font-size: 0.875rem;
+    background: #ffffff;
+    border: 1px solid rgba(20, 62, 46, 0.1);
+    border-radius: 1rem;
+    font-weight: 500;
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-3xl border border-primary/10 shadow-xl p-8 sm:p-10">
+      <div class="text-center mb-8">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-16 w-16 rounded-full object-cover border-2 border-gold/40 mx-auto mb-4 shadow-sm" onerror="this.src='https://via.placeholder.com/64'">
+        <p class="text-xs uppercase tracking-widest text-gold-deep font-bold mb-1">SMCAC Academy</p>
+        <h1 class="font-headline text-2xl sm:text-3xl font-medium text-primary">Connexion super-admin</h1>
+        <p class="text-xs text-on-surface-variant mt-2">Gestion du contenu pédagogique et des quiz.</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Adresse e-mail</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">admin_panel_settings</span>
+            <input type="email" id="email" required autocomplete="email" placeholder="admin@smcac.cm" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label for="password" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Mot de passe</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">key</span>
+            <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <button type="submit" id="login-btn" class="w-full mt-2 bg-primary text-gold-light hover:bg-gold hover:text-primary transition-all font-semibold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 text-sm">
+          <span>Se connecter</span>
+          <span class="material-symbols-outlined text-[18px]">login</span>
+        </button>
+
+        <div id="login-status" class="status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP SCREEN -->
+  <div id="app-screen" class="hidden flex-1 flex flex-col w-full">
+    
+    <header class="w-full bg-primary text-surface border-b border-gold/20 sticky top-0 z-40 shadow-md">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 rounded-full object-cover border-2 border-gold/40" onerror="this.src='https://via.placeholder.com/40'">
+          <div>
+            <p class="text-[10px] sm:text-xs uppercase tracking-widest text-gold font-semibold">SMCAC Academy</p>
+            <h1 class="font-headline text-lg sm:text-2xl font-medium text-surface">Contenu des cours</h1>
+          </div>
+        </div>
+
+        <nav class="flex items-center gap-3">
+          <a href="super-admin.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-light hover:bg-gold hover:text-primary text-gold-light border border-gold/20 text-xs sm:text-sm font-medium transition-all text-decoration-none">
+            <span class="material-symbols-outlined text-[18px]">dashboard</span>
+            <span class="hidden sm:inline">Tableau de bord</span>
+          </a>
+          <button id="logout-btn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-surface/20 hover:bg-surface/10 text-surface text-xs sm:text-sm font-medium transition-all">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+            <span class="hidden sm:inline">Se déconnecter</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-10">
+      
+      <div id="dash-status" class="status" role="status" aria-live="polite"></div>
+
+      <!-- SECTION 1: PRESENTATION FILES (PDF & PPTX) -->
+      <section class="space-y-6">
+        <div class="flex items-center gap-2.5 pb-2 border-b border-primary/10">
+          <span class="material-symbols-outlined text-gold-deep text-[24px]">slideshow</span>
+          <div>
+            <h2 class="font-headline text-xl font-medium text-primary m-0">Supports de cours (PDF, PowerPoint)</h2>
+            <p class="text-xs text-on-surface-variant m-0 mt-0.5">Formats acceptés : <code class="bg-surface-container px-1.5 py-0.5 rounded text-primary font-mono">.pdf, .pptx, .ppt</code></p>
+          </div>
+        </div>
+
+        <div id="uploads-wrap" class="space-y-8">
+          <div class="card-empty">Chargement des cours...</div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: QUIZ QUESTIONS -->
+      <section class="space-y-6">
+        <div class="flex items-center gap-2.5 pb-2 border-b border-primary/10">
+          <span class="material-symbols-outlined text-gold-deep text-[24px]">quiz</span>
+          <div>
+            <h2 class="font-headline text-xl font-medium text-primary m-0">Questions du quiz</h2>
+            <p class="text-xs text-on-surface-variant m-0 mt-0.5">Gestion des questions associées à chaque module d'évaluation.</p>
+          </div>
+        </div>
+
+        <div id="quiz-wrap" class="space-y-8">
+          <div class="card-empty">Chargement des modules et questions...</div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script>
+  const sb = supabase.createClient('https://fbogkyrrnyawbdgwratl.supabase.co', 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI');
+  
+  const loginScreen = document.getElementById('login-screen');
+  const appScreen = document.getElementById('app-screen');
+  const loginForm = document.getElementById('login-form');
+  const loginStatus = document.getElementById('login-status');
+  const loginBtn = document.getElementById('login-btn');
+  const dashStatus = document.getElementById('dash-status');
+  const uploadsWrap = document.getElementById('uploads-wrap');
+  const quizWrap = document.getElementById('quiz-wrap');
+
+  let coursesList = [];
+  let modulesList = [];
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+  }
+
+  function slugify(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]+/g, '')
+      .replace(/\-\-+/g, '-');
+  }
+
+  function showStatus(msg, type = 'error') {
+    dashStatus.className = `status ${type}`;
+    dashStatus.textContent = msg;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showLoginError(m) { loginStatus.className = 'status error'; loginStatus.textContent = m; }
+  function showLogin() { loginScreen.classList.remove('hidden'); appScreen.classList.add('hidden'); }
+  function showApp() { loginScreen.classList.add('hidden'); appScreen.classList.remove('hidden'); }
+
+  async function checkSessionAndRoute() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { showLogin(); return; }
+    
+    const { data: profile, error } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+    if (error || !profile || profile.role !== 'super_admin') {
+      showLoginError('Ce compte n\'a pas les droits super-admin.');
+      await sb.auth.signOut(); 
+      showLogin(); 
+      return;
+    }
+    showApp();
+    loadAll();
+  }
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginBtn.disabled = true;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) { 
+      showLoginError('E-mail ou mot de passe incorrect.'); 
+      loginBtn.disabled = false; 
+    } else { 
+      await checkSessionAndRoute(); 
+      loginBtn.disabled = false; 
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async (e) => {
+    e.preventDefault(); 
+    await sb.auth.signOut(); 
+    showLogin();
+  });
+
+  async function loadAll() {
+    const { data: courses, error: cErr } = await sb.from('courses').select('id, title, order_index').order('order_index');
+    if (cErr) { 
+      showStatus('Erreur Base de données (courses): ' + cErr.message, 'error'); 
+      return; 
+    }
+    coursesList = courses || [];
+
+    // Safe query excluding non-existent columns
+    const { data: mods, error: mErr } = await sb
+      .from('modules')
+      .select('id, title, order_index, course_id, file_path, original_file_path, mime_type')
+      .not('course_id', 'is', null);
+
+    if (mErr) { 
+      showStatus('Erreur Base de données (modules): ' + mErr.message, 'error'); 
+      return; 
+    }
+    modulesList = mods || [];
+
+    renderUploads();
+    loadQuestions();
+  }
+
+  function modulesForCourse(courseId) {
+    return modulesList
+      .filter(m => m.course_id === courseId)
+      .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+  }
+
+  function renderUploads() {
+    if (coursesList.length === 0) {
+      uploadsWrap.innerHTML = '<div class="card-empty">Aucun cours disponible en base de données.</div>';
+      return;
+    }
+
+    uploadsWrap.innerHTML = coursesList.map(c => {
+      const mods = modulesForCourse(c.id);
+      
+      const moduleCards = mods.length > 0 ? mods.map((m, index) => {
+        const activePath = m.file_path || m.original_file_path;
+        const hasFile = Boolean(activePath);
+        const fileExt = hasFile ? activePath.split('.').pop().toLowerCase() : '';
+        const iconName = fileExt === 'pdf' ? 'picture_as_pdf' : (['pptx', 'ppt'].includes(fileExt) ? 'slideshow' : 'description');
+
+        return `
+          <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 overflow-hidden">
+                <span class="material-symbols-outlined text-gold-deep text-2xl shrink-0">${iconName}</span>
+                <div class="truncate">
+                  <h4 class="font-headline text-base font-medium text-primary m-0 truncate">${escapeHTML(m.title)}</h4>
+                  <p class="text-[11px] text-outline font-mono m-0 truncate">${hasFile ? activePath : 'Aucun fichier associé'}</p>
+                </div>
+              </div>
+              <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0 ${hasFile ? 'bg-success/10 text-success' : 'bg-surface-container text-on-surface-variant'}">
+                ${hasFile ? fileExt.toUpperCase() : 'Aucun fichier'}
+              </span>
+            </div>
+            <div class="space-y-3">
+              <input type="file" accept=".pdf,.pptx,.ppt" data-moduleid="${m.id}" class="file-input block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-surface-container file:text-primary hover:file:bg-gold/20 cursor-pointer border border-outline-variant/60 rounded-xl p-1 bg-surface">
+              <div class="flex gap-2">
+                <button class="primary flex-1 px-4 py-2 bg-primary text-gold-light hover:bg-gold hover:text-primary font-semibold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5" data-moduleid="${m.id}" data-btn="upload">
+                  <span class="material-symbols-outlined text-[16px]">upload_file</span>
+                  <span>${hasFile ? 'Remplacer le support' : 'Envoyer le support'}</span>
+                </button>
+                ${hasFile ? `
+                <button class="px-3 py-2 border border-error/30 text-error hover:bg-error/10 font-semibold text-xs rounded-xl transition-all flex items-center gap-1" data-moduleid="${m.id}" data-filepath="${activePath}" data-btn="delete">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('') : '<p class="text-xs text-on-surface-variant italic py-2">Aucun module assigné à ce cours.</p>';
+
+      return `
+        <div class="bg-surface-container-low/50 border border-primary/10 rounded-3xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-2 border-b border-primary/10">
+            <span class="text-gold-deep text-base font-bold bg-gold/10 px-3 py-1 rounded-lg">Cours 0${c.order_index || 1}</span>
+            <h3 class="font-headline text-lg font-semibold text-primary m-0">${escapeHTML(c.title)}</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${moduleCards}</div>
+        </div>
+      `;
+    }).join('');
+
+    uploadsWrap.querySelectorAll('button[data-btn="upload"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const moduleId = btn.dataset.moduleid;
+        const input = uploadsWrap.querySelector(`input[data-moduleid="${moduleId}"]`);
+        const file = input ? input.files[0] : null;
+        if (!file) { showStatus('Veuillez choisir un fichier (PDF ou PowerPoint).', 'error'); return; }
+        
+        btn.disabled = true; 
+        btn.textContent = 'Envoi en cours…';
+
+        const fileExt = file.name.split('.').pop().toLowerCase();
+        const targetModule = modulesList.find(m => String(m.id) === String(moduleId));
+        const course = coursesList.find(c => c.id === targetModule.course_id);
+        
+        const courseSlug = slugify(course ? course.title : 'course');
+        const modNum = targetModule.order_index || 1;
+        const storagePath = `${courseSlug}-module-${modNum}.${fileExt}`;
+        
+        // 1. Upload to Supabase Storage
+        const { error: uploadError } = await sb.storage.from('modules').upload(storagePath, file, { upsert: true });
+        if (uploadError) {
+          showStatus('Erreur de téléversement : ' + uploadError.message, 'error');
+          btn.disabled = false;
+          return;
+        }
+
+        // 2. Persist metadata in database based on extension
+        const isPdf = fileExt === 'pdf';
+        const isPpt = ['pptx', 'ppt'].includes(fileExt);
+        const mimeType = file.type || (isPdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+
+        const dbUpdate = {
+          mime_type: mimeType,
+          file_path: isPdf ? storagePath : (targetModule.file_path || storagePath),
+          original_file_path: isPpt ? storagePath : targetModule.original_file_path,
+          processing_status: 'completed'
+        };
+
+        const { error: dbError } = await sb.from('modules').update(dbUpdate).eq('id', moduleId);
+        if (dbError) {
+          showStatus('Erreur mise à jour base de données : ' + dbError.message, 'error');
+          btn.disabled = false;
+        } else {
+          showStatus('Fichier téléversé et associé avec succès.', 'success');
+          loadAll();
+        }
+      });
+    });
+
+    uploadsWrap.querySelectorAll('button[data-btn="delete"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Supprimer ce support de cours ?')) return;
+        const moduleId = btn.dataset.moduleid;
+        const filePath = btn.dataset.filepath;
+        btn.disabled = true;
+
+        if (filePath) {
+          await sb.storage.from('modules').remove([filePath]);
+        }
+
+        const { error: dbError } = await sb.from('modules').update({ file_path: null, original_file_path: null }).eq('id', moduleId);
+        if (dbError) {
+          showStatus('Erreur lors de la suppression : ' + dbError.message, 'error');
+          btn.disabled = false;
+        } else {
+          showStatus('Support supprimé avec succès.', 'success');
+          loadAll();
+        }
+      });
+    });
+  }
+
+  async function loadQuestions() {
+    const { data: questions, error } = await sb
+      .from('quiz_questions')
+      .select('id, module_id, question, options, correct_option_index, order_index')
+      .order('order_index');
+
+    if (error) { quizWrap.innerHTML = `<div class="card-empty">Erreur : ${escapeHTML(error.message)}</div>`; return; }
+
+    if (coursesList.length === 0) {
+      quizWrap.innerHTML = '<div class="card-empty">Aucun cours configuré.</div>';
+      return;
+    }
+
+    quizWrap.innerHTML = coursesList.map(c => {
+      const mods = modulesForCourse(c.id);
+      
+      const moduleBlocks = mods.length > 0 ? mods.map((m, idx) => {
+        const qs = (questions || []).filter(q => q.module_id === m.id);
+        const rows = qs.map(q => {
+          const correctIdx = q.correct_option_index !== undefined ? q.correct_option_index : q.correct_index;
+          return `
+            <div class="q-row py-3.5 border-b border-primary/10 last:border-b-0 flex items-start justify-between gap-4">
+              <div class="space-y-1">
+                <div class="q-text text-sm font-medium text-primary">${escapeHTML(q.question)}</div>
+                <div class="q-opts text-xs text-on-surface-variant flex flex-wrap gap-1.5 mt-1">
+                  ${q.options.map((o, i) => (i === correctIdx
+                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-success/10 text-success border border-success/20 font-semibold"><span class="material-symbols-outlined text-[12px]">check_circle</span>${escapeHTML(o)}</span>`
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-surface-container text-on-surface-variant">${escapeHTML(o)}</span>`)).join('')}
+                </div>
+              </div>
+              <button class="btn-delete-q px-2.5 py-1.5 text-xs font-semibold text-error border border-error/30 hover:bg-error/10 rounded-lg transition-all flex items-center gap-1 shrink-0" data-id="${q.id}">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+                <span>Supprimer</span>
+              </button>
+            </div>
+          `;
+        }).join('') || '<p class="text-xs text-on-surface-variant py-2 m-0 italic">Aucune question configurée pour ce module.</p>';
+
+        return `
+          <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-primary/10">
+              <h4 class="font-headline text-base font-medium text-primary m-0">${escapeHTML(m.title)} (Module ${m.order_index || idx + 1})</h4>
+              <span class="text-xs text-outline font-semibold bg-surface-container px-2.5 py-1 rounded-full">${qs.length} question(s)</span>
+            </div>
+            <div class="divide-y divide-primary/10">${rows}</div>
+            <button class="btn-add-q px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-gold-light font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 mt-4" data-add="${m.id}">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              <span>Ajouter une question</span>
+            </button>
+            <div class="new-q-form" data-form="${m.id}"></div>
+          </div>
+        `;
+      }).join('') : '<p class="text-xs text-on-surface-variant italic py-2">Aucun module disponible.</p>';
+
+      return `
+        <div class="bg-surface-container-low/50 border border-primary/10 rounded-3xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-2 border-b border-primary/10">
+            <span class="text-gold-deep text-base font-bold bg-gold/10 px-3 py-1 rounded-lg">Cours 0${c.order_index || 1}</span>
+            <h3 class="font-headline text-lg font-semibold text-primary m-0">${escapeHTML(c.title)}</h3>
+          </div>
+          <div class="space-y-4">${moduleBlocks}</div>
+        </div>
+      `;
+    }).join('');
+
+    quizWrap.querySelectorAll('.btn-delete-q').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Supprimer cette question ?')) return;
+        const { error: delErr } = await sb.from('quiz_questions').delete().eq('id', btn.dataset.id);
+        if (delErr) { showStatus('Erreur de suppression: ' + delErr.message, 'error'); }
+        else { showStatus('Question supprimée.', 'success'); loadQuestions(); }
+      });
+    });
+
+    quizWrap.querySelectorAll('.btn-add-q').forEach(btn => {
+      btn.addEventListener('click', () => renderNewQuestionForm(btn.dataset.add));
+    });
+  }
+
+  function renderNewQuestionForm(moduleId) {
+    const container = quizWrap.querySelector(`div[data-form="${moduleId}"]`);
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="mt-4 pt-4 border-t border-primary/10 bg-surface-container/40 p-4 sm:p-5 rounded-2xl space-y-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Libellé de la question</label>
+          <textarea rows="2" class="new-q-text w-full p-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all" placeholder="Entrez la question ici…"></textarea>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-1">Options de réponse (Cochez la bonne réponse)</label>
+
+          <div class="opt-row flex items-center gap-3">
+            <input type="radio" name="correct-${moduleId}" value="0" checked class="text-primary focus:ring-gold">
+            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 1">
+          </div>
+
+          <div class="opt-row flex items-center gap-3">
+            <input type="radio" name="correct-${moduleId}" value="1" class="text-primary focus:ring-gold">
+            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 2">
+          </div>
+
+          <div class="opt-row flex items-center gap-3">
+            <input type="radio" name="correct-${moduleId}" value="2" class="text-primary focus:ring-gold">
+            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 3 (optionnel)">
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
+          <p class="text-xs text-on-surface-variant m-0">Sélectionnez le bouton radio correspondant à la réponse correcte.</p>
+          <button class="save-q-btn px-4 py-2.5 bg-primary text-gold-light hover:bg-gold hover:text-primary font-semibold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0">
+            <span class="material-symbols-outlined text-[16px]">save</span>
+            <span>Enregistrer la question</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    const saveBtn = container.querySelector('.save-q-btn');
+    saveBtn.addEventListener('click', async () => {
+      const questionText = container.querySelector('.new-q-text').value.trim();
+      const rawInputs = [...container.querySelectorAll('.new-q-opt')];
+      const checkedRadio = container.querySelector(`input[name="correct-${moduleId}"]:checked`);
+      const checkedRawIndex = parseInt(checkedRadio.value, 10);
+      
+      const validOpts = [];
+      let mappedCorrectIndex = -1;
+
+      rawInputs.forEach((input, idx) => {
+        const val = input.value.trim();
+        if (val !== '') {
+          validOpts.push(val);
+          if (idx === checkedRawIndex) {
+            mappedCorrectIndex = validOpts.length - 1;
+          }
+        }
+      });
+
+      if (!questionText || validOpts.length < 2) {
+        showStatus('Veuillez saisir une question et au moins 2 réponses valides.', 'error');
+        return;
+      }
+
+      if (mappedCorrectIndex === -1) {
+        showStatus('La réponse sélectionnée comme correcte ne peut pas être vide.', 'error');
+        return;
+      }
+
+      saveBtn.disabled = true;
+
+      const { data: existing } = await sb.from('quiz_questions').select('order_index').eq('module_id', moduleId);
+      const nextOrder = (existing || []).length + 1;
+
+      const { error } = await sb.from('quiz_questions').insert({
+        module_id: moduleId,
+        question: questionText,
+        options: validOpts,
+        correct_option_index: mappedCorrectIndex,
+        order_index: nextOrder
+      });
+
+      if (error) { 
+        showStatus('Erreur lors de la sauvegarde : ' + error.message, 'error'); 
+        saveBtn.disabled = false;
+      } else { 
+        showStatus('Question ajoutée avec succès.', 'success'); 
+        loadQuestions(); 
+      }
+    });
+  }
+
+  checkSessionAndRoute();
+</script>
+</body>
+</html>

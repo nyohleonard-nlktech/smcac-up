@@ -1,0 +1,16 @@
+{
+  "name": "SMCAC Academy",
+  "short_name": "SMCAC Academy",
+  "description": "Formations en art oratoire et développement personnel.",
+  "start_url": "index.html",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#fbf9f4",
+  "theme_color": "#143e2e",
+  "lang": "fr",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

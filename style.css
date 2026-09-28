@@ -1,0 +1,313 @@
+/* ============================================================
+   SMCAC ACADEMY — SHARED DESIGN SYSTEM
+   One file, linked from every hand-built page (dashboards, admin
+   pages, viewer, registration forms). index.html is the one
+   exception — it's built on Tailwind CDN with its own inline
+   config, so its color values are kept in sync with this file
+   by hand rather than sharing it directly.
+   ============================================================ */
+
+:root {
+  /* ---- Brand ---- */
+  --primary: #143e2e;           /* forest green — was navy #1d3557, now retired */
+  --primary-container: #0d2b1f; /* darker green, hover/active states */
+  --primary-light: #1d5540;     /* lighter green, hover on light surfaces */
+  --gold: #d4a017;
+  --gold-light: #ffdfa0;
+  --gold-deep: #b2840c;
+  --gold-glow: #f6be39;
+
+  /* ---- Surfaces ---- */
+  --surface: #fbf9f4;
+  --surface-dim: #f2eee5;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f7f4ed;
+  --surface-container: #f1ede2;
+  --surface-container-high: #e8e3d5;
+
+  /* ---- Text ---- */
+  --on-surface: #1b231e;
+  --on-surface-variant: #49554e;
+  --outline: #7a877e;
+  --outline-variant: #c5cec7;
+
+  /* ---- Semantic states (distinct from brand green, kept separate on purpose) ---- */
+  --error: #ba1a1a;
+  --error-bg: #fbeceb;
+  --error-border: #f1c9c6;
+  --success: #2c5e2c;
+  --success-bg: #eef4ee;
+  --success-border: #cfe3cf;
+
+  /* ---- Fixed brand (not part of the theme, WhatsApp's own color) ---- */
+  --whatsapp: #25d366;
+
+  /* ---- Radius scale ---- */
+  --radius-sm: 0.125rem;
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  /* ---- Spacing scale ---- */
+  --space-xs: 0.375rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+  --space-xl: 3.5rem;
+  --gutter: 1.5rem;
+  --gutter-mobile: 1.25rem;
+  --margin-desktop: 3.5rem;
+}
+
+/* ============================================================
+   RESET + BASE
+   ============================================================ */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: 'IBM Plex Sans', sans-serif;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Newsreader', Georgia, serif;
+  color: var(--primary);
+  margin: 0;
+}
+
+a { color: inherit; }
+
+/* ============================================================
+   HEADER / APP BAR
+   Used on every login-gated dashboard page.
+   ============================================================ */
+header.app-bar {
+  background: var(--primary);
+  color: var(--surface);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+header.app-bar .brand p.eyebrow {
+  margin: 0 0 0.15rem;
+  font-size: 0.8rem;
+  color: var(--gold-light);
+  font-weight: 500;
+}
+
+header.app-bar .brand h1 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--surface);
+  margin: 0;
+}
+
+header.app-bar button.logout,
+header.app-bar a.logout {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.35);
+  color: var(--surface);
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+header.app-bar button.logout:hover,
+header.app-bar a.logout:hover { background: rgba(255,255,255,0.08); }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+main.page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem 3rem;
+}
+
+main.page.narrow { max-width: 640px; }
+main.page.login { max-width: 420px; margin: 4rem auto; padding: 0 1.5rem; }
+
+h2.section {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--primary-container);
+  margin: 2rem 0 0.9rem;
+}
+h2.section:first-of-type { margin-top: 0; }
+
+p.intro {
+  font-size: 0.9rem;
+  color: var(--on-surface-variant);
+  margin: 0 0 1.5rem;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  box-shadow: 0 1px 2px rgba(20, 62, 46, 0.06);
+}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.field { margin-bottom: 1.1rem; }
+
+.field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  color: var(--primary-container);
+}
+
+.field .hint { font-weight: 400; color: var(--on-surface-variant); font-size: 0.8rem; }
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold);
+}
+
+.divider { border: none; border-top: 1px solid var(--outline-variant); margin: 1.35rem 0; }
+
+.add-form { display: flex; gap: 0.7rem; align-items: flex-end; flex-wrap: wrap; }
+.add-form .field { margin-bottom: 0; flex: 1 1 180px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+button, a.btn { font-family: inherit; cursor: pointer; }
+
+.btn-primary, button.primary, a.primary {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.65rem 1.1rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-primary:hover:not(:disabled),
+button.primary:hover:not(:disabled),
+a.primary:hover { background: var(--primary-container); }
+button.primary:disabled { opacity: 0.6; cursor: default; }
+
+.btn-submit, button.submit {
+  width: 100%;
+  background: var(--primary);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.btn-submit:hover:not(:disabled), button.submit:hover:not(:disabled) { background: var(--primary-container); }
+button.submit:disabled { opacity: 0.6; cursor: default; }
+
+button.danger {
+  background: transparent;
+  border: 1px solid var(--error);
+  color: var(--error);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+a.wa-btn, button.wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--whatsapp);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: none;
+}
+a.wa-btn:hover, button.wa-btn:hover { filter: brightness(0.95); }
+
+/* ============================================================
+   STATUS MESSAGES
+   ============================================================ */
+.status {
+  margin-top: 0.9rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  display: none;
+}
+.status.error { display: block; background: var(--error-bg); border: 1px solid var(--error-border); color: var(--error); }
+.status.success { display: block; background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success); }
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge.unlocked, .badge.redeemed, .badge.confirmed, .badge.active { background: var(--success-bg); color: var(--success); }
+.badge.locked, .badge.unassigned { background: var(--surface-container-high); color: var(--on-surface-variant); }
+.badge.invited, .badge.pending { background: #fdf1dd; color: var(--gold-deep); }
+.badge.blocked, .badge.suspended { background: var(--error-bg); color: var(--error); }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table { width: 100%; border-collapse: collapse; background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--radius); overflow: hidden; }
+th, td { text-align: left; padding: 0.7rem 0.85rem; font-size: 0.88rem; border-bottom: 1px solid var(--outline-variant); vertical-align: middle; }
+th { background: var(--surface); font-weight: 500; color: var(--primary-container); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+tr:last-child td { border-bottom: none; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.empty { padding: 1.5rem; text-align: center; color: var(--on-surface-variant); font-size: 0.9rem; background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--radius); }
+.hidden { display: none !important; }
+.code-cell { font-family: monospace; font-size: 0.9rem; }
+
+.module-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--outline-variant); }
+.module-row:last-child { border-bottom: none; }
+.module-row .title { font-weight: 500; }
+.module-row .meta { font-size: 0.82rem; color: var(--on-surface-variant); margin-top: 0.15rem; }

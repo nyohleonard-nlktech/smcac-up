@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord Super-Admin - SMCAC Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans min-h-screen">
+
+  <!-- Top Navbar -->
+  <header class="bg-emerald-900 text-white py-4 px-6 shadow-md flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-amber-400 text-3xl">admin_panel_settings</span>
+      <div>
+        <h1 class="text-xl font-bold leading-none">SMCAC ACADEMY</h1>
+        <p class="text-xs text-amber-300">Tableau de bord super-admin</p>
+      </div>
+    </div>
+    <button id="logout-btn" class="bg-emerald-800 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all">
+      <span class="material-symbols-outlined text-sm">logout</span>
+      Déconnexion
+    </button>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-6 space-y-6">
+    <!-- Status Alert Bar -->
+    <div id="status-bar" class="hidden p-4 rounded-xl text-xs font-semibold transition-all"></div>
+
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-3xl font-extrabold text-emerald-900" id="stat-total-learners">0</p>
+          <p class="text-xs uppercase font-bold text-stone-400 tracking-wider mt-1">Total Apprenants</p>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-emerald-100">groups</span>
+      </div>
+
+      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-3xl font-extrabold text-emerald-900" id="stat-active-companies">0</p>
+          <p class="text-xs uppercase font-bold text-stone-400 tracking-wider mt-1">Entreprises Actives</p>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-amber-100">domain</span>
+      </div>
+
+      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-3xl font-extrabold text-amber-600" id="stat-pending-seats">0</p>
+          <p class="text-xs uppercase font-bold text-stone-400 tracking-wider mt-1">Places en Attente</p>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-amber-100">pending_actions</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex border-b border-stone-200 gap-4 text-xs font-bold">
+      <button id="tab-btn-companies" class="py-3 px-4 text-emerald-900 border-b-2 border-emerald-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">business</span> Entreprises & Validateur de Places
+      </button>
+      <button id="tab-btn-individuals" class="py-3 px-4 text-stone-500 hover:text-emerald-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">person</span> Apprenants Individuels
+      </button>
+    </div>
+
+    <!-- Section: Companies -->
+    <section id="tab-companies" class="space-y-4">
+      <h2 class="text-lg font-bold text-emerald-900">Gestion des Entreprises et Validation des Places Payées</h2>
+      <div id="companies-container" class="space-y-4">
+        <div class="p-8 text-center text-stone-400 bg-white rounded-2xl border border-stone-200 text-xs">Chargement...</div>
+      </div>
+    </section>
+
+    <!-- Section: Individuals -->
+    <section id="tab-individuals" class="hidden space-y-4">
+      <h2 class="text-lg font-bold text-emerald-900">Apprenants Individuels</h2>
+      <div class="bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 uppercase font-bold">
+              <th class="p-4">Nom / Email</th>
+              <th class="p-4">Date d'inscription</th>
+              <th class="p-4">Statut</th>
+              <th class="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="individuals-table-body" class="divide-y divide-stone-100">
+            <tr><td colspan="4" class="p-6 text-center text-stone-400">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://fbogkyrrnyawbdgwratl.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    const statusBar = document.getElementById('status-bar');
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function showStatus(msg, isError = false) {
+      statusBar.className = `p-4 rounded-xl text-xs font-semibold ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}`;
+      statusBar.textContent = msg;
+      statusBar.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => statusBar.classList.add('hidden'), 5000);
+    }
+
+    async function initDashboard() {
+      try {
+        const { data: { session }, error: authErr } = await sb.auth.getSession();
+        if (authErr || !session) { 
+          window.location.href = 'index.html'; 
+          return; 
+        }
+
+        const { data: profile, error: profErr } = await sb
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profErr || !profile || profile.role !== 'super_admin') {
+          alert('Accès non autorisé. Droits de Super-Admin requis.');
+          await sb.auth.signOut();
+          window.location.href = 'index.html';
+          return;
+        }
+
+        await refreshData();
+      } catch (err) {
+        showStatus('Erreur d\'initialisation: ' + err.message, true);
+      }
+    }
+
+    async function refreshData() {
+      await Promise.all([
+        loadStats(),
+        loadCompanies(),
+        loadIndividualLearners()
+      ]);
+    }
+
+    async function loadStats() {
+      const [{ count: learnersCount }, { count: companiesCount }, { data: pendingRequests }] = await Promise.all([
+        sb.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student'),
+        sb.from('companies').select('*', { count: 'exact', head: true }),
+        sb.from('seat_requests').select('requested_seats').eq('status', 'pending')
+      ]);
+
+      const totalPending = (pendingRequests || []).reduce((acc, r) => acc + (r.requested_seats || 0), 0);
+
+      document.getElementById('stat-total-learners').textContent = learnersCount || 0;
+      document.getElementById('stat-active-companies').textContent = companiesCount || 0;
+      document.getElementById('stat-pending-seats').textContent = totalPending;
+    }
+
+    async function loadCompanies() {
+      const container = document.getElementById('companies-container');
+      const { data: companies, error } = await sb.from('companies').select('*, seat_requests(*)');
+
+      if (error) { 
+        showStatus('Erreur chargement entreprises: ' + error.message, true); 
+        return; 
+      }
+
+      if (!companies || companies.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-stone-400 bg-white rounded-2xl border border-stone-200 text-xs">Aucune entreprise enregistrée.</div>`;
+        return;
+      }
+
+      container.innerHTML = companies.map(c => {
+        const requests = c.seat_requests || [];
+        const pending = requests.filter(r => r.status === 'pending');
+        const companyId = escapeHtml(c.id);
+        
+        return `
+          <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-100">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-bold text-base text-emerald-900">${escapeHtml(c.name || 'Entreprise sans nom')}</h3>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'}">
+                    ${escapeHtml(c.status || 'Active')}
+                  </span>
+                </div>
+                <p class="text-xs text-stone-500 mt-0.5">Places Payées & Validées : <strong class="text-emerald-900">${c.total_seats_paid || 0}</strong></p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button id="btn-del-comp-${companyId}" onclick="deleteCompany('${companyId}')" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition-all flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">delete</span> Supprimer
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 flex flex-col sm:flex-row items-end gap-3">
+              <div class="flex-1 w-full">
+                <label class="block text-[11px] font-bold text-stone-600 uppercase tracking-wider mb-1">Ajouter / Valider des places payées</label>
+                <input type="number" id="seats-input-${companyId}" min="1" placeholder="Ex: 5" class="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-800 outline-none">
+              </div>
+              <button id="btn-val-${companyId}" onclick="validateSeats('${companyId}')" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-amber-300 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">check_circle</span> Valider le paiement
+              </button>
+            </div>
+
+            ${pending.length > 0 ? `
+              <div class="space-y-2 pt-2">
+                <p class="text-xs font-bold text-amber-700 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">pending</span> Demandes en attente (${pending.length})
+                </p>
+                <div class="space-y-1">
+                  ${pending.map(r => {
+                    const reqId = escapeHtml(r.id);
+                    const seats = parseInt(r.requested_seats, 10) || 0;
+                    return `
+                      <div class="flex items-center justify-between text-xs bg-amber-50 border border-amber-200/60 p-2.5 rounded-lg">
+                        <span>Demande de <strong>${seats} places</strong> (${new Date(r.created_at).toLocaleDateString()})</span>
+                        <button id="btn-app-${reqId}" onclick="approveRequest('${reqId}', '${companyId}', ${seats})" class="px-2.5 py-1 bg-emerald-800 text-white rounded-md text-[11px] font-bold hover:bg-emerald-700 transition-all">Approuver</button>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function validateSeats(companyId) {
+      const btn = document.getElementById(`btn-val-${companyId}`);
+      const input = document.getElementById(`seats-input-${companyId}`);
+      const addedSeats = parseInt(input.value, 10);
+
+      if (isNaN(addedSeats) || addedSeats <= 0) {
+        showStatus('Veuillez entrer un nombre valide de places.', true);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      try {
+        const { data, error } = await sb.rpc('increment_company_seats', {
+          p_company_id: companyId,
+          p_seats_to_add: addedSeats
+        });
+
+        if (error) {
+          showStatus('Erreur lors de la validation: ' + error.message, true);
+        } else {
+          showStatus(`Succès: ${addedSeats} place(s) ajoutée(s). Nouveau total: ${data}`);
+          await refreshData();
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
+    }
+
+    async function approveRequest(requestId, companyId, requestedSeats) {
+      const btn = document.getElementById(`btn-app-${requestId}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      try {
+        const { error } = await sb.rpc('approve_seat_request', {
+          p_request_id: requestId,
+          p_company_id: companyId,
+          p_seats_to_add: requestedSeats
+        });
+
+        if (error) {
+          showStatus('Erreur lors de l\'approbation: ' + error.message, true);
+        } else {
+          showStatus(`Demande approuvée. ${requestedSeats} places ajoutées.`);
+          await refreshData();
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
+    }
+
+    async function loadIndividualLearners() {
+      const tbody = document.getElementById('individuals-table-body');
+      const { data: learners, error } = await sb.from('profiles').select('*').eq('role', 'student');
+
+      if (error) { 
+        showStatus('Erreur chargement apprenants: ' + error.message, true); 
+        return; 
+      }
+
+      if (!learners || learners.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-stone-400">Aucun apprenant trouvé.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = learners.map(l => {
+        const userId = escapeHtml(l.id);
+        return `
+          <tr class="hover:bg-stone-50">
+            <td class="p-4">
+              <p class="font-bold text-stone-800">${escapeHtml(l.full_name || 'Sans Nom')}</p>
+              <p class="text-stone-400 text-[11px]">${escapeHtml(l.email || '')}</p>
+            </td>
+            <td class="p-4 text-stone-500">${new Date(l.created_at).toLocaleDateString()}</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Actif</span></td>
+            <td class="p-4 text-right">
+              <button id="btn-del-usr-${userId}" onclick="hardDeleteUser('${userId}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition-all inline-flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">delete</span> Supprimer
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function hardDeleteUser(userId) {
+      if (!confirm('ATTENTION : Supprimer définitivement cet apprenant et son compte d\'authentification ?')) return;
+
+      const btn = document.getElementById(`btn-del-usr-${userId}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      try {
+        const { error } = await sb.from('profiles').delete().eq('id', userId);
+        if (error) {
+          showStatus('Erreur lors de la suppression : ' + error.message, true);
+        } else {
+          showStatus('Apprenant et identité auth supprimés définitivement.');
+          await refreshData();
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
+    }
+
+    async function deleteCompany(companyId) {
+  if (!confirm("Voulez-vous vraiment supprimer cette entreprise et toutes ses données associées ?")) {
+    return;
+  }
+
+  // Execute delete query on Supabase
+  const { error } = await sb
+    .from('companies')
+    .delete()
+    .eq('id', companyId);
+
+  if (error) {
+    console.error("Delete error:", error);
+    showNotification("Erreur : " + error.message, "error");
+    return;
+  }
+
+  // Show success feedback
+  showNotification("Entreprise supprimée avec succès.", "success");
+
+  // Immediately refresh the UI list and statistics counters
+  if (typeof loadCompanies === 'function') {
+    loadCompanies();
+  }
+  if (typeof loadStats === 'function') {
+    loadStats();
+  }
+}
+
+    // UI Tab Controls
+    document.getElementById('tab-btn-companies').addEventListener('click', () => {
+      document.getElementById('tab-companies').classList.remove('hidden');
+      document.getElementById('tab-individuals').classList.add('hidden');
+      document.getElementById('tab-btn-companies').className = 'py-3 px-4 text-emerald-900 border-b-2 border-emerald-900 flex items-center gap-2';
+      document.getElementById('tab-btn-individuals').className = 'py-3 px-4 text-stone-500 hover:text-emerald-900 flex items-center gap-2';
+    });
+
+    document.getElementById('tab-btn-individuals').addEventListener('click', () => {
+      document.getElementById('tab-individuals').classList.remove('hidden');
+      document.getElementById('tab-companies').classList.add('hidden');
+      document.getElementById('tab-btn-individuals').className = 'py-3 px-4 text-emerald-900 border-b-2 border-emerald-900 flex items-center gap-2';
+      document.getElementById('tab-btn-companies').className = 'py-3 px-4 text-stone-500 hover:text-emerald-900 flex items-center gap-2';
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    window.addEventListener('DOMContentLoaded', initDashboard);
+  </script>
+</body>
+</html>

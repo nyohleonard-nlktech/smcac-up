@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-surface">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription — SMCAC Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c", "glow": "#f6be39" },
+          "error": "#b3261e"
+        },
+        fontFamily: {
+          "display": ["Newsreader", "Georgia", "serif"],
+          "headline": ["Newsreader", "Georgia", "serif"],
+          "body": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .status {
+    display: none;
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.85rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .status.error {
+    display: block;
+    background-color: #fbeceb;
+    border: 1px solid #f1c9c6;
+    color: #b3261e;
+  }
+  .status.success {
+    display: block;
+    background-color: #eef4ee;
+    border: 1px solid #cfe3cf;
+    color: #2c5e2c;
+  }
+  .status.success h2 {
+    font-family: 'Newsreader', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #1f4a1f;
+  }
+  .status.success p {
+    margin: 0.35rem 0;
+    line-height: 1.5;
+  }
+  .course-card input:checked + div {
+    border-color: #d4a017;
+    background-color: rgba(212, 160, 23, 0.12);
+    box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.3);
+  }
+  .course-card input:checked + div span {
+    color: #143e2e;
+    font-weight: 700;
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="w-full bg-surface/90 backdrop-blur-md border-b border-primary/10 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3.5 group focus:outline-none">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-11 w-11 rounded-full object-cover border-2 border-gold/40 group-hover:border-gold transition-colors" onerror="this.src='https://via.placeholder.com/44'">
+        <div class="flex flex-col text-left border-l border-primary/15 pl-3.5">
+          <span class="font-display text-lg text-primary font-bold leading-tight group-hover:text-primary-light transition-colors">SMCAC Academy</span>
+          <span class="text-[10px] uppercase tracking-[0.2em] text-gold-deep font-semibold">L'Art Oratoire &amp; Présence</span>
+        </div>
+      </a>
+      <a href="index.html" class="inline-flex items-center gap-2 text-xs uppercase tracking-wider font-semibold text-primary hover:text-gold-deep transition-colors">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        <span class="hidden sm:inline">Retour à l'accueil</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 flex items-center justify-center">
+    
+    <div class="w-full bg-surface-container-lowest rounded-3xl border border-primary/10 shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-12">
+      
+      <!-- LEFT VISUAL BRAND PANEL WITH BACKGROUND IMAGE -->
+      <div class="flex md:col-span-5 relative bg-[#0a2e20] text-white p-6 sm:p-8 lg:p-10 flex-col justify-between overflow-hidden min-h-[320px] md:min-h-[600px]">
+        
+        <!-- Background Hero Image + Dark Overlay Gradient -->
+        <div class="absolute inset-0 pointer-events-none z-0">
+          <img src="assets/hero-bg.png" alt="SMCAC Background" class="w-full h-full object-cover object-center opacity-30 filter brightness-110" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80';">
+          <div class="absolute inset-0 bg-gradient-to-b from-[#0a2e20]/95 via-[#0e3928]/85 to-[#062016]"></div>
+        </div>
+
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-gold/40 text-gold-light text-xs font-semibold tracking-wider uppercase mb-6 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-gold-glow animate-pulse"></span>
+            Inscription Apprenant
+          </div>
+          <h2 class="font-headline text-2xl lg:text-3xl font-medium text-white mb-3 leading-tight">
+            Révélez votre potentiel d'expression et de leadership.
+          </h2>
+          <p class="text-surface-container-high/80 text-xs lg:text-sm font-light leading-relaxed">
+            Accédez instantanément au premier module de formation dès la validation de votre profil.
+          </p>
+        </div>
+
+        <!-- Stacked Feature Cards -->
+        <div class="relative z-10 space-y-3 my-6 md:my-8">
+          <div class="flex items-start gap-3 bg-black/30 backdrop-blur-md p-3.5 rounded-xl border border-white/10 shadow-sm">
+            <span class="material-symbols-outlined text-gold-glow text-[20px] shrink-0 mt-0.5">check_circle</span>
+            <p class="text-xs text-surface-container-high leading-relaxed"><strong class="text-white font-medium">Module 1 Inclus :</strong> Développement personnel et clarté d'objectifs.</p>
+          </div>
+          <div class="flex items-start gap-3 bg-black/30 backdrop-blur-md p-3.5 rounded-xl border border-white/10 shadow-sm">
+            <span class="material-symbols-outlined text-gold-glow text-[20px] shrink-0 mt-0.5">signal_wifi_off</span>
+            <p class="text-xs text-surface-container-high leading-relaxed"><strong class="text-white font-medium">Mode Hors-ligne :</strong> Continuez vos cours partout depuis votre application.</p>
+          </div>
+          <div class="flex items-start gap-3 bg-black/30 backdrop-blur-md p-3.5 rounded-xl border border-white/10 shadow-sm">
+            <span class="material-symbols-outlined text-gold-glow text-[20px] shrink-0 mt-0.5">verified</span>
+            <p class="text-xs text-surface-container-high leading-relaxed"><strong class="text-white font-medium">Certification :</strong> Attestation officielle avec vérification sécurisée.</p>
+          </div>
+        </div>
+
+        <div class="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-surface-container-high/70">
+          <span>© SMCAC Academy</span>
+          <span class="text-gold-light font-medium">Art Oratoire &amp; Présence</span>
+        </div>
+      </div>
+
+      <!-- RIGHT FORM PANEL -->
+      <div class="md:col-span-7 p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
+        
+        <!-- Header text -->
+        <div class="mb-6">
+          <p class="text-xs uppercase tracking-widest text-gold-deep font-bold mb-1.5">SMCAC Academy</p>
+          <h1 class="font-headline text-3xl sm:text-4xl font-medium text-primary mb-2.5">Commencez votre formation</h1>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+            Développement personnel et art oratoire — deux modules, à votre rythme. Le premier module est accessible dès votre inscription.
+          </p>
+        </div>
+
+        <!-- Corporate notice badge -->
+        <div class="mb-6 p-3.5 sm:p-4 rounded-2xl bg-secondary-container/20 border border-gold/30 flex items-start gap-3 text-xs sm:text-sm text-on-surface-variant">
+          <span class="material-symbols-outlined text-gold-deep text-[20px] shrink-0 mt-0.5">domain</span>
+          <div>
+            Inscription individuelle. Vous représentez une entreprise ? 
+            <a href="company-registration.html" class="text-primary font-bold hover:text-gold-deep underline decoration-gold/50 underline-offset-2 transition-colors">
+              Inscrivez votre entreprise ici
+            </a>.
+          </div>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="reg-form" class="space-y-4">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Full Name -->
+            <div class="sm:col-span-2">
+              <label for="full_name" class="block text-[11px] uppercase tracking-wider font-bold text-primary mb-1.5">Nom complet</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">person</span>
+                <input type="text" id="full_name" required autocomplete="name" placeholder="ex : Jean-Paul Nguema" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant/70 rounded-xl text-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div>
+              <label for="phone" class="block text-[11px] uppercase tracking-wider font-bold text-primary mb-1.5">Téléphone</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">call</span>
+                <input type="tel" id="phone" required autocomplete="tel" placeholder="6XX XXX XXX" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant/70 rounded-xl text-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+              </div>
+            </div>
+
+            <!-- Seat Code -->
+            <div>
+              <label for="seat_code" class="block text-[11px] uppercase tracking-wider font-bold text-primary mb-1.5">
+                Code entreprise <span class="text-on-surface-variant font-normal lowercase">(facultatif)</span>
+              </label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">badge</span>
+                <input type="text" id="seat_code" autocomplete="off" placeholder="ex : nlktech7" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant/70 rounded-xl text-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+              </div>
+            </div>
+          </div>
+
+          <!-- Course selection -->
+          <div id="course-select-wrap" class="pt-1">
+            <label class="block text-[11px] uppercase tracking-wider font-bold text-primary mb-2">Choisissez votre cours</label>
+            <div id="course-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="text-xs text-on-surface-variant italic p-3">Chargement des cours…</div>
+            </div>
+            <p id="course-hint" class="hidden text-xs text-on-surface-variant mt-2 italic">Les employés d'entreprise suivent automatiquement le cours choisi par leur employeur — aucune sélection nécessaire ici.</p>
+          </div>
+
+          <div class="relative my-5">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-primary/10"></div></div>
+            <div class="relative flex justify-center text-[10px] text-outline font-bold tracking-widest uppercase"><span class="bg-surface-container-lowest px-3">Identifiants</span></div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Email -->
+            <div class="sm:col-span-2">
+              <label for="email" class="block text-[11px] uppercase tracking-wider font-bold text-primary mb-1.5">Adresse e-mail</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+                <input type="email" id="email" required autocomplete="email" placeholder="votre.email@exemple.com" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant/70 rounded-xl text-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="sm:col-span-2">
+              <label for="password" class="block text-[11px] uppercase tracking-wider font-bold text-primary mb-1.5">
+                Mot de passe <span class="text-on-surface-variant font-normal lowercase">(6 caractères min.)</span>
+              </label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+                <input type="password" id="password" required minlength="6" autocomplete="new-password" placeholder="••••••••" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant/70 rounded-xl text-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-2">
+            <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary hover:border-gold font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2" id="submit-btn">
+              <span>Créer mon compte</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+          </div>
+
+          <!-- Status Message Target Container -->
+          <div id="status" class="status" role="status" aria-live="polite"></div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </main>
+
+<script>
+  const SUPABASE_URL = 'https://fbogkyrrnyawbdgwratl.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const form = document.getElementById('reg-form');
+  const statusEl = document.getElementById('status');
+  const submitBtn = document.getElementById('submit-btn');
+  const seatCodeInput = document.getElementById('seat_code');
+  const courseCardsWrap = document.getElementById('course-cards');
+  const courseHint = document.getElementById('course-hint');
+
+  function showStatus(kind, html) {
+    statusEl.className = 'status ' + kind;
+    statusEl.innerHTML = html;
+  }
+
+  function resetSubmitButton() {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span>Créer mon compte</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span>';
+  }
+
+  // Load courses and render selectable cards with static fallback if needed
+  async function loadCourses() {
+    try {
+      const { data, error } = await sb.from('courses').select('id, title, order_index').order('order_index');
+      let courses = data;
+      
+      if (error || !courses || courses.length === 0) {
+        // Static fallback to display cards if database table is initializing
+        courses = [
+          { id: '1', title: 'Prise de parole en public' },
+          { id: '2', title: 'Développement personnel' },
+          { id: '3', title: 'Pour les blessures émotionnelles' }
+        ];
+      }
+
+      courseCardsWrap.innerHTML = courses.map((c, i) => `
+        <label class="course-card cursor-pointer block">
+          <input type="radio" name="course_id" value="${c.id}" class="sr-only" ${i === 0 ? 'checked' : ''} required>
+          <div class="p-3.5 rounded-xl border-2 border-outline-variant/70 hover:border-gold/60 transition-all h-full flex items-center justify-center text-center bg-surface">
+            <span class="text-xs font-semibold text-primary leading-snug">${c.title}</span>
+          </div>
+        </label>
+      `).join('');
+    } catch (e) {
+      courseCardsWrap.innerHTML = '<div class="text-xs text-error italic p-3">Erreur de chargement des cours.</div>';
+    }
+  }
+  loadCourses();
+
+  // Hide/Show course picker if seat code is entered
+  seatCodeInput.addEventListener('input', () => {
+    const hasSeat = seatCodeInput.value.trim() !== '';
+    courseCardsWrap.classList.toggle('hidden', hasSeat);
+    courseHint.classList.toggle('hidden', !hasSeat);
+    document.querySelectorAll('input[name="course_id"]').forEach(r => { r.required = !hasSeat; });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Création en cours…';
+    statusEl.className = 'status';
+    statusEl.innerHTML = '';
+
+    const full_name = document.getElementById('full_name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const seat_code_raw = seatCodeInput.value.trim();
+    const seat_code = seat_code_raw === '' ? null : seat_code_raw;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    const checkedCourse = document.querySelector('input[name="course_id"]:checked');
+    const course_id = checkedCourse ? checkedCourse.value : null;
+
+    if (!seat_code && !course_id) {
+      showStatus('error', 'Veuillez choisir un cours avant de continuer.');
+      resetSubmitButton();
+      return;
+    }
+
+    try {
+      let userId;
+
+      const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password });
+
+      if (signUpError) {
+        if (signUpError.message.toLowerCase().includes('already registered')) {
+          const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email, password });
+          if (signInError) {
+            throw new Error('Cet e-mail est déjà utilisé avec un mot de passe différent. Contactez le support si vous pensez que c\u2019est une erreur.');
+          }
+          userId = signInData.user.id;
+        } else {
+          throw signUpError;
+        }
+      } else {
+        userId = signUpData.user.id;
+      }
+
+      const { data: existingProfile } = await sb.from('profiles').select('id').eq('id', userId).maybeSingle();
+
+      if (existingProfile) {
+        showStatus('success', `
+          <h2>Compte déjà actif</h2>
+          <p>Ce compte est déjà inscrit. Connectez-vous depuis votre espace habituel.</p>
+        `);
+        form.reset();
+        return;
+      }
+
+      const { data: enrollmentId, error: rpcError } = await sb.rpc('register_learner', {
+        p_full_name: full_name,
+        p_phone: phone,
+        p_seat_code: seat_code,
+        p_course_id: course_id
+      });
+      if (rpcError) throw rpcError;
+
+      let courseTitle = 'votre cours';
+      const { data: enrData } = await sb.from('enrollments').select('courses(title)').eq('id', enrollmentId).single();
+      if (enrData && enrData.courses) courseTitle = enrData.courses.title;
+
+      showStatus('success', `
+        <h2>Compte créé</h2>
+        <p>Bienvenue, ${full_name}. Vous êtes inscrit(e) au cours <strong>${courseTitle}</strong> — le premier module est déjà accessible.</p>
+        <p>Vérifiez votre e-mail pour confirmer votre compte avant de vous connecter.</p>
+      `);
+      form.reset();
+      courseCardsWrap.classList.remove('hidden');
+      courseHint.classList.add('hidden');
+
+    } catch (err) {
+      let message = err.message || 'Une erreur est survenue.';
+      if (message.includes('invalid seat code')) {
+        message = 'Ce code entreprise n\u2019est pas reconnu. Vérifiez-le auprès de votre employeur.';
+      } else if (message.includes('seat code already used')) {
+        message = 'Ce code a déjà été utilisé par un autre employé.';
+      } else if (message.includes('course selection required')) {
+        message = 'Veuillez choisir un cours avant de continuer.';
+      } else if (message.includes('has not chosen a course')) {
+        message = 'Votre entreprise n\u2019a pas encore choisi de cours. Contactez votre administrateur.';
+      }
+      showStatus('error', message);
+    } finally {
+      resetSubmitButton();
+    }
+  });
+</script>
+
+</body>
+</html>

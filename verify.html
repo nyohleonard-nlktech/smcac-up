@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-surface">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vérification de certificat — SMCAC Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c" },
+          "error": "#b3261e",
+          "success": "#2c5e2c"
+        },
+        fontFamily: {
+          "display": ["Newsreader", "Georgia", "serif"],
+          "headline": ["Newsreader", "Georgia", "serif"],
+          "body": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .result {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    text-align: left;
+    transition: all 0.3s ease;
+  }
+  .result.valid {
+    background-color: #ffffff;
+    border: 2px solid #d4a017;
+    box-shadow: 0 10px 25px -5px rgba(20, 62, 46, 0.08);
+  }
+  .result.invalid {
+    background-color: #fbeceb;
+    border: 1px solid #f1c9c6;
+    color: #b3261e;
+  }
+  .result h2 {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: #143e2e;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .result p {
+    margin: 0.35rem 0;
+    font-size: 0.925rem;
+    color: #49554e;
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
+
+  <!-- HEADER -->
+  <header class="w-full bg-primary text-surface border-b border-gold/20 shadow-md">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 rounded-full object-cover border-2 border-gold/40">
+        <div>
+          <p class="text-[10px] sm:text-xs uppercase tracking-widest text-gold font-bold">SMCAC Academy</p>
+          <h1 class="font-headline text-lg sm:text-xl font-medium text-surface">Vérification de certificat</h1>
+        </div>
+      </div>
+      <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary-light hover:bg-gold hover:text-primary text-gold-light text-xs font-semibold transition-all">
+        <span class="material-symbols-outlined text-[16px]">home</span>
+        <span class="hidden sm:inline">Accueil</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-lg w-full mx-auto px-4 sm:px-6 py-12 flex flex-col justify-center">
+    
+    <div class="card bg-surface-container-lowest border border-primary/10 rounded-3xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-32 h-32 bg-gold/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="w-16 h-16 rounded-2xl bg-surface-container flex items-center justify-center mx-auto mb-4 border border-gold/30 text-gold-deep shadow-inner">
+        <span class="material-symbols-outlined text-3xl">verified</span>
+      </div>
+
+      <h2 class="font-headline text-2xl font-medium text-primary mb-2">Authentifier un certificat</h2>
+      <p class="text-xs text-on-surface-variant leading-relaxed mb-6">
+        Saisissez le code de vérification unique figurant au bas de l'attestation ou du certificat SMCAC Academy.
+      </p>
+
+      <!-- FORM CONTEXT FOR KEYBOARD DISPATCH -->
+      <form id="verify-form" onsubmit="return false;">
+        <div class="field text-left mb-4">
+          <label for="token-input" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Code de vérification</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">key</span>
+            <input type="text" id="token-input" placeholder="ex: ATT-2026-X89K" required class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm font-mono text-primary placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <button type="submit" class="primary w-full bg-primary hover:bg-gold text-gold-light hover:text-primary font-semibold py-3 px-6 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm" id="verify-btn">
+          <span>Vérifier l'authenticité</span>
+          <span class="material-symbols-outlined text-[18px]">search</span>
+        </button>
+      </form>
+
+      <!-- RESULT CONTAINER -->
+      <div id="result" class="hidden"></div>
+    </div>
+
+    <p class="text-center text-[11px] text-outline mt-6 flex items-center justify-center gap-1">
+      <span class="material-symbols-outlined text-[14px]">lock</span>
+      <span>Registre officiel d'attestations numériques SMCAC</span>
+    </p>
+
+  </main>
+
+<script>
+  const sb = supabase.createClient('https://fbogkyrrnyawbdgwratl.supabase.co', 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI');
+  const resultEl = document.getElementById('result');
+  const tokenInput = document.getElementById('token-input');
+  const verifyForm = document.getElementById('verify-form');
+  const verifyBtn = document.getElementById('verify-btn');
+
+  // Utility to prevent XSS attacks
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('token')) { 
+    tokenInput.value = params.get('token'); 
+    verify(); 
+  }
+
+  verifyForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    verify();
+  });
+
+  async function verify() {
+    const token = tokenInput.value.trim();
+    if (!token) {
+      tokenInput.focus();
+      return;
+    }
+    
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span>Vérification en cours…</span>`;
+
+    const { data, error } = await sb.rpc('verify_attestation', { p_token: token });
+
+    verifyBtn.disabled = false;
+    verifyBtn.innerHTML = `<span>Vérifier l'authenticité</span><span class="material-symbols-outlined text-[18px]">search</span>`;
+
+    resultEl.classList.remove('hidden');
+    if (error || !data || data.length === 0) {
+      resultEl.className = 'result invalid';
+      resultEl.innerHTML = `
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-error text-2xl mt-0.5">error</span>
+          <div>
+            <h3 class="font-headline font-bold text-error text-base mb-1">Code invalide</h3>
+            <p class="text-xs text-error/90 m-0 leading-relaxed">Aucun certificat ou attestation officielle ne correspond à ce code de vérification.</p>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const r = data[0];
+    const formattedDate = r.issued_at ? new Date(r.issued_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : 'N/A';
+
+    resultEl.className = 'result valid';
+    resultEl.innerHTML = `
+      <div class="flex items-center gap-2 mb-3 pb-3 border-b border-gold/20">
+        <span class="material-symbols-outlined text-gold-deep text-2xl">verified</span>
+        <div>
+          <span class="text-[10px] uppercase tracking-widest text-gold-deep font-bold block">Document officiel</span>
+          <h2 class="m-0 text-primary">Certificat valide</h2>
+        </div>
+      </div>
+      <div class="space-y-2 text-sm text-on-surface">
+        <p class="m-0"><span class="text-xs text-on-surface-variant block">Titulaire :</span><strong class="text-base text-primary font-headline">${escapeHtml(r.full_name)}</strong></p>
+        <p class="m-0"><span class="text-xs text-on-surface-variant block">Formation / Module :</span><span class="font-medium text-primary">« ${escapeHtml(r.module_title)} »</span></p>
+        <p class="m-0 text-xs text-on-surface-variant"><span class="text-xs text-on-surface-variant block">Délivré le :</span><strong>${escapeHtml(formattedDate)}</strong></p>
+      </div>
+    `;
+  }
+</script>
+
+</body>
+</html>

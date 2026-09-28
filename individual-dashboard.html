@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-surface">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon espace — SMCAC Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c", "glow": "#f6be39" },
+          "error": "#b3261e",
+          "success": "#2c5e2c",
+          "wa": "#25d366"
+        },
+        fontFamily: {
+          "display": ["Newsreader", "Georgia", "serif"],
+          "headline": ["Newsreader", "Georgia", "serif"],
+          "body": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .status {
+    display: none;
+    margin-bottom: 1.25rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .status.error {
+    display: block;
+    background-color: #fbeceb;
+    border: 1px solid #f1c9c6;
+    color: #b3261e;
+  }
+  .status.success {
+    display: block;
+    background-color: #eef4ee;
+    border: 1px solid #cfe3cf;
+    color: #2c5e2c;
+  }
+  .card {
+    background-color: #ffffff;
+    border: 1px solid rgba(20, 62, 46, 0.1);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  .module-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(20, 62, 46, 0.08);
+    transition: background-color 0.2s ease;
+  }
+  .module-row:last-child { border-bottom: none; }
+  .module-row:hover { background-color: #fbf9f4; }
+  .module-row .title { font-weight: 600; color: #143e2e; font-size: 0.95rem; }
+  .module-row .meta { font-size: 0.8rem; color: #49554e; margin-top: 0.25rem; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge.unlocked { background-color: #dcfce7; color: #166534; }
+  .badge.locked { background-color: #f3f4f6; color: #4b5563; border: 1px solid rgba(20, 62, 46, 0.1); }
+  a.primary, button.primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    background-color: #143e2e;
+    color: #ffdfa0;
+    border: 1px solid rgba(212, 160, 23, 0.3);
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  a.primary:hover, button.primary:hover {
+    background-color: #d4a017;
+    color: #143e2e;
+    border-color: #d4a017;
+  }
+  a.wa-btn, button.wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background-color: #25d366;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.55rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  a.wa-btn:hover, button.wa-btn:hover {
+    background-color: #20bd5a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .empty {
+    padding: 2.5rem;
+    text-align: center;
+    color: #49554e;
+    font-size: 0.875rem;
+    background-color: #ffffff;
+    border: 1px dashed rgba(20, 62, 46, 0.2);
+    border-radius: 1rem;
+  }
+</style>
+</head>
+<body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
+
+  <!-- LOGIN SCREEN CONTAINER -->
+  <div id="login-screen" class="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-3xl border border-primary/10 shadow-xl p-8 sm:p-10">
+      <div class="text-center mb-8">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-16 w-16 rounded-full object-cover border-2 border-gold/40 mx-auto mb-4 shadow-sm">
+        <p class="text-xs uppercase tracking-widest text-gold-deep font-bold mb-1">SMCAC Academy</p>
+        <h1 class="font-headline text-3xl font-medium text-primary">Espace Apprenant</h1>
+        <p class="text-xs text-on-surface-variant mt-2">Accédez à vos modules de formation et vos attestations.</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Adresse e-mail</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+            <input type="email" id="email" required autocomplete="email" placeholder="apprenant@exemple.cm" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label for="password" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Mot de passe</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+            <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <button type="submit" id="login-btn" class="primary w-full mt-2 py-3.5 px-6 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary hover:border-gold font-semibold text-base shadow-md transition-all duration-200 active:scale-[0.99] disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2">
+          <span>Se connecter</span>
+          <span class="material-symbols-outlined text-[20px]">login</span>
+        </button>
+
+        <div id="login-status" class="status" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="mt-8 pt-6 border-t border-primary/10 text-center">
+        <a href="registration.html" class="text-xs text-primary hover:text-gold-deep font-semibold transition-colors">
+          Pas encore de compte ? Activez votre code d'inscription →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SCREEN CONTAINER -->
+  <div id="dashboard-screen" class="hidden flex-1 flex flex-col w-full">
+    <header class="w-full bg-surface/90 backdrop-blur-md border-b border-primary/10 sticky top-0 z-40">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-11 w-11 rounded-full object-cover border-2 border-gold/40">
+          <div class="flex flex-col text-left border-l border-primary/15 pl-3.5">
+            <p class="text-xs uppercase tracking-widest text-gold-deep font-bold">SMCAC Academy</p>
+            <h1 id="welcome-name" class="font-headline text-lg sm:text-xl font-medium text-primary leading-tight">Mon espace</h1>
+          </div>
+        </div>
+
+        <button id="logout-btn" class="logout inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-primary/20 text-primary hover:bg-primary hover:text-white font-medium text-xs sm:text-sm transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          <span class="hidden sm:inline">Se déconnecter</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 pb-16 space-y-8">
+      <div id="dash-status" class="status" role="status" aria-live="polite"></div>
+
+      <!-- Guidance Banner -->
+      <div class="p-5 rounded-2xl bg-surface-container-low border border-primary/10 flex items-start gap-4">
+        <span class="material-symbols-outlined text-gold-deep text-[26px] shrink-0 mt-0.5">school</span>
+        <p class="text-sm text-on-surface-variant leading-relaxed">
+          Vous suivez le cours <strong id="course-name-banner" class="text-primary">…</strong>. Suivez votre progression et accédez à vos modules ci-dessous. Une fois les modules terminés et leurs quiz réussis, votre attestation apparaît dans « Mes attestations » et l'évaluation finale se débloque plus bas.
+        </p>
+      </div>
+
+      <!-- SECTION 1: MODULES -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-gold-deep text-[22px]">auto_stories</span>
+          <h2 class="font-headline text-2xl font-medium text-primary">Vos modules</h2>
+        </div>
+        <div class="card" id="modules-wrap">
+          <div class="empty">Chargement…</div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: FINAL EVALUATION -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-gold-deep text-[22px]">military_tech</span>
+          <h2 class="font-headline text-2xl font-medium text-primary">Statut d'évaluation finale</h2>
+        </div>
+        <div class="card" id="final-eval-wrap">
+          <div class="empty">Chargement…</div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: ATTESTATIONS -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-gold-deep text-[22px]">verified</span>
+          <h2 class="font-headline text-2xl font-medium text-primary">Mes attestations</h2>
+        </div>
+        <div class="card" id="attestations-wrap">
+          <div class="empty">Chargement…</div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: EVALUATION PRATIQUE -->
+      <section class="pt-4" id="eval-section">
+        <div class="bg-surface-container-lowest border border-primary/10 rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-primary/10">
+            <span class="material-symbols-outlined text-gold-deep text-2xl shrink-0">workspace_premium</span>
+            <div>
+              <h2 class="font-headline text-lg sm:text-xl font-medium text-primary m-0">Évaluation Pratique & Certification Finale</h2>
+              <p class="text-xs text-on-surface-variant m-0 mt-0.5" id="eval-subtitle">Planifiez votre examen pratique pour obtenir votre Certificat de Fin de Formation.</p>
+            </div>
+          </div>
+
+          <form id="practical-exam-form" class="space-y-5">
+            <div>
+              <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-2.5">Mode d'évaluation souhaité</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label class="flex items-center gap-3 p-4 rounded-xl border border-outline-variant bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all">
+                  <input type="radio" name="exam_mode" value="Présentiel (Locaux SMCAC)" checked class="text-primary focus:ring-gold">
+                  <div>
+                    <p class="text-sm font-semibold text-primary m-0">Présentiel</p>
+                    <p class="text-xs text-on-surface-variant m-0 mt-0.5">Dans les locaux de SMCAC Academy</p>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-3 p-4 rounded-xl border border-outline-variant bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all">
+                  <input type="radio" name="exam_mode" value="En ligne (Visio-conférence)" class="text-primary focus:ring-gold">
+                  <div>
+                    <p class="text-sm font-semibold text-primary m-0">En ligne</p>
+                    <p class="text-xs text-on-surface-variant m-0 mt-0.5">Évaluation à distance via Google Meet / Zoom</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label for="exam-notes" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Disponibilités ou précisions (optionnel)</label>
+              <textarea id="exam-notes" rows="2" placeholder="Ex: Disponible les samedis matin..." class="w-full px-3.5 py-2.5 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold"></textarea>
+            </div>
+
+            <button type="button" id="send-whatsapp-btn" class="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold py-3.5 px-5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+              </svg>
+              <span>Réserver mon évaluation sur WhatsApp</span>
+            </button>
+          </form>
+
+          <div id="company-eval-notice" class="hidden bg-amber-500/10 border-l-4 border-gold-deep p-5 rounded-2xl">
+            <div class="flex items-start gap-3.5">
+              <span class="material-symbols-outlined text-gold-deep text-2xl shrink-0 mt-0.5">info</span>
+              <div>
+                <h3 class="font-bold text-primary text-base mb-1">Formation via Compte Entreprise</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                  <strong>Information importante :</strong> Étant inscrit au compte de votre entreprise, <strong>la planification de l'évaluation pratique et la délivrance de la certification globale sont directement gérées par le responsable formation de votre entreprise.</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: CATALOGUE REDIRECTION -->
+      <section class="pt-2">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-headline text-lg sm:text-xl font-medium text-primary m-0">Autres formations disponibles</h2>
+          <a href="index.html#formations" class="text-xs text-primary hover:text-gold-deep font-semibold flex items-center gap-1 transition-colors">
+            <span>Voir tout le catalogue</span>
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <a href="index.html#formations" class="group relative rounded-2xl overflow-hidden shadow-md border border-primary/10 min-h-[230px] flex flex-col justify-between p-6 sm:p-7 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-cover bg-center" style="background-image: linear-gradient(180deg, rgba(20, 62, 46, 0.45) 0%, rgba(13, 43, 31, 0.94) 100%), url('assets/module-developpement-personnel.png');">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-gold-light bg-primary-container/80 backdrop-blur-md px-3 py-1 rounded-full border border-gold/30">Catalogue SMCAC</span>
+              <span class="material-symbols-outlined text-gold-light opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-[20px]">open_in_new</span>
+            </div>
+            <div>
+              <h3 class="font-headline text-xl font-semibold text-white mb-2 group-hover:text-gold-light transition-colors">Développement Personnel & Leadership</h3>
+              <p class="text-xs text-surface-container-low/90 line-clamp-2 mb-4 leading-relaxed">Maîtrisez la communication persuasive, la prise de parole et le leadership d'équipe.</p>
+              <div class="inline-flex items-center gap-2 text-xs font-semibold text-gold-light group-hover:underline">
+                <span>Accéder à la formation</span>
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="index.html#formations" class="group relative rounded-2xl overflow-hidden shadow-md border border-primary/10 min-h-[230px] flex flex-col justify-between p-6 sm:p-7 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-cover bg-center" style="background-image: linear-gradient(180deg, rgba(20, 62, 46, 0.45) 0%, rgba(13, 43, 31, 0.94) 100%), url('assets/module-art-oratoire.png');">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-gold-light bg-primary-container/80 backdrop-blur-md px-3 py-1 rounded-full border border-gold/30">Inscriptions Ouvertes</span>
+              <span class="material-symbols-outlined text-gold-light opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-[20px]">open_in_new</span>
+            </div>
+            <div>
+              <h3 class="font-headline text-xl font-semibold text-white mb-2 group-hover:text-gold-light transition-colors">Découvrir tous nos parcours</h3>
+              <p class="text-xs text-surface-container-low/90 line-clamp-2 mb-4 leading-relaxed">Parcourez l'ensemble des modules certifiants et sélectionnez votre prochaine formation.</p>
+              <div class="inline-flex items-center gap-2 text-xs font-semibold text-gold-light group-hover:underline">
+                <span>Accéder aux formations</span>
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  const SUPABASE_URL = 'https://fbogkyrrnyawbdgwratl.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const SUPER_ADMIN_WHATSAPP = '237690000000';
+
+  const loginScreen = document.getElementById('login-screen');
+  const dashScreen = document.getElementById('dashboard-screen');
+  const loginForm = document.getElementById('login-form');
+  const loginStatus = document.getElementById('login-status');
+  const loginBtn = document.getElementById('login-btn');
+  const dashStatus = document.getElementById('dash-status');
+  const modulesWrap = document.getElementById('modules-wrap');
+  const welcomeName = document.getElementById('welcome-name');
+  const courseNameBanner = document.getElementById('course-name-banner');
+  const finalEvalWrap = document.getElementById('final-eval-wrap');
+
+  function showLoginError(msg) { loginStatus.className = 'status error'; loginStatus.textContent = msg; }
+  function showLogin() { loginScreen.classList.remove('hidden'); dashScreen.classList.add('hidden'); }
+  function showDashboard() { loginScreen.classList.add('hidden'); dashScreen.classList.remove('hidden'); }
+
+  let isCompanyWorker = false;
+  let moduleTwoTitle = 'Module 2';
+  let activeEnrollmentId = null;
+
+  function fmtDate(iso) {
+    if (!iso) return null;
+    return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  async function checkSessionAndRoute() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { showLogin(); return; }
+
+    const { data: profile, error } = await sb
+      .from('profiles')
+      .select('role, full_name, company_id')
+      .eq('id', session.user.id)
+      .maybeSingle();
+
+    if (error || !profile || profile.role !== 'learner') {
+      showLoginError('Ce compte n\u2019est pas un compte apprenant valide.');
+      await sb.auth.signOut();
+      showLogin();
+      return;
+    }
+
+    isCompanyWorker = !!profile.company_id;
+    welcomeName.textContent = 'Bonjour, ' + (profile.full_name || 'Apprenant');
+
+    const formEl = document.getElementById('practical-exam-form');
+    const companyNoticeEl = document.getElementById('company-eval-notice');
+    const evalSubtitleEl = document.getElementById('eval-subtitle');
+
+    if (isCompanyWorker) {
+      if (formEl) formEl.classList.add('hidden');
+      if (companyNoticeEl) companyNoticeEl.classList.remove('hidden');
+      if (evalSubtitleEl) evalSubtitleEl.textContent = "Organisation centralisée par votre entreprise.";
+    } else {
+      if (formEl) formEl.classList.remove('hidden');
+      if (companyNoticeEl) companyNoticeEl.classList.add('hidden');
+      if (evalSubtitleEl) evalSubtitleEl.textContent = "Planifiez votre examen pratique pour obtenir votre Certificat de Fin de Formation.";
+    }
+
+    showDashboard();
+    loadModules(session.user.id);
+    loadAttestations(session.user.id);
+  }
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Connexion…';
+    loginStatus.className = 'status';
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      showLoginError(error.message.includes('Invalid') ? 'E-mail ou mot de passe incorrect.' : error.message);
+    } else {
+      await checkSessionAndRoute();
+    }
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Se connecter';
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    showLogin();
+  });
+
+  async function loadModules(userId) {
+    dashStatus.className = 'status';
+
+    try {
+      const { data: enrollments, error } = await sb
+        .from('enrollments')
+        .select('id, expires_at, course_id, courses(id, title), module_progress(unlocked, status, module_id, modules(id, title, order_index))')
+        .eq('profile_id', userId);
+
+      if (error) {
+        modulesWrap.innerHTML = `<div class="empty">Erreur de chargement : ${error.message}</div>`;
+        return;
+      }
+
+      if (!enrollments || enrollments.length === 0) {
+        courseNameBanner.textContent = "aucun cours";
+        modulesWrap.innerHTML = '<div class="empty">Vous n\'êtes inscrit à aucun cours pour le moment.</div>';
+        finalEvalWrap.innerHTML = '<div class="empty">Aucune évaluation en attente.</div>';
+        return;
+      }
+
+      const activeEnrollment = enrollments[0];
+      activeEnrollmentId = activeEnrollment.id;
+
+      const courseTitle = activeEnrollment.courses ? activeEnrollment.courses.title : 'Cours sans titre';
+      courseNameBanner.textContent = courseTitle;
+
+      const rawProgress = activeEnrollment.module_progress || [];
+      const sortedProgress = rawProgress.sort((a, b) => {
+        const orderA = a.modules ? a.modules.order_index : 0;
+        const orderB = b.modules ? b.modules.order_index : 0;
+        return orderA - orderB;
+      });
+
+      const mod2 = sortedProgress.find(mp => mp.modules && mp.modules.order_index === 2);
+      if (mod2 && mod2.modules) moduleTwoTitle = mod2.modules.title;
+
+      if (sortedProgress.length === 0) {
+        modulesWrap.innerHTML = '<div class="empty">Aucun module disponible dans ce cours.</div>';
+        return;
+      }
+
+      const rows = sortedProgress.map(mp => {
+        const mod = mp.modules || { title: 'Module', order_index: 1 };
+        const isModule2 = mod.order_index === 2;
+        const expiryLine = mp.unlocked && activeEnrollment.expires_at
+          ? `<div class="meta">Accès valable jusqu'au ${fmtDate(activeEnrollment.expires_at)}</div>`
+          : '';
+
+        const action = (isModule2 && !mp.unlocked)
+          ? (isCompanyWorker
+              ? `<span class="badge locked">Contactez votre responsable formation</span>`
+              : `<button class="wa-btn" id="request-payment-btn">Demander le paiement</button>`)
+          : (mp.unlocked
+              ? `<a class="primary" style="text-decoration:none;" href="module-viewer.html?course=${activeEnrollment.course_id || ''}&module=${mod.order_index}&module_id=${mp.module_id}">Ouvrir le module</a>`
+              : `<span class="badge locked">Verrouillé</span>`);
+
+        return `<div class="module-row">
+          <div>
+            <div class="title">${mod.title}</div>
+            ${expiryLine}
+          </div>
+          <div>${action}</div>
+        </div>`;
+      }).join('');
+
+      modulesWrap.innerHTML = rows;
+
+      const payBtn = document.getElementById('request-payment-btn');
+      if (payBtn) payBtn.addEventListener('click', requestPayment);
+
+      const allCompleted = sortedProgress.length > 0 && sortedProgress.every(mp => mp.status === 'completed');
+      renderFinalEval(activeEnrollment.id, allCompleted, courseTitle);
+
+    } catch (err) {
+      modulesWrap.innerHTML = `<div class="empty">Erreur inattendue : ${err.message}</div>`;
+    }
+  }
+
+  async function renderFinalEval(enrollmentId, allCompleted, courseTitle) {
+    if (!allCompleted) {
+      finalEvalWrap.innerHTML = '<div class="empty">Terminez l\'ensemble de vos modules (et leurs quiz) pour débloquer l\'évaluation finale.</div>';
+      return;
+    }
+
+    if (isCompanyWorker) {
+      finalEvalWrap.innerHTML = '<div class="empty">Félicitations, vous avez validé tous les modules ! Votre responsable d\'entreprise organisera votre évaluation finale.</div>';
+      return;
+    }
+
+    const { data: exam } = await sb
+      .from('practical_exams')
+      .select('status, mode')
+      .eq('enrollment_id', enrollmentId)
+      .maybeSingle();
+
+    const modeLabel = { physical_at_smcac: 'Présentiel (chez SMCAC)', online: 'En ligne (Visio)' };
+
+    if (exam) {
+      finalEvalWrap.innerHTML = `
+        <div class="module-row">
+          <div>
+            <div class="title">Demande enregistrée : ${modeLabel[exam.mode] || exam.mode}</div>
+            <div class="meta">Statut actuel : <strong>${exam.status}</strong>. L'équipe pédagogique vous contactera par téléphone/WhatsApp.</div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    finalEvalWrap.innerHTML = `
+      <div style="padding:1.5rem;">
+        <p style="font-size:0.9rem;color:#49554e;margin:0 0 1rem;">
+          Félicitations, tous les modules de <strong>${courseTitle || 'votre parcours'}</strong> sont validés ! Réservez votre évaluation pratique ci-dessous.
+        </p>
+      </div>`;
+  }
+
+  async function loadAttestations(userId) {
+    const attestationsWrap = document.getElementById('attestations-wrap');
+    const { data, error } = await sb
+      .from('attestations')
+      .select('id, issued_at, verification_token, modules(title)')
+      .eq('profile_id', userId)
+      .order('issued_at', { ascending: false });
+
+    if (error) { attestationsWrap.innerHTML = `<div class="empty">Erreur : ${error.message}</div>`; return; }
+    if (!data || data.length === 0) {
+      attestationsWrap.innerHTML = '<div class="empty">Aucune attestation délivrée pour l\'instant — terminez un module et son quiz pour l\'obtenir.</div>';
+      return;
+    }
+
+    attestationsWrap.innerHTML = data.map(a => `
+      <div class="module-row">
+        <div>
+          <div class="title">${a.modules ? a.modules.title : 'Attestation de Module'}</div>
+          <div class="meta">Délivrée le ${fmtDate(a.issued_at)}</div>
+        </div>
+        <a class="primary" style="text-decoration:none;" href="verify.html?token=${a.verification_token}" target="_blank" rel="noopener">Voir l'attestation</a>
+      </div>
+    `).join('');
+  }
+
+  async function requestPayment() {
+    dashStatus.className = 'status';
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      dashStatus.className = 'status error';
+      dashStatus.textContent = 'Votre session a expiré. Reconnectez-vous.';
+      showLogin();
+      return;
+    }
+
+    const { error } = await sb.from('payment_batches').insert({
+      profile_id: session.user.id,
+      seats_requested: 1
+    });
+
+    if (error) {
+      dashStatus.className = 'status error';
+      dashStatus.textContent = 'Erreur lors de l\'enregistrement : ' + error.message;
+      return;
+    }
+
+    const msg = `Bonjour SMCAC Academy, je souhaite régler les frais pour débloquer le Module 2 (${moduleTwoTitle}).`;
+    window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+
+    dashStatus.className = 'status success';
+    dashStatus.textContent = 'Demande de paiement transmise avec succès.';
+  }
+
+  document.getElementById('send-whatsapp-btn').addEventListener('click', async () => {
+    const selectedMode = document.querySelector('input[name="exam_mode"]:checked')?.value || 'Présentiel';
+    const notes = document.getElementById('exam-notes').value.trim();
+    const courseTitle = courseNameBanner.textContent !== '…' ? courseNameBanner.textContent : 'mon parcours';
+
+    if (activeEnrollmentId) {
+      const modeDb = selectedMode.includes('Présentiel') ? 'physical_at_smcac' : 'online';
+      await sb.from('practical_exams').upsert({
+        enrollment_id: activeEnrollmentId,
+        mode: modeDb,
+        status: 'pending',
+        notes: notes || null
+      });
+      renderFinalEval(activeEnrollmentId, true, courseTitle);
+    }
+
+    let message = `Bonjour SMCAC Academy,\n\nJe souhaite réserver mon évaluation pratique pour la formation "${courseTitle}".`;
+    message += `\n- Mode d'évaluation : ${selectedMode}`;
+    if (notes) {
+      message += `\n- Disponibilités / Précisions : ${notes}`;
+    }
+
+    window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`, '_blank');
+  });
+
+  checkSessionAndRoute();
+</script>
+
+</body>
+</html>

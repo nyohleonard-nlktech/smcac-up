@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta name="theme-color" content="#143e2e"/>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<title>SMCAC Academy — Art oratoire &amp; Développement personnel</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c", "glow": "#f6be39" }
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
+        spacing: { "gutter": "1.5rem", "space-xl": "3.5rem", "gutter-mobile": "1rem", "margin-desktop": "3.5rem", "space-xs": "0.375rem", "space-sm": "0.75rem", "space-md": "1.25rem", "space-lg": "2rem" },
+        fontFamily: { "display": ["Newsreader", "Georgia", "serif"], "headline": ["Newsreader", "Georgia", "serif"], "body": ["IBM Plex Sans", "sans-serif"] }
+      }
+    }
+  };
+</script>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased selection:bg-gold-light selection:text-primary min-h-screen flex flex-col">
+
+<!-- HEADER -->
+<header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-md border-b border-primary/10 shadow-sm transition-all duration-200">
+  <div class="h-20 max-w-7xl mx-auto px-gutter-mobile lg:px-margin-desktop flex items-center justify-between gap-2">
+    
+    <!-- Brand Logo -->
+    <a class="flex items-center gap-2.5 sm:gap-3.5 group focus:outline-none focus:ring-2 focus:ring-gold/50 rounded-full shrink-0" href="index.html">
+      <div class="relative shrink-0">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover border-2 border-gold/40 group-hover:border-gold transition-colors duration-200 shadow-sm" onerror="this.src='https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=200&q=80'">
+        <span class="absolute inset-0 rounded-full ring-2 ring-gold/20 group-hover:scale-105 transition-transform duration-200"></span>
+      </div>
+      <div class="flex flex-col text-left border-l border-primary/15 pl-2.5 sm:pl-3.5">
+        <span class="font-display text-base sm:text-lg text-primary font-bold tracking-tight leading-tight group-hover:text-primary-light transition-colors">SMCAC Academy</span>
+        <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-gold-deep font-semibold">L'Art Oratoire &amp; Présence</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-8">
+      <a class="text-sm font-medium text-on-surface/80 hover:text-primary relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold after:transition-all hover:after:w-full transition-colors duration-150" href="#formations">Formations</a>
+      <a class="text-sm font-medium text-on-surface/80 hover:text-primary relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold after:transition-all hover:after:w-full transition-colors duration-150" href="#methode">Comment ça marche</a>
+      <a class="text-sm font-medium text-on-surface/80 hover:text-primary relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold after:transition-all hover:after:w-full transition-colors duration-150" href="#application">Application mobile</a>
+    </nav>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-2 relative">
+      
+      <!-- Login Dropdown Trigger -->
+      <div class="relative">
+        <button id="login-menu-btn" class="inline-flex items-center gap-1.5 sm:gap-2 text-xs uppercase tracking-wider font-semibold rounded-xl bg-primary text-white px-3.5 py-2.5 sm:px-5 sm:py-2.5 hover:bg-primary-light shadow-md border border-gold/40 hover:border-gold active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gold/50 min-h-[44px]" aria-expanded="false" aria-haspopup="true">
+          <span class="hidden sm:inline">Se connecter</span>
+          <span class="sm:hidden">Accès</span>
+          <span class="material-symbols-outlined text-[18px] text-gold-glow transition-transform duration-200">expand_more</span>
+        </button>
+        
+        <div id="login-menu" class="hidden absolute right-0 top-full mt-3 w-56 sm:w-60 bg-white rounded-2xl shadow-xl border border-primary/10 py-2.5 z-50 origin-top-right transition-all">
+          <a href="individual-dashboard.html" class="flex items-center gap-2.5 px-4 py-3 text-sm font-medium text-on-surface hover:bg-surface-container hover:text-primary transition-colors min-h-[48px]">
+            <span class="material-symbols-outlined text-[20px] text-gold-deep">person</span>
+            Espace apprenant
+          </a>
+          <a href="company-dashboard.html" class="flex items-center gap-2.5 px-4 py-3 text-sm font-medium text-on-surface hover:bg-surface-container hover:text-primary transition-colors border-t border-primary/5 min-h-[48px]">
+            <span class="material-symbols-outlined text-[20px] text-gold-deep">business</span>
+            Espace entreprise
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Toggle Button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2.5 rounded-xl border border-primary/15 text-primary hover:bg-primary/5 active:bg-primary/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Ouvrir le menu">
+        <span class="material-symbols-outlined text-[24px]">menu</span>
+      </button>
+
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAVIGATION DRAWER -->
+<div id="mobile-drawer" class="fixed inset-0 z-50 hidden md:hidden">
+  <div id="mobile-drawer-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+  <div class="fixed inset-y-0 right-0 w-full max-w-xs bg-surface-container-lowest shadow-2xl p-6 flex flex-col justify-between z-10 transform transition-transform duration-300">
+    <div>
+      <div class="flex items-center justify-between pb-6 border-b border-primary/10">
+        <div class="flex items-center gap-3">
+          <img src="assets/logo-full.jpeg" alt="SMCAC" class="h-9 w-9 rounded-full object-cover border border-gold" onerror="this.src='https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=200&q=80'">
+          <span class="font-headline font-bold text-primary text-lg">Menu</span>
+        </div>
+        <button id="mobile-drawer-close" class="p-2 text-on-surface-variant hover:text-primary rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center">
+          <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+      </div>
+
+      <nav class="flex flex-col gap-2 mt-6">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-on-surface hover:bg-surface-container hover:text-primary transition-colors min-h-[48px]" href="#formations">
+          <span class="material-symbols-outlined text-[20px] text-gold-deep">school</span>
+          Formations
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-on-surface hover:bg-surface-container hover:text-primary transition-colors min-h-[48px]" href="#methode">
+          <span class="material-symbols-outlined text-[20px] text-gold-deep">auto_stories</span>
+          Comment ça marche
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-on-surface hover:bg-surface-container hover:text-primary transition-colors min-h-[48px]" href="#application">
+          <span class="material-symbols-outlined text-[20px] text-gold-deep">smartphone</span>
+          Application mobile
+        </a>
+      </nav>
+    </div>
+
+    <div class="pt-6 border-t border-primary/10 space-y-3">
+      <a href="registration.html" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gold text-primary-container font-semibold text-sm shadow-sm min-h-[48px]">
+        S'inscrire (individuel)
+      </a>
+      <a href="company-registration.html" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary text-white font-semibold text-sm shadow-sm min-h-[48px]">
+        Inscrire mon entreprise
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="w-full pt-20 bg-surface flex-1">
+  <div class="flex flex-col w-full">
+
+    <!-- HERO SECTION -->
+    <section class="relative w-full overflow-hidden bg-primary text-white">
+      <div class="absolute inset-0">
+        <img alt="SMCAC Academy" class="w-full h-full object-cover object-center transform scale-105 filter brightness-[0.35] contrast-[1.1]" src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=80" onerror="this.src='assets/hero-bg.png'"/>
+        <div class="absolute inset-0 bg-gradient-to-r from-primary-container via-primary/90 to-primary/40"></div>
+        <div class="absolute top-1/4 right-10 w-96 h-96 rounded-full bg-gold/10 blur-[120px] pointer-events-none"></div>
+      </div>
+
+      <div class="relative max-w-7xl mx-auto px-gutter-mobile lg:px-margin-desktop pt-12 pb-16 md:pt-24 md:pb-32">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          
+          <!-- Hero Text -->
+          <div class="lg:col-span-7 flex flex-col items-start text-left">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-gold/40 shadow-inner mb-6">
+              <span class="w-2 h-2 rounded-full bg-gold-glow animate-pulse shrink-0"></span>
+              <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gold-light">Académie de formation au Cameroun</span>
+            </div>
+            
+            <h1 class="font-headline text-3xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-white mb-5 leading-[1.2]">
+              Développez votre assurance et maîtrisez <span class="italic text-gold-light drop-shadow-[0_2px_12px_rgba(212,160,23,0.35)]">l'art de convaincre</span>.
+            </h1>
+            
+            <p class="text-sm sm:text-lg text-surface-container-high/90 font-light mb-8 max-w-xl leading-relaxed">
+              Des formations concrètes en art oratoire, développement personnel et résilience, conçues pour révéler votre potentiel d'expression et de leadership.
+            </p>
+
+            <div class="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 mb-8">
+              <a class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 sm:py-4 rounded-xl bg-gold text-primary-container font-semibold text-sm sm:text-base shadow-lg hover:bg-gold-glow active:scale-[0.98] transition-all duration-200 group min-h-[48px]" href="registration.html">
+                <span>S'inscrire (individuel)</span>
+                <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </a>
+              <a class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 sm:py-4 rounded-xl bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-sm sm:text-base shadow-md hover:bg-white/20 hover:border-gold/50 active:scale-[0.98] transition-all duration-200 group min-h-[48px]" href="company-registration.html">
+                <span>Inscrire mon entreprise</span>
+                <span class="material-symbols-outlined text-[20px]">apartment</span>
+              </a>
+            </div>
+
+            <div class="inline-flex items-center gap-2.5 text-surface-container-high/90 text-xs sm:text-sm font-light backdrop-blur-md px-4 py-2.5 rounded-xl bg-black/30 border border-white/10 w-full sm:w-auto">
+              <span class="material-symbols-outlined text-gold-glow text-[20px] shrink-0">verified_user</span>
+              <span>Accessible en ligne et disponible hors-ligne sur votre téléphone.</span>
+            </div>
+          </div>
+
+          <!-- Hero Graphic Visual -->
+          <div class="lg:col-span-5 flex justify-center lg:justify-end mt-4 lg:mt-0">
+            <div class="relative group max-w-[240px] sm:max-w-[280px] lg:max-w-xs w-full">
+              <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-gold/30 to-gold-glow/20 blur-xl opacity-75"></div>
+              <img src="assets/logo-phone-mockup.jpeg" alt="Application SMCAC Academy" class="relative w-full aspect-[4/5] object-cover drop-shadow-2xl rounded-2xl transform group-hover:scale-[1.02] transition-transform duration-300" onerror="this.src='https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80'">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- METHODOLOGY -->
+    <section class="w-full bg-surface py-16 sm:py-20 relative z-10" id="methode">
+      <div class="max-w-7xl mx-auto px-gutter-mobile lg:px-margin-desktop">
+        
+        <div class="max-w-2xl mb-10 sm:mb-14">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/15 text-primary text-[11px] font-bold uppercase tracking-wider mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>Pédagogie de l'Excellence
+          </div>
+          <h2 class="font-headline text-2xl sm:text-4xl text-primary font-medium leading-tight">Une méthode simple, progressive et accessible</h2>
+          <p class="text-sm sm:text-base text-on-surface-variant mt-2 sm:mt-3 leading-relaxed">Comment se déroule votre apprentissage chez SMCAC Academy.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          
+          <div class="bg-surface-container-lowest p-6 sm:p-8 rounded-2xl border border-primary/10 shadow-sm hover:shadow-md hover:border-gold/60 transition-all duration-300">
+            <div class="flex items-center justify-between mb-5">
+              <span class="w-11 h-11 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center font-display text-lg text-primary font-bold">01</span>
+              <span class="text-[11px] uppercase tracking-wider text-gold-deep font-bold">Départ</span>
+            </div>
+            <h3 class="font-headline text-xl sm:text-2xl text-primary font-semibold mb-2">Inscription</h3>
+            <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">Choisissez votre parcours (individuel ou équipe entreprise) et accédez instantanément à votre espace apprenant.</p>
+          </div>
+
+          <div class="bg-surface-container-lowest p-6 sm:p-8 rounded-2xl border border-primary/10 shadow-sm hover:shadow-md hover:border-gold/60 transition-all duration-300">
+            <div class="flex items-center justify-between mb-5">
+              <span class="w-11 h-11 rounded-xl bg-primary text-gold-light border border-gold/40 flex items-center justify-center font-display text-lg font-bold shadow-sm">02</span>
+              <span class="text-[11px] uppercase tracking-wider text-primary font-bold">Pratique</span>
+            </div>
+            <h3 class="font-headline text-xl sm:text-2xl text-primary font-semibold mb-2">Suivez les modules</h3>
+            <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">Progressez à votre rythme à travers des leçons structurées et validez chaque module par un quiz.</p>
+          </div>
+
+          <div class="bg-surface-container-lowest p-6 sm:p-8 rounded-2xl border border-primary/10 shadow-sm hover:shadow-md hover:border-gold/60 transition-all duration-300">
+            <div class="flex items-center justify-between mb-5">
+              <span class="w-11 h-11 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center font-display text-lg text-primary font-bold">03</span>
+              <span class="text-[11px] uppercase tracking-wider text-gold-deep font-bold">Aboutissement</span>
+            </div>
+            <h3 class="font-headline text-xl sm:text-2xl text-primary font-semibold mb-2">Certification</h3>
+            <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">Recevez une attestation officielle, vérifiable en ligne par un code unique.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMATIONS (4 CARDS GRID: 3 ACTIVE COURSES + 1 UPCOMING TEASER) -->
+    <section class="w-full bg-surface-container-low py-16 sm:py-20 border-y border-primary/10" id="formations">
+      <div class="max-w-7xl mx-auto px-gutter-mobile lg:px-margin-desktop">
+        
+        <div class="mb-10 sm:mb-14">
+          <div class="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-gold-deep font-bold mb-2">
+            <span class="material-symbols-outlined text-gold text-[18px]">school</span>Parcours Certifiants
+          </div>
+          <h2 class="font-headline text-2xl sm:text-4xl text-primary font-medium">Nos parcours de formation actuels</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <!-- Card 1: Art Oratoire -->
+          <article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-primary/10 shadow-sm hover:shadow-xl hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group">
+            <div>
+              <div class="relative w-full h-48 overflow-hidden bg-primary">
+                <img alt="Art oratoire" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80" onerror="this.src='assets/module-art-oratoire.png'"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-primary-container via-primary/20 to-transparent"></div>
+                <div class="absolute bottom-3 left-3 right-3">
+                  <span class="px-2.5 py-1 rounded-md bg-gold text-primary-container text-[10px] uppercase tracking-wider font-bold shadow-md inline-block">
+                    Prise de parole &amp; Rhétorique
+                  </span>
+                </div>
+              </div>
+              <div class="p-5">
+                <h3 class="font-headline text-xl font-semibold text-primary mb-1">Art oratoire</h3>
+                <h4 class="font-display italic text-gold-deep text-xs font-medium mb-2.5">Captiver, convaincre et émouvoir votre auditoire</h4>
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                  Structurez vos discours, maîtrisez votre souffle, surmontez le trac et imposez votre présence dans vos prises de parole.
+                </p>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a class="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary transition-all duration-200 font-semibold text-xs shadow-sm min-h-[44px]" href="registration.html?course=1">
+                <span>S'inscrire — Art oratoire</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 2: Développement Personnel -->
+          <article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-primary/10 shadow-sm hover:shadow-xl hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group">
+            <div>
+              <div class="relative w-full h-48 overflow-hidden bg-primary">
+                <img alt="Développement personnel" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" onerror="this.src='assets/module-developpement-personnel.png'"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-primary-container via-primary/20 to-transparent"></div>
+                <div class="absolute bottom-3 left-3 right-3">
+                  <span class="px-2.5 py-1 rounded-md bg-gold text-primary-container text-[10px] uppercase tracking-wider font-bold shadow-md inline-block">
+                    Posture &amp; Clarté intérieure
+                  </span>
+                </div>
+              </div>
+              <div class="p-5">
+                <h3 class="font-headline text-xl font-semibold text-primary mb-1">Développement personnel</h3>
+                <h4 class="font-display italic text-gold-deep text-xs font-medium mb-2.5">Bâtir une confiance solide et aligner vos objectifs</h4>
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                  Identifiez vos leviers de motivation, clarifiez vos priorités stratégiques et renforcez votre résilience au quotidien.
+                </p>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a class="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary transition-all duration-200 font-semibold text-xs shadow-sm min-h-[44px]" href="registration.html?course=2">
+                <span>S'inscrire — Dév. personnel</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 3: Blessures Émotionnelles / Guérison -->
+          <article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-primary/10 shadow-sm hover:shadow-xl hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group">
+            <div>
+              <div class="relative w-full h-48 overflow-hidden bg-primary">
+                <img alt="Guérison & Blessures Émotionnelles" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80" onerror="this.src='assets/auditorium.png'"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-primary-container via-primary/20 to-transparent"></div>
+                <div class="absolute bottom-3 left-3 right-3">
+                  <span class="px-2.5 py-1 rounded-md bg-gold text-primary-container text-[10px] uppercase tracking-wider font-bold shadow-md inline-block">
+                    Guérison &amp; Résilience
+                  </span>
+                </div>
+              </div>
+              <div class="p-5">
+                <h3 class="font-headline text-xl font-semibold text-primary mb-1">Blessures émotionnelles</h3>
+                <h4 class="font-display italic text-gold-deep text-xs font-medium mb-2.5">Surmonter les blocages et libérer votre potentiel</h4>
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                  Apprenez à identifier les freins émotionnels du passé pour retrouver assurance, sérénité et liberté dans vos échanges.
+                </p>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a class="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary transition-all duration-200 font-semibold text-xs shadow-sm min-h-[44px]" href="registration.html?course=3">
+                <span>S'inscrire — Guérison</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 4: Formations à Venir (Teaser) -->
+          <article class="bg-surface-container rounded-2xl border-2 border-dashed border-gold/40 overflow-hidden flex flex-col justify-between group hover:border-gold transition-all duration-300">
+            <div>
+              <div class="relative w-full h-48 overflow-hidden bg-primary/20 flex items-center justify-center">
+                <img alt="Formations à venir" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 opacity-60" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"/>
+                <div class="absolute inset-0 bg-primary-container/60 backdrop-blur-[2px] flex items-center justify-center">
+                  <div class="w-12 h-12 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center text-gold-glow">
+                    <span class="material-symbols-outlined text-[28px]">auto_awesome</span>
+                  </div>
+                </div>
+                <div class="absolute bottom-3 left-3 right-3">
+                  <span class="px-2.5 py-1 rounded-md bg-gold/20 text-gold-light border border-gold/40 text-[10px] uppercase tracking-wider font-bold shadow-sm inline-block backdrop-blur-md">
+                    Prochainement
+                  </span>
+                </div>
+              </div>
+              <div class="p-5">
+                <h3 class="font-headline text-xl font-semibold text-primary mb-1">Formations à venir</h3>
+                <h4 class="font-display italic text-gold-deep text-xs font-medium mb-2.5">Catalogue en constante expansion</h4>
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                  De nouveaux modules en négociation stratégique, leadership d'impact et communication seront bientôt accessibles.
+                </p>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <span class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 text-primary font-semibold text-xs border border-primary/10 cursor-default min-h-[44px]">
+                <span class="material-symbols-outlined text-[16px]">schedule</span>
+                <span>En cours de développement</span>
+              </span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- MOBILE PWA SECTION -->
+    <section class="w-full bg-surface py-16 sm:py-20" id="application">
+      <div class="max-w-7xl mx-auto px-gutter-mobile lg:px-margin-desktop">
+        <div class="w-full rounded-3xl bg-primary-container text-white p-6 sm:p-12 lg:p-16 relative overflow-hidden border border-gold/30 shadow-2xl">
+          <div class="absolute inset-0 pointer-events-none">
+            <img alt="" class="w-full h-full object-cover object-center opacity-15 filter brightness-125 mix-blend-overlay" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" onerror="this.src='assets/auditorium.png'"/>
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-container via-primary-container/95 to-transparent"></div>
+          </div>
+          
+          <div class="relative z-10 max-w-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-gold/30 mb-5">
+              <span class="material-symbols-outlined text-gold-glow text-[18px]">wifi_off</span>
+              <span class="text-[11px] uppercase tracking-wider text-gold-light font-bold">Mode Hors-ligne Disponible</span>
+            </div>
+            
+            <h2 class="font-headline text-2xl sm:text-4xl text-white font-medium mb-3 leading-tight">Installez l'application SMCAC Academy</h2>
+            <p class="text-xs sm:text-base text-surface-container-high/90 font-light mb-6 sm:mb-8 leading-relaxed">
+              Apprenez même sans connexion Internet stable. Installez l'application sur votre téléphone pour poursuivre vos cours où que vous soyez.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <button id="install-btn" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-gold text-primary-container font-semibold text-sm hover:bg-gold-glow active:scale-[0.98] transition-all duration-200 shadow-lg min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined text-[20px]">download</span>
+                <span id="install-btn-text">Installer l'application</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="w-full bg-surface-dim border-t border-primary/10 py-12 sm:py-16">
+      <div class="max-w-7xl mx-auto px-gutter-mobile lg:px-margin-desktop">
+        
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-8 mb-8 border-b border-primary/10 gap-4">
+          <div class="flex items-center gap-3.5">
+            <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-gold/40" onerror="this.src='https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=200&q=80'">
+            <div class="border-l border-primary/15 pl-3.5">
+              <h3 class="font-headline text-lg sm:text-xl font-bold text-primary">SMCAC Academy</h3>
+              <p class="text-xs text-on-surface-variant">Académie d'art oratoire et de développement personnel au Cameroun.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10">
+          <div class="space-y-2.5">
+            <h4 class="text-xs uppercase tracking-wider text-gold-deep font-bold">Navigation &amp; Accès</h4>
+            <ul class="space-y-2 text-xs sm:text-sm">
+              <li><a class="text-on-surface-variant hover:text-primary transition-colors py-1 inline-block" href="individual-dashboard.html">Se connecter à l'espace apprenant</a></li>
+              <li><a class="text-primary font-semibold hover:text-gold-deep transition-colors py-1 inline-block" href="verify.html">Vérifier l'authenticité d'un certificat</a></li>
+              <li><a class="text-on-surface-variant hover:text-primary transition-colors py-1 inline-block" href="#formations">Nos parcours de formation</a></li>
+            </ul>
+          </div>
+
+          <div class="space-y-2.5">
+            <h4 class="text-xs uppercase tracking-wider text-gold-deep font-bold">Coordonnées</h4>
+            <ul class="space-y-2 text-xs sm:text-sm text-on-surface-variant">
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-gold-deep">location_on</span>
+                <span>Cameroun</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="space-y-2.5">
+            <h4 class="text-xs uppercase tracking-wider text-gold-deep font-bold">SMCAC Academy</h4>
+            <p class="text-xs text-on-surface-variant leading-relaxed">Plateforme éducative SMCAC Academy.</p>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-primary/10 flex flex-col sm:flex-row items-center justify-between text-xs text-on-surface-variant gap-3">
+          <p>© 2026 SMCAC Academy. Tous droits réservés.</p>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+</main>
+
+<script>
+  // Login Dropdown Logic
+  const loginBtn = document.getElementById('login-menu-btn');
+  const loginMenu = document.getElementById('login-menu');
+
+  loginBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = loginMenu.classList.contains('hidden');
+    loginMenu.classList.toggle('hidden');
+    loginBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+  });
+
+  // Mobile Drawer Navigation Logic
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileDrawer = document.getElementById('mobile-drawer');
+  const mobileDrawerClose = document.getElementById('mobile-drawer-close');
+  const mobileDrawerBackdrop = document.getElementById('mobile-drawer-backdrop');
+
+  function openDrawer() {
+    mobileDrawer.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    mobileDrawer.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  mobileMenuBtn.addEventListener('click', openDrawer);
+  mobileDrawerClose.addEventListener('click', closeDrawer);
+  mobileDrawerBackdrop.addEventListener('click', closeDrawer);
+
+  mobileDrawer.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeDrawer);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!loginBtn.contains(e.target) && !loginMenu.contains(e.target)) {
+      loginMenu.classList.add('hidden');
+      loginBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Service Worker and Robust PWA Prompt Logic
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch((err) => console.warn('SW registration failed', err));
+  }
+
+  let deferredPrompt;
+  const installBtn = document.getElementById('install-btn');
+  const installBtnText = document.getElementById('install-btn-text');
+
+  // Check if running in Standalone (already installed)
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    installBtn.disabled = true;
+    installBtnText.textContent = 'Application installée';
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.disabled = false;
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      alert("Pour installer l'application sur Android, appuyez sur le menu du navigateur (⋮) puis sur 'Ajouter à l'écran d'accueil'.");
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      installBtn.disabled = true;
+      installBtnText.textContent = 'Application installée';
+    }
+    deferredPrompt = null;
+  });
+</script>
+</body>
+</html>

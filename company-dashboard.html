@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-surface">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace entreprise — SMCAC Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c", "glow": "#f6be39" },
+          "error": "#b3261e",
+          "success": "#2c5e2c",
+          "wa": "#25d366"
+        },
+        fontFamily: {
+          "display": ["Newsreader", "Georgia", "serif"],
+          "headline": ["Newsreader", "Georgia", "serif"],
+          "body": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .status {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .status.error { display: block; background-color: #fbeceb; border: 1px solid #f1c9c6; color: #b3261e; }
+  .status.success { display: block; background-color: #eef4ee; border: 1px solid #cfe3cf; color: #2c5e2c; }
+  .status.info { display: block; background-color: #e8f4fd; border: 1px solid #b6e0fe; color: #0c5460; }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0; background-color: #ffffff;
+    border: 1px solid rgba(20, 62, 46, 0.12); border-radius: 1rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  th {
+    background-color: #f7f4ed; font-weight: 600; color: #143e2e; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.05em; padding: 0.85rem 1rem; border-bottom: 1px solid rgba(20, 62, 46, 0.12); text-align: left;
+  }
+  td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid rgba(20, 62, 46, 0.06); color: #1b231e; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background-color: #fbf9f4; }
+  .badge { display: inline-flex; align-items: center; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .badge.invited { background-color: #fef3c7; color: #92400e; }
+  .badge.redeemed { background-color: #dcfce7; color: #166534; }
+  .badge.unassigned { background-color: #f3f4f6; color: #4b5563; }
+  .badge.blocked { background-color: #fee2e2; color: #991b1b; }
+  a.wa-btn, button.wa-btn {
+    display: inline-flex; align-items: center; gap: 0.35rem; background-color: #25d366; color: #ffffff;
+    text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600;
+    border: none; cursor: pointer; font-family: inherit; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  a.wa-btn:hover, button.wa-btn:hover { background-color: #20bd5a; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+  .code-cell {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight: 600; color: #143e2e;
+    background-color: #f7f4ed; padding: 0.2rem 0.55rem; border-radius: 0.375rem; border: 1px solid rgba(20, 62, 46, 0.1); display: inline-block;
+  }
+  .empty { padding: 2.5rem; text-align: center; color: #49554e; font-size: 0.9rem; background-color: #ffffff; border: 1px dashed rgba(20, 62, 46, 0.2); border-radius: 1rem; }
+  .warning-banner { background-color: #fdf1dd; border: 1px solid #f8dfb1; color: #8a5a00; }
+</style>
+</head>
+<body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
+
+  <!-- LOGIN SCREEN CONTAINER -->
+  <div id="login-screen" class="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-3xl border border-primary/10 shadow-xl p-8 sm:p-10">
+      
+      <div class="text-center mb-8">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-16 w-16 rounded-full object-cover border-2 border-gold/40 mx-auto mb-4 shadow-sm" onerror="this.src='https://via.placeholder.com/64?text=SMCAC'">
+        <p class="text-xs uppercase tracking-widest text-gold-deep font-bold mb-1">SMCAC Academy</p>
+        <h1 class="font-headline text-3xl font-medium text-primary">Connexion entreprise</h1>
+        <p class="text-xs text-on-surface-variant mt-2">Accédez au portail administrateur de votre organisation.</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Adresse e-mail</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+            <input type="email" id="email" required autocomplete="email" placeholder="admin@entreprise.cm" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label for="password" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Mot de passe</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+            <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-11 pr-11 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+            <button type="button" id="toggle-password" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-[20px]" id="toggle-password-icon">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="login-btn" class="w-full mt-2 py-3.5 px-6 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary hover:border-gold font-semibold text-base shadow-md transition-all duration-200 active:scale-[0.99] disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2">
+          <span>Se connecter</span>
+          <span class="material-symbols-outlined text-[20px]">login</span>
+        </button>
+
+        <div id="login-status" class="status" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="mt-8 pt-6 border-t border-primary/10 text-center">
+        <a href="company-registration.html" class="text-xs text-primary hover:text-gold-deep font-semibold transition-colors">
+          Pas encore de compte entreprise ? Inscrivez votre organisation →
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DASHBOARD SCREEN CONTAINER -->
+  <div id="dashboard-screen" class="hidden flex-1 flex flex-col w-full">
+    
+    <header class="w-full bg-surface/90 backdrop-blur-md border-b border-primary/10 sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-11 w-11 rounded-full object-cover border-2 border-gold/40" onerror="this.src='https://via.placeholder.com/44?text=SMCAC'">
+          <div class="flex flex-col text-left border-l border-primary/15 pl-3.5">
+            <p id="company-name-label" class="text-xs uppercase tracking-widest text-gold-deep font-bold">SMCAC Academy</p>
+            <h1 class="font-headline text-lg sm:text-xl font-medium text-primary leading-tight">Espace entreprise</h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="refresh-btn" title="Rafraîchir les données" class="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-primary/20 text-primary hover:bg-primary/10 font-medium text-xs sm:text-sm transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+            <span class="hidden md:inline">Actualiser</span>
+          </button>
+          <button id="logout-btn" class="logout inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-primary/20 text-primary hover:bg-primary hover:text-white font-medium text-xs sm:text-sm transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+            <span class="hidden sm:inline">Se déconnecter</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <div id="dash-status" class="status" role="status" aria-live="polite"></div>
+
+      <!-- Overview Info Banner -->
+      <div class="p-5 rounded-2xl bg-surface-container-low border border-primary/10 flex items-start gap-4">
+        <span class="material-symbols-outlined text-gold-deep text-[28px] shrink-0 mt-0.5">info</span>
+        <p class="text-sm text-on-surface-variant leading-relaxed">
+          Cours de formation assigné à votre entreprise : <strong id="course-name-label" class="text-primary">Chargement…</strong>. Ajoutez vos employés, suivez leur inscription, demandez l'activation du Module 2 pour ceux qui sont prêts, et choisissez le mode d'évaluation finale pour l'obtention de leurs certificats.
+        </p>
+      </div>
+
+      <!-- SECTION: EXPLICATION DU PARCOURS DE FORMATION -->
+      <section class="space-y-4 pt-2 pb-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-gold-deep text-[22px]">route</span>
+          <h2 class="font-headline text-2xl font-medium text-primary">Comment fonctionne le parcours de formation ?</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- Step 1: Module 1 -->
+          <div class="bg-surface-container-lowest p-6 rounded-3xl border border-primary/10 shadow-sm relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 text-primary/5 pointer-events-none">
+              <span class="material-symbols-outlined text-[100px]">looks_one</span>
+            </div>
+            <div class="relative z-10">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4 border border-primary/20">
+                <span class="material-symbols-outlined">menu_book</span>
+              </div>
+              <h3 class="font-headline text-lg font-bold text-primary mb-2">1. Inscription &amp; Accès Module 1</h3>
+              <p class="text-sm text-on-surface-variant leading-relaxed">
+                Ajoutez vos employés ci-dessous pour leur générer un code d'accès unique. L'employé reçoit son code par WhatsApp et accède gratuitement au premier module théorique du cours.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 2: Module 2 -->
+          <div class="bg-surface-container-lowest p-6 rounded-3xl border border-primary/10 shadow-sm relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 text-primary/5 pointer-events-none">
+              <span class="material-symbols-outlined text-[100px]">looks_two</span>
+            </div>
+            <div class="relative z-10">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4 border border-primary/20">
+                <span class="material-symbols-outlined">lock_open_right</span>
+              </div>
+              <h3 class="font-headline text-lg font-bold text-primary mb-2">2. Paiement &amp; Activation Module 2</h3>
+              <p class="text-sm text-on-surface-variant leading-relaxed">
+                Remplissez le formulaire <em>"Demander le paiement"</em> en précisant le nombre de places. Un message WhatsApp pré-rempli s'ouvre avec l'administrateur pour finaliser le règlement. Une fois validé, attribuez ces places pour débloquer le Module 2.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 3: Certification Options -->
+          <div class="bg-surface-container-lowest p-6 rounded-3xl border border-gold/40 shadow-sm relative overflow-hidden bg-gradient-to-br from-surface-container-lowest to-gold/10">
+            <div class="absolute -right-4 -top-4 text-gold/10 pointer-events-none">
+              <span class="material-symbols-outlined text-[100px]">looks_3</span>
+            </div>
+            <div class="relative z-10">
+              <div class="w-10 h-10 rounded-xl bg-gold text-primary flex items-center justify-center mb-4 shadow-sm">
+                <span class="material-symbols-outlined">military_tech</span>
+              </div>
+              <h3 class="font-headline text-lg font-bold text-primary mb-2">3. Choix d'Évaluation Finale</h3>
+              <p class="text-sm text-on-surface-variant mb-3 leading-relaxed">
+                Une fois la théorie terminée, cochez le mode d'évaluation finale souhaité pour vos collaborateurs dans la section dédiée et transmettez votre demande sur WhatsApp :
+              </p>
+              <ul class="text-xs text-on-surface-variant space-y-2 list-none font-medium">
+                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-deep">location_on</span> Présentiel (locaux SMCAC)</li>
+                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-deep">business</span> Intra-entreprise (vos locaux)</li>
+                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-deep">videocam</span> En ligne (Meet / Zoom)</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Course-not-set warning (hidden unless applicable) -->
+      <div id="no-course-warning" class="hidden p-5 rounded-2xl warning-banner flex items-start gap-4">
+        <span class="material-symbols-outlined text-[26px] shrink-0 mt-0.5">warning</span>
+        <p class="text-sm leading-relaxed">
+          Aucun cours n'a encore été assigné à votre entreprise par le super-admin. Vos employés peuvent être ajoutés, mais leur inscription échouera tant qu'un cours n'est pas défini. Contactez SMCAC Academy pour le faire assigner.
+        </p>
+      </div>
+
+      <!-- GRID LAYOUT FOR FORMS & ACTIONS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- SECTION 1: ADD WORKER FORM -->
+        <section class="bg-surface-container-lowest p-6 sm:p-8 rounded-3xl border border-primary/10 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-gold-deep text-[22px]">person_add</span>
+              <h2 class="font-headline text-2xl font-medium text-primary">Ajouter un employé</h2>
+            </div>
+            <p class="text-xs text-on-surface-variant mb-6">Générez un code d'inscription unique pour votre collaborateur.</p>
+            
+            <form id="add-worker-form" class="add-form space-y-4">
+              <div>
+                <label for="worker-email" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">E-mail de l'employé</label>
+                <div class="relative">
+                  <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+                  <input type="email" id="worker-email" required placeholder="employe@entreprise.cm" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+                </div>
+              </div>
+
+              <div>
+                <label for="worker-phone" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Téléphone WhatsApp</label>
+                <div class="relative">
+                  <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">call</span>
+                  <input type="tel" id="worker-phone" required placeholder="6XX XXX XXX" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button type="submit" id="add-worker-btn" class="primary w-full py-3.5 px-6 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary hover:border-gold font-semibold text-sm shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                  <span>Ajouter l'employé</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION 2: BATCH PAYMENT REQUEST FORM -->
+        <section class="bg-surface-container-lowest p-6 sm:p-8 rounded-3xl border border-primary/10 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-gold-deep text-[22px]">workspace_premium</span>
+              <h2 class="font-headline text-2xl font-medium text-primary">Demander l'activation du Module 2</h2>
+            </div>
+            <p class="text-xs text-on-surface-variant mb-6">Indiquez le nombre d'employés à inscrire. Cliquez sur le bouton pour ouvrir WhatsApp avec le numéro de l'administrateur, votre entreprise et le nombre de personnes sélectionnées.</p>
+
+            <form id="batch-form" class="add-form space-y-4">
+              <div>
+                <label for="batch-count" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Nombre d'employés à inscrire</label>
+                <div class="relative">
+                  <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">groups</span>
+                  <input type="number" id="batch-count" min="1" required placeholder="ex : 5" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button type="submit" id="batch-btn" class="primary w-full py-3.5 px-6 rounded-xl bg-[#25d366] text-white hover:bg-[#20bd5a] font-semibold text-sm shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-[20px]">chat</span>
+                  <span>Demander le paiement via WhatsApp</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- SECTION 3: WORKERS TABLE LIST -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-gold-deep text-[22px]">badge</span>
+            <h2 class="font-headline text-2xl font-medium text-primary">Employés enregistrés</h2>
+          </div>
+        </div>
+        <div id="workers-wrap" class="overflow-x-auto">
+          <div class="empty">Chargement des employés…</div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: PAID SEAT BATCH ASSIGNMENT -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-gold-deep text-[22px]">assignment_turned_in</span>
+          <h2 class="font-headline text-2xl font-medium text-primary">Attribution des places payées</h2>
+        </div>
+        <div id="batches-wrap" class="space-y-4">
+          <div class="empty">Chargement des demandes de paiement…</div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: LEADERBOARD -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-gold-deep text-[22px]">leaderboard</span>
+          <h2 class="font-headline text-2xl font-medium text-primary">Classement &amp; Progression des employés</h2>
+        </div>
+        <div id="leaderboard-wrap" class="overflow-x-auto">
+          <div class="empty">Chargement du classement…</div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: INTERACTIVE FINAL EVALUATION & CERTIFICATION FORM -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-gold-deep text-[24px]">military_tech</span>
+          <h2 class="font-headline text-2xl font-medium text-primary">Évaluation Pratique &amp; Certification Finale</h2>
+        </div>
+        <div id="final-eval-wrap" class="bg-surface-container-lowest p-6 sm:p-8 rounded-3xl border border-primary/10 shadow-sm">
+          <div class="empty">Chargement…</div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: AUTRES FORMATIONS DISPONIBLES -->
+      <section class="mt-12 pt-10 pb-6 border-t border-primary/10 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-gold-deep text-[24px] shrink-0">auto_stories</span>
+            <h2 class="font-headline text-2xl sm:text-3xl font-medium text-primary">Autres formations disponibles</h2>
+          </div>
+          <button type="button" id="btn-catalog-all" class="self-start sm:self-auto text-xs sm:text-sm text-primary font-bold hover:text-gold-deep transition-colors inline-flex items-center gap-1.5 cursor-pointer bg-transparent border-none p-0">
+            <span>Voir tout le catalogue</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        </div>
+
+        <p class="text-xs sm:text-sm text-on-surface-variant max-w-3xl leading-relaxed mt-1">
+          Vous souhaitez former vos employés sur un autre module ? Cliquez sur une formation ci-dessous pour demander son activation directement au super-admin via WhatsApp.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 pt-4">
+          
+          <!-- Course Card 1 -->
+          <div id="card-course-leadership" class="relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl group cursor-pointer border border-primary/10 min-h-[300px] sm:min-h-[320px] flex flex-col justify-end p-6 sm:p-8 bg-primary text-white transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Développement Personnel & Leadership" class="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/75 to-transparent"></div>
+            
+            <div class="relative z-10 space-y-3">
+              <div>
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider uppercase bg-gold/20 text-gold-light border border-gold/30 backdrop-blur-sm">
+                  Catalogue SMCAC
+                </span>
+              </div>
+              <h3 class="font-headline text-xl sm:text-2xl font-bold text-surface-container-lowest leading-snug">
+                Développement Personnel &amp; Leadership
+              </h3>
+              <p class="text-xs sm:text-sm text-surface-container-low/85 leading-relaxed line-clamp-2">
+                Maîtrisez la communication persuasive, la prise de parole et le leadership d'équipe.
+              </p>
+              <div class="pt-2 flex items-center gap-2 text-gold-light text-xs sm:text-sm font-semibold group-hover:translate-x-1.5 transition-transform">
+                <span>Accéder à la formation</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Course Card 2 -->
+          <div id="card-course-all" class="relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl group cursor-pointer border border-primary/10 min-h-[300px] sm:min-h-[320px] flex flex-col justify-end p-6 sm:p-8 bg-primary text-white transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop" alt="Découvrir tous nos parcours" class="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/75 to-transparent"></div>
+            
+            <div class="relative z-10 space-y-3">
+              <div>
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider uppercase bg-wa/20 text-wa border border-wa/30 backdrop-blur-sm">
+                  Inscriptions Ouvertes
+                </span>
+              </div>
+              <h3 class="font-headline text-xl sm:text-2xl font-bold text-surface-container-lowest leading-snug">
+                Découvrir tous nos parcours
+              </h3>
+              <p class="text-xs sm:text-sm text-surface-container-low/85 leading-relaxed line-clamp-2">
+                Parcourez l'ensemble des modules certifiants et sélectionnez votre prochaine formation.
+              </p>
+              <div class="pt-2 flex items-center gap-2 text-gold-light text-xs sm:text-sm font-semibold group-hover:translate-x-1.5 transition-transform">
+                <span>Accéder aux formations</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script>
+  // ============================================================
+  // CONFIGURATION & UTILITIES
+  // ============================================================
+  const SUPABASE_URL = 'https://fbogkyrrnyawbdgwratl.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const REGISTRATION_URL = new URL('registration.html', window.location.href).href;
+  const SUPER_ADMIN_WHATSAPP = '237690000000';
+
+  const loginScreen = document.getElementById('login-screen');
+  const dashScreen = document.getElementById('dashboard-screen');
+  const loginForm = document.getElementById('login-form');
+  const loginStatus = document.getElementById('login-status');
+  const loginBtn = document.getElementById('login-btn');
+  const dashStatus = document.getElementById('dash-status');
+  const workersWrap = document.getElementById('workers-wrap');
+  const addWorkerForm = document.getElementById('add-worker-form');
+  const addWorkerBtn = document.getElementById('add-worker-btn');
+  const companyNameLabel = document.getElementById('company-name-label');
+  const courseNameLabel = document.getElementById('course-name-label');
+  const noCourseWarning = document.getElementById('no-course-warning');
+  const refreshBtn = document.getElementById('refresh-btn');
+
+  const togglePasswordBtn = document.getElementById('toggle-password');
+  const passwordInput = document.getElementById('password');
+  const togglePasswordIcon = document.getElementById('toggle-password-icon');
+
+  let myCompanyId = null;
+  let myCompanyName = '';
+  let myCourseTitle = null;
+  let lastLeaderboardRows = [];
+
+  // Toggle password visibility
+  if (togglePasswordBtn && passwordInput && togglePasswordIcon) {
+    togglePasswordBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      togglePasswordIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+    });
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function setStatus(el, type, msg) {
+    if (!el) return;
+    if (!msg) {
+      el.className = 'status';
+      el.textContent = '';
+      return;
+    }
+    el.className = `status ${type}`;
+    el.textContent = msg;
+  }
+
+  // ============================================================
+  // AUTHENTICATION & ROUTING
+  // ============================================================
+  async function ensureCompanyAdminSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return false;
+    const { data: profile } = await sb.from('profiles').select('role, company_id').eq('id', session.user.id).single();
+    return !!(profile && profile.role === 'company_admin' && profile.company_id === myCompanyId);
+  }
+
+  function handleSessionMismatch() {
+    setStatus(dashStatus, 'error', 'Votre session a expiré ou changé. Veuillez vous reconnecter.');
+    sb.auth.signOut().then(showLogin);
+  }
+
+  async function checkSessionAndRoute() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { showLogin(); return; }
+
+    const { data: profile, error } = await sb
+      .from('profiles')
+      .select('role, company_id')
+      .eq('id', session.user.id)
+      .single();
+
+    if (error) {
+      console.error("Profile retrieval error:", error);
+      setStatus(loginStatus, 'error', 'Erreur d\'accès au profil. Vérifiez la configuration RLS dans Supabase.');
+      await sb.auth.signOut();
+      showLogin();
+      return;
+    }
+
+    if (!profile || profile.role !== 'company_admin') {
+      setStatus(loginStatus, 'error', 'Ce compte ne possède pas les droits administrateur d\'entreprise.');
+      await sb.auth.signOut();
+      showLogin();
+      return;
+    }
+
+    if (!profile.company_id) {
+      setStatus(loginStatus, 'error', 'Ce compte administrateur n\'est associé à aucune entreprise enregistrée.');
+      await sb.auth.signOut();
+      showLogin();
+      return;
+    }
+
+    myCompanyId = profile.company_id;
+
+    const { data: company, error: compErr } = await sb
+      .from('companies')
+      .select('name, course_id, courses(title)')
+      .eq('id', myCompanyId)
+      .single();
+
+    if (compErr) {
+      console.warn("Company load warning:", compErr);
+    }
+
+    if (company) {
+      myCompanyName = company.name || 'Entreprise';
+      companyNameLabel.textContent = myCompanyName;
+
+      const courseData = Array.isArray(company.courses) ? company.courses[0] : company.courses;
+      myCourseTitle = courseData?.title || null;
+
+      courseNameLabel.textContent = myCourseTitle || 'Aucun cours assigné';
+      noCourseWarning.classList.toggle('hidden', !!(company.course_id && myCourseTitle));
+    }
+
+    showDashboard();
+    await loadAllDashboardData();
+  }
+
+  async function loadAllDashboardData() {
+    setStatus(dashStatus, null, '');
+    await Promise.all([
+      loadWorkers(),
+      loadBatches(),
+      loadLeaderboard()
+    ]);
+  }
+
+  function showLogin() { loginScreen.classList.remove('hidden'); dashScreen.classList.add('hidden'); }
+  function showDashboard() { loginScreen.classList.add('hidden'); dashScreen.classList.remove('hidden'); }
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span>Connexion…</span>';
+    setStatus(loginStatus, null, '');
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      setStatus(loginStatus, 'error', error.message.includes('Invalid') ? 'E-mail ou mot de passe incorrect.' : error.message);
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '<span>Se connecter</span><span class="material-symbols-outlined text-[20px]">login</span>';
+    } else {
+      await checkSessionAndRoute();
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '<span>Se connecter</span><span class="material-symbols-outlined text-[20px]">login</span>';
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    showLogin();
+  });
+
+  refreshBtn.addEventListener('click', async () => {
+    refreshBtn.disabled = true;
+    await loadAllDashboardData();
+    refreshBtn.disabled = false;
+  });
+
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') {
+      showLogin();
+    }
+  });
+
+  // ============================================================
+  // WORKER MANAGEMENT
+  // ============================================================
+  async function loadWorkers() {
+    const { data, error } = await sb
+      .from('company_seats')
+      .select('id, seat_number, seat_code, status, assigned_email, assigned_phone, invited_at, redeemed_at, learner_profile_id, profiles(full_name)')
+      .eq('company_id', myCompanyId)
+      .order('seat_number', { ascending: true });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur de chargement des employés : ' + error.message);
+      workersWrap.innerHTML = '<div class="empty">Erreur de chargement.</div>';
+      return;
+    }
+    renderWorkers(data || []);
+  }
+
+  function waLink(seat) {
+    const msg = `Bonjour ! Voici votre code d'inscription à la formation SMCAC Academy : *${seat.seat_code}*\n\nInscrivez-vous ici : ${REGISTRATION_URL}`;
+    const phoneDigits = (seat.assigned_phone || '').replace(/\D/g, '');
+    return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(msg)}`;
+  }
+
+  function renderWorkers(seats) {
+    if (seats.length === 0) {
+      workersWrap.innerHTML = '<div class="empty">Aucun employé ajouté pour l\u2019instant.</div>';
+      return;
+    }
+
+    const rows = seats.map(s => {
+      const displayName = s.profiles?.full_name ? s.profiles.full_name : (s.assigned_email || '—');
+      return `
+        <tr>
+          <td><span class="code-cell">${escapeHtml(s.seat_code)}</span></td>
+          <td class="font-medium">${escapeHtml(displayName)}</td>
+          <td>${escapeHtml(s.assigned_phone || '—')}</td>
+          <td><span class="badge ${escapeHtml(s.status)}">${escapeHtml(labelForStatus(s.status))}</span></td>
+          <td>${s.status !== 'redeemed'
+                ? `<a class="wa-btn" href="${waLink(s)}" target="_blank" rel="noopener"><span class="material-symbols-outlined text-[16px]">chat</span> WhatsApp</a>`
+                : '—'}</td>
+        </tr>
+      `;
+    }).join('');
+
+    workersWrap.innerHTML = `
+      <table>
+        <thead><tr><th>Code</th><th>Employé</th><th>Téléphone</th><th>Statut</th><th>Action</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  function labelForStatus(status) {
+    return { unassigned: 'Non assigné', invited: 'Invité', redeemed: 'Inscrit', blocked: 'Bloqué' }[status] || status;
+  }
+
+  addWorkerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!(await ensureCompanyAdminSession())) { handleSessionMismatch(); return; }
+    
+    addWorkerBtn.disabled = true;
+    addWorkerBtn.innerHTML = '<span>Ajout en cours…</span>';
+    setStatus(dashStatus, null, '');
+
+    const email = document.getElementById('worker-email').value.trim();
+    const phone = document.getElementById('worker-phone').value.trim();
+
+    const { data, error } = await sb.rpc('add_company_worker', {
+      p_company_id: myCompanyId,
+      p_email: email,
+      p_phone: phone
+    });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+    } else {
+      setStatus(dashStatus, 'success', `Employé ajouté avec succès. Code : ${data?.seat_code || 'Généré'}`);
+      addWorkerForm.reset();
+      await loadWorkers();
+    }
+
+    addWorkerBtn.disabled = false;
+    addWorkerBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_circle</span><span>Ajouter l\'employé</span>';
+  });
+
+  // ============================================================
+  // BATCH PAYMENT REQUESTS & SEAT ASSIGNMENT
+  // ============================================================
+  const batchForm = document.getElementById('batch-form');
+  const batchBtn = document.getElementById('batch-btn');
+  const batchesWrap = document.getElementById('batches-wrap');
+
+  batchForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!(await ensureCompanyAdminSession())) { handleSessionMismatch(); return; }
+
+    batchBtn.disabled = true;
+    batchBtn.innerHTML = '<span>Traitement…</span>';
+    setStatus(dashStatus, null, '');
+
+    const count = parseInt(document.getElementById('batch-count').value, 10);
+
+    const { error } = await sb
+      .from('payment_batches')
+      .insert({ company_id: myCompanyId, seats_requested: count })
+      .select()
+      .single();
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+    } else {
+      const msg = `Bonjour SMCAC Academy,\n\nJe représente l'entreprise "*${myCompanyName}*".\nNous souhaitons effectuer le paiement pour l'activation du Module 2 de nos collaborateurs.\n\n📊 *Détails de la demande* :\n- Nombre d'employés choisis : *${count}*\n- Cours concerné : *${myCourseTitle || 'Non spécifié'}*\n- Numéro Admin destinataire : *${SUPER_ADMIN_WHATSAPP}*\n\nMerci de nous transmettre la procédure de règlement.`;
+
+      window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+
+      setStatus(dashStatus, 'success', 'Demande de paiement transmise. Le numéro de l\'administrateur et le nombre de personnes sélectionnées (' + count + ') ont été envoyés sur WhatsApp.');
+      batchForm.reset();
+      await loadBatches();
+    }
+
+    batchBtn.disabled = false;
+    batchBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">chat</span><span>Demander le paiement via WhatsApp</span>';
+  });
+
+async function loadBatches() {
+    const { data: compData } = await sb
+      .from('companies')
+      .select('total_seats_paid')
+      .eq('id', myCompanyId)
+      .single();
+
+    const totalPaidSeats = compData?.total_seats_paid || 0;
+
+    const { data: batches, error: batchErr } = await sb
+      .from('payment_batches')
+      .select('id, seats_requested, status, created_at')
+      .eq('company_id', myCompanyId)
+      .order('created_at', { ascending: false });
+
+    if (batchErr) {
+      batchesWrap.innerHTML = `<div class="empty">Erreur : ${escapeHtml(batchErr.message)}</div>`;
+      return;
+    }
+    if (!batches || batches.length === 0) {
+      batchesWrap.innerHTML = '<div class="empty">Aucune demande de paiement enregistrée pour l’instant.</div>';
+      return;
+    }
+
+    const { data: allSelections } = await sb
+      .from('batch_seat_selection')
+      .select('batch_id, seat_id');
+
+    const { data: eligibleSeats } = await sb
+      .from('company_seats')
+      .select('id, seat_code, assigned_email, learner_profile_id, profiles(full_name)')
+      .eq('company_id', myCompanyId)
+      .eq('status', 'redeemed');
+
+    const assignedSeatIds = new Set((allSelections || []).map(s => s.seat_id));
+    const unassignedEligible = (eligibleSeats || []).filter(s => !assignedSeatIds.has(s.id));
+
+    // Consider batch confirmed if explicit status is confirmed OR company has paid seats
+    batchesWrap.innerHTML = batches.map(b => {
+      const isConfirmed = b.status === 'confirmed' || totalPaidSeats > 0;
+      return renderBatch({ ...b, status: isConfirmed ? 'confirmed' : b.status }, unassignedEligible);
+    }).join('');
+
+    batches.forEach(b => {
+      const form = document.getElementById(`assign-form-${b.id}`);
+      if (form) {
+        form.addEventListener('submit', (e) => handleAssign(e, b));
+      }
+    });
+  }
+
+  function renderBatch(batch, eligibleSeats) {
+    const badge = `<span class="badge ${batch.status === 'confirmed' ? 'redeemed' : 'invited'}">${batch.status === 'confirmed' ? 'Confirmé' : 'En attente'}</span>`;
+
+    if (batch.status !== 'confirmed') {
+      return `<div class="bg-surface-container-lowest p-6 rounded-2xl border border-primary/10 shadow-sm space-y-1">
+        <p class="text-sm font-medium text-primary"><strong>${batch.seats_requested}</strong> place(s) demandée(s) — ${badge}</p>
+        <p class="text-xs text-on-surface-variant">En attente de validation du règlement par l'administrateur.</p>
+      </div>`;
+    }
+
+    if (eligibleSeats.length === 0) {
+      return `<div class="bg-surface-container-lowest p-6 rounded-2xl border border-primary/10 shadow-sm space-y-1">
+        <p class="text-sm font-medium text-primary"><strong>${batch.seats_requested}</strong> place(s) confirmée(s) — ${badge}</p>
+        <p class="text-xs text-on-surface-variant">Aucun employé inscrit disponible pour l\u2019instant (l\u2019employé doit d\u2019abord s\u2019inscrire avec son code d'accès).</p>
+      </div>`;
+    }
+
+    const checkboxes = eligibleSeats.map((s, i) => {
+      const displayName = s.profiles?.full_name ? s.profiles.full_name : s.assigned_email;
+      return `
+        <label class="flex items-center gap-2.5 py-1.5 text-sm text-on-surface cursor-pointer">
+          <input type="checkbox" name="seat" value="${escapeHtml(s.id)}" ${i < batch.seats_requested ? 'checked' : ''} class="rounded border-outline-variant text-primary focus:ring-gold/50">
+          <span class="code-cell">${escapeHtml(s.seat_code)}</span> — ${escapeHtml(displayName)}
+        </label>
+      `;
+    }).join('');
+
+    return `<div class="bg-surface-container-lowest p-6 rounded-2xl border border-primary/10 shadow-sm space-y-3">
+      <p class="text-sm font-medium text-primary"><strong>${batch.seats_requested}</strong> place(s) confirmée(s) — ${badge}</p>
+      <form id="assign-form-${batch.id}" class="space-y-3">
+        <p class="text-xs text-on-surface-variant font-medium">Cochez exactement ${batch.seats_requested} employé(s) pour leur débloquer le Module 2 :</p>
+        <div class="space-y-1 bg-surface p-3.5 rounded-xl border border-outline-variant/60">${checkboxes}</div>
+        <button type="submit" class="primary px-5 py-2.5 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary font-semibold text-xs shadow-sm transition-all cursor-pointer">
+          Confirmer l'attribution du Module 2
+        </button>
+      </form>
+    </div>`;
+  }
+
+  async function handleAssign(e, batch) {
+    e.preventDefault();
+    if (!(await ensureCompanyAdminSession())) { handleSessionMismatch(); return; }
+
+    const checked = [...e.target.querySelectorAll('input[name="seat"]:checked')].map(cb => cb.value);
+
+    setStatus(dashStatus, null, '');
+    if (checked.length !== batch.seats_requested) {
+      setStatus(dashStatus, 'error', `Vous devez cocher exactement ${batch.seats_requested} employé(s), pas ${checked.length}.`);
+      return;
+    }
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Attribution en cours…'; }
+
+    const { error } = await sb.rpc('assign_batch_seats', { p_batch_id: batch.id, p_seat_ids: checked });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      if (btn) { btn.disabled = false; btn.textContent = 'Confirmer l\'attribution du Module 2'; }
+    } else {
+      setStatus(dashStatus, 'success', 'Module 2 activé avec succès pour les employés sélectionnés.');
+      await loadBatches();
+      await loadWorkers();
+      await loadLeaderboard();
+    }
+  }
+
+  // ============================================================
+  // LEADERBOARD & PROGRESS TRACKING
+  // ============================================================
+  async function loadLeaderboard() {
+    const wrap = document.getElementById('leaderboard-wrap');
+
+    const { data: seats, error } = await sb
+      .from('company_seats')
+      .select('seat_code, assigned_email, learner_profile_id, profiles(full_name, enrollments(module_progress(status, modules(title)), quiz_attempts(score, total, passed, modules(title))))')
+      .eq('company_id', myCompanyId)
+      .eq('status', 'redeemed');
+
+    if (error) { wrap.innerHTML = `<div class="empty">Erreur : ${escapeHtml(error.message)}</div>`; return; }
+    if (!seats || seats.length === 0) {
+      wrap.innerHTML = '<div class="empty">Aucun employé inscrit pour l\u2019instant.</div>';
+      lastLeaderboardRows = [];
+      renderFinalEval();
+      return;
+    }
+
+    const rows = seats.map(s => {
+      const profile = s.profiles;
+      const displayName = profile?.full_name ? profile.full_name : s.assigned_email;
+
+      let enrollmentsList = [];
+      if (profile && profile.enrollments) {
+        enrollmentsList = Array.isArray(profile.enrollments) ? profile.enrollments : [profile.enrollments];
+      }
+      const enrollment = enrollmentsList[0] || null;
+
+      const moduleProgress = Array.isArray(enrollment?.module_progress) ? enrollment.module_progress : [];
+      const quizAttempts = Array.isArray(enrollment?.quiz_attempts) ? enrollment.quiz_attempts : [];
+
+      const completed = moduleProgress.filter(mp => mp.status === 'completed').length;
+      const total = moduleProgress.length;
+
+      const bestScores = quizAttempts
+        .filter(a => a.passed)
+        .map(a => `${a.modules?.title || 'Module'}: ${a.score}/${a.total}`)
+        .join(', ');
+
+      return { name: displayName, completed, total, bestScores };
+    }).sort((a, b) => b.completed - a.completed);
+
+    lastLeaderboardRows = rows;
+
+    wrap.innerHTML = `
+      <table>
+        <thead><tr><th>Employé</th><th>Modules terminés</th><th>Scores</th></tr></thead>
+        <tbody>${rows.map(r => `
+          <tr>
+            <td class="font-medium">${escapeHtml(r.name)}</td>
+            <td><span class="font-semibold text-primary">${r.completed}</span> /${r.total || 2}</td>
+            <td class="text-xs font-mono text-on-surface-variant">${escapeHtml(r.bestScores || '—')}</td>
+          </tr>
+        `).join('')}</tbody>
+      </table>
+    `;
+
+    renderFinalEval();
+  }
+
+  // ============================================================
+  // FINAL PRACTICAL EVALUATION FORM
+  // ============================================================
+  function renderFinalEval() {
+    const wrap = document.getElementById('final-eval-wrap');
+    const ready = lastLeaderboardRows.filter(r => r.total > 0 && r.completed === r.total);
+    const readyNamesList = ready.length > 0 ? ready.map(r => r.name).join(', ') : 'Employés en cours de formation';
+
+    wrap.innerHTML = `
+      <div class="space-y-6">
+        
+        <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+          Sélectionnez le mode d'évaluation finale souhaité pour vos collaborateurs (${ready.length > 0 ? `<strong class="text-primary font-bold">${ready.length} prêt(s) : ${escapeHtml(readyNamesList)}</strong>` : 'Cochez votre option ci-dessous'}), écrivez un court message à l'administrateur, puis cliquez sur le bouton WhatsApp pour transmettre votre réservation.
+        </p>
+
+        <form id="final-eval-form" class="space-y-6">
+          
+          <div>
+            <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-3">
+              Cochez le mode d'évaluation souhaité
+            </label>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              
+              <label class="relative flex items-start p-4 rounded-2xl border border-outline-variant/80 bg-surface-container-low hover:border-gold transition-all cursor-pointer select-none has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:ring-2 has-[:checked]:ring-primary/20">
+                <input type="radio" name="eval_mode" value="Présentiel (dans les locaux de SMCAC Academy)" checked class="mt-0.5 text-primary focus:ring-gold/50">
+                <div class="ml-3">
+                  <span class="block text-sm font-bold text-primary">Présentiel</span>
+                  <span class="block text-xs text-on-surface-variant mt-0.5">Dans les locaux de SMCAC Academy</span>
+                </div>
+              </label>
+
+              <label class="relative flex items-start p-4 rounded-2xl border border-outline-variant/80 bg-surface-container-low hover:border-gold transition-all cursor-pointer select-none has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:ring-2 has-[:checked]:ring-primary/20">
+                <input type="radio" name="eval_mode" value="Intra-entreprise (dans vos locaux d'entreprise)" class="mt-0.5 text-primary focus:ring-gold/50">
+                <div class="ml-3">
+                  <span class="block text-sm font-bold text-primary">Intra-entreprise</span>
+                  <span class="block text-xs text-on-surface-variant mt-0.5">SMCAC se déplace dans vos locaux</span>
+                </div>
+              </label>
+
+              <label class="relative flex items-start p-4 rounded-2xl border border-outline-variant/80 bg-surface-container-low hover:border-gold transition-all cursor-pointer select-none has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:ring-2 has-[:checked]:ring-primary/20">
+                <input type="radio" name="eval_mode" value="En ligne (à distance via Google Meet / Zoom)" class="mt-0.5 text-primary focus:ring-gold/50">
+                <div class="ml-3">
+                  <span class="block text-sm font-bold text-primary">En ligne</span>
+                  <span class="block text-xs text-on-surface-variant mt-0.5">Évaluation à distance via Meet / Zoom</span>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <div>
+            <label for="eval-notes" class="block text-xs uppercase tracking-wider font-bold text-primary mb-2">
+              Écrire un court message à l'administrateur
+            </label>
+            <textarea id="eval-notes" rows="3" placeholder="Ex: Bonjour, nous aimerions planifier l'évaluation ce samedi matin à nos bureaux de Douala..." class="w-full p-4 bg-surface-container-low border border-outline-variant rounded-2xl text-xs sm:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all resize-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-4 px-6 rounded-2xl bg-[#25d366] hover:bg-[#20bd5a] text-white font-bold text-sm sm:text-base shadow-md transition-all duration-200 active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-[22px]">chat</span>
+            <span>Envoyer la réservation d'évaluation sur WhatsApp</span>
+          </button>
+
+        </form>
+      </div>
+    `;
+
+    const form = document.getElementById('final-eval-form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const selectedMode = wrap.querySelector('input[name="eval_mode"]:checked')?.value || 'Présentiel';
+        const userNotes = document.getElementById('eval-notes').value.trim();
+
+        const msg = `Bonjour SMCAC Academy,\n\nNous souhaitons organiser l'évaluation finale de nos collaborateurs.\n\n🏢 *Entreprise* : ${myCompanyName || 'N/A'}\n📚 *Cours* : ${myCourseTitle || 'N/A'}\n📌 *Option choisie* : *${selectedMode}*\n👥 *Employés concernés (${ready.length})* : ${readyNamesList}\n\n💬 *Message de l'entreprise* :\n"${userNotes || 'Aucune précision supplémentaire'}"\n\nMerci de nous recontacter sur ce numéro Admin (*${SUPER_ADMIN_WHATSAPP}*) pour confirmer la date.`;
+
+        window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+
+        setStatus(dashStatus, 'success', 'Demande d\'évaluation transmise sur WhatsApp avec l\'option cochée et votre message.');
+      });
+    }
+  }
+
+  function contactForOtherCourse(courseTitle) {
+    const company = myCompanyName || 'Notre entreprise';
+    const msg = `Bonjour SMCAC Academy,\n\nNous sommes l'entreprise "*${company}*".\nNous souhaitons obtenir des informations pour inscrire nos collaborateurs à la formation suivante :\n👉 *${courseTitle}*\n\nMerci de nous contacter pour la démarche de souscription.`;
+    
+    window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  // Bind catalog triggers
+  document.getElementById('btn-catalog-all')?.addEventListener('click', () => contactForOtherCourse('Catalogue Complet SMCAC'));
+  document.getElementById('card-course-leadership')?.addEventListener('click', () => contactForOtherCourse('Développement Personnel & Leadership'));
+  document.getElementById('card-course-all')?.addEventListener('click', () => contactForOtherCourse('Catalogue Tous Parcours SMCAC'));
+
+  // Initialize
+  checkSessionAndRoute();
+</script>
+
+</body>
+</html>

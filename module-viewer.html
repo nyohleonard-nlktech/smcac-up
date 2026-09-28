@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-surface">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formation — SMCAC Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c" },
+          "error": "#b3261e",
+          "success": "#2c5e2c"
+        },
+        fontFamily: {
+          "display": ["Newsreader", "Georgia", "serif"],
+          "headline": ["Newsreader", "Georgia", "serif"],
+          "body": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  * { -webkit-touch-callout: none; }
+  
+  .status {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .status.error {
+    display: block;
+    background-color: #fbeceb;
+    border: 1px solid #f1c9c6;
+    color: #b3261e;
+  }
+  .status.success {
+    display: block;
+    background-color: #eef4ee;
+    border: 1px solid #cfe3cf;
+    color: #2c5e2c;
+  }
+
+  .page-container {
+    position: relative;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(20, 62, 46, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+    background: #ffffff;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    user-select: none;
+  }
+  .page-container canvas {
+    display: block;
+    margin: 0 auto;
+  }
+  .watermark-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 10;
+  }
+  .watermark-layer span {
+    position: absolute;
+    white-space: nowrap;
+    font-size: 12px;
+    color: rgba(20, 62, 46, 0.18);
+    transform: rotate(-28deg);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-bar {
+    position: sticky;
+    bottom: 1.25rem;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(20, 62, 46, 0.15);
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: fit-content;
+    max-width: 95vw;
+    margin: 0 auto 2rem;
+    box-shadow: 0 12px 30px -5px rgba(20, 62, 46, 0.16);
+    z-index: 30;
+  }
+  .nav-bar button.tool-btn {
+    background: #143e2e;
+    color: #ffdfa0;
+    border: 1px solid rgba(212, 160, 23, 0.3);
+    border-radius: 9999px;
+    padding: 0.4rem 0.85rem;
+    font-family: inherit;
+    font-size: 0.825rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+  }
+  .nav-bar button.tool-btn:hover:not(:disabled) {
+    background: #d4a017;
+    color: #143e2e;
+  }
+  .nav-bar button.tool-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  button.primary {
+    width: 100%;
+    background-color: #143e2e;
+    color: #ffdfa0;
+    border: 1px solid rgba(212, 160, 23, 0.3);
+    border-radius: 0.75rem;
+    padding: 0.8rem 1.25rem;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  button.primary:hover:not(:disabled) {
+    background-color: #d4a017;
+    color: #143e2e;
+  }
+  button.primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
+
+  <!-- INITIAL SESSION CHECK LOADER -->
+  <div id="auth-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-surface">
+    <span class="material-symbols-outlined text-gold-deep text-5xl animate-spin mb-3">progress_activity</span>
+    <p class="text-sm font-semibold text-primary">Vérification de la session…</p>
+  </div>
+
+  <!-- LOGIN SCREEN CONTAINER -->
+  <div id="login-screen" class="hidden flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-3xl border border-primary/10 shadow-xl p-8 sm:p-10">
+      
+      <div class="text-center mb-8">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-16 w-16 rounded-full object-cover border-2 border-gold/40 mx-auto mb-4 shadow-sm" onerror="this.src='https://via.placeholder.com/64'">
+        <p class="text-xs uppercase tracking-widest text-gold-deep font-bold mb-1">SMCAC Academy</p>
+        <h1 class="font-headline text-3xl font-medium text-primary">Connexion au Module</h1>
+        <p class="text-xs text-on-surface-variant mt-2">Connectez-vous pour lire le support de cours sécurisé.</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Adresse e-mail</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+            <input type="email" id="email" required autocomplete="email" placeholder="apprenant@exemple.cm" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label for="password" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Mot de passe</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+            <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
+        </div>
+
+        <button type="submit" id="login-btn" class="primary w-full mt-2 shadow-md">
+          <span>Se connecter</span>
+          <span class="material-symbols-outlined text-[20px]">login</span>
+        </button>
+
+        <div id="login-status" class="status" role="status" aria-live="polite"></div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- VIEWER SCREEN CONTAINER -->
+  <div id="viewer-screen" class="hidden flex-1 flex flex-col w-full">
+    
+    <!-- HEADER -->
+    <header class="w-full bg-surface/90 backdrop-blur-md border-b border-primary/10 sticky top-0 z-40">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 rounded-full object-cover border-2 border-gold/40 shrink-0" onerror="this.src='https://via.placeholder.com/40'">
+          <div class="min-w-0">
+            <p class="text-[10px] sm:text-xs uppercase tracking-widest text-gold-deep font-bold line-clamp-1" id="course-title">Formation SMCAC</p>
+            <h1 id="module-title" class="font-headline text-sm sm:text-lg font-medium text-primary line-clamp-1">Chargement…</h1>
+          </div>
+        </div>
+
+        <!-- Header Actions: Module Switcher & Back -->
+        <div class="flex items-center gap-2 shrink-0">
+          <select id="module-select" class="hidden sm:block text-xs bg-surface-container-low border border-primary/15 rounded-xl px-2.5 py-1.5 font-medium text-primary focus:outline-none focus:ring-2 focus:ring-gold/50 cursor-pointer">
+            <option value="">Chargement des modules...</option>
+          </select>
+
+          <a class="back inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-surface-container-low hover:bg-surface-container border border-primary/10 text-primary font-medium text-xs sm:text-sm transition-all" href="individual-dashboard.html">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span class="hidden sm:inline">Mon espace</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col items-center">
+      
+      <!-- Mobile Module Switcher Bar -->
+      <div id="mobile-module-switcher" class="w-full max-w-md mb-4 sm:hidden">
+        <label for="mobile-module-select" class="block text-[10px] uppercase tracking-wider font-bold text-primary/70 mb-1">Changer de module</label>
+        <select id="mobile-module-select" class="w-full text-xs bg-surface-container-lowest border border-primary/20 rounded-xl px-3 py-2 font-medium text-primary focus:outline-none focus:ring-2 focus:ring-gold/50">
+          <option value="">Chargement des modules...</option>
+        </select>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-message" class="py-20 text-center text-on-surface-variant flex flex-col items-center justify-center gap-3">
+        <span class="material-symbols-outlined text-gold-deep text-4xl animate-spin">progress_activity</span>
+        <p class="text-sm font-medium text-primary">Chargement du contenu sécurisé…</p>
+        <p class="text-xs text-on-surface-variant">Préparation du support de cours haute définition.</p>
+      </div>
+
+      <!-- Locked / Error State -->
+      <div id="locked-message" class="hidden my-12 max-w-md w-full mx-auto p-6 sm:p-8 rounded-3xl bg-surface-container-lowest border border-error/20 text-center shadow-md">
+        <div class="w-12 h-12 rounded-2xl bg-error/10 text-error flex items-center justify-center mx-auto mb-3">
+          <span class="material-symbols-outlined text-2xl">lock</span>
+        </div>
+        <h2 class="font-headline text-xl font-semibold text-primary mb-2">Accès au module indisponible</h2>
+        <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-6" id="locked-details">
+          Le fichier PDF associé à ce module n'a pas encore été téléversé ou activé pour votre compte.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button id="retry-btn" onclick="init()" class="w-full sm:w-auto px-4 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-semibold transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">refresh</span>
+            Réessayer
+          </button>
+          <a href="individual-dashboard.html" class="w-full sm:w-auto px-4 py-2.5 bg-primary text-gold-light hover:bg-gold hover:text-primary rounded-xl text-xs font-semibold transition-all inline-flex items-center justify-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">dashboard</span>
+            Retour au tableau de bord
+          </a>
+        </div>
+      </div>
+
+      <!-- PDF Canvas View Container -->
+      <div id="viewer-wrap" class="hidden w-full flex flex-col items-center min-h-[500px]"></div>
+
+      <!-- Floating Controls Toolbar -->
+      <div class="nav-bar hidden" id="nav-bar">
+        <button id="prev-btn" class="tool-btn" title="Page précédente">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          <span class="hidden md:inline">Précédent</span>
+        </button>
+
+        <span id="page-indicator" class="text-xs sm:text-sm font-semibold text-primary px-1 select-none whitespace-nowrap">Page 1 / 1</span>
+
+        <button id="next-btn" class="tool-btn" title="Page suivante">
+          <span class="hidden md:inline">Suivant</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+
+        <div class="h-4 w-px bg-primary/20 mx-1"></div>
+
+        <button id="zoom-out-btn" class="tool-btn !px-2" title="Zoom arrière">
+          <span class="material-symbols-outlined text-[18px]">zoom_out</span>
+        </button>
+
+        <button id="zoom-reset-btn" class="tool-btn !px-2.5 text-[11px]" title="Ajuster la largeur">
+          <span class="material-symbols-outlined text-[16px]">fit_screen</span>
+        </button>
+
+        <button id="zoom-in-btn" class="tool-btn !px-2" title="Zoom avant">
+          <span class="material-symbols-outlined text-[18px]">zoom_in</span>
+        </button>
+      </div>
+
+      <!-- Module Completion Card -->
+      <div id="module-completion-card" class="hidden w-full max-w-2xl my-6 bg-surface-container-lowest border border-gold/40 p-6 rounded-3xl shadow-md text-center">
+        <div class="w-12 h-12 rounded-full bg-gold/20 text-gold-deep flex items-center justify-center mx-auto mb-3">
+          <span class="material-symbols-outlined text-2xl">verified</span>
+        </div>
+        <h3 class="font-headline text-xl font-bold text-primary mb-1">Lecture terminée !</h3>
+        <p class="text-xs sm:text-sm text-on-surface-variant mb-4">Vous avez parcouru toutes les pages de ce support de cours.</p>
+        <button id="goto-quiz-btn" class="primary max-w-xs mx-auto text-xs py-3">
+          <span>Passer au quiz de validation</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+        </button>
+      </div>
+
+      <!-- Quiz Wrapper Container -->
+      <div id="quiz-wrap" class="hidden w-full max-w-2xl my-6"></div>
+
+    </main>
+  </div>
+
+<script>
+  const SUPABASE_URL = 'https://fbogkyrrnyawbdgwratl.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function slugify(text) {
+    if (!text) return '';
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]+/g, '')
+      .replace(/\-\-+/g, '-');
+  }
+
+  const authLoader = document.getElementById('auth-loader');
+  const loginScreen = document.getElementById('login-screen');
+  const viewerScreen = document.getElementById('viewer-screen');
+  const loginForm = document.getElementById('login-form');
+  const loginStatus = document.getElementById('login-status');
+  const loginBtn = document.getElementById('login-btn');
+  const loadingMsg = document.getElementById('loading-message');
+  const lockedMsg = document.getElementById('locked-message');
+  const lockedDetails = document.getElementById('locked-details');
+  const viewerWrap = document.getElementById('viewer-wrap');
+  const navBar = document.getElementById('nav-bar');
+  const courseTitle = document.getElementById('course-title');
+  const moduleTitle = document.getElementById('module-title');
+  const pageIndicator = document.getElementById('page-indicator');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const zoomInBtn = document.getElementById('zoom-in-btn');
+  const zoomOutBtn = document.getElementById('zoom-out-btn');
+  const zoomResetBtn = document.getElementById('zoom-reset-btn');
+  const moduleSelect = document.getElementById('module-select');
+  const mobileModuleSelect = document.getElementById('mobile-module-select');
+  const moduleCompletionCard = document.getElementById('module-completion-card');
+  const gotoQuizBtn = document.getElementById('goto-quiz-btn');
+  const quizWrap = document.getElementById('quiz-wrap');
+
+  let pdfDoc = null;
+  let currentPage = 1;
+  let zoomMultiplier = 1.0;
+  let watermarkText = '';
+  let moduleId = null;
+  let moduleOrder = 1;
+  let activeCourseGlobal = null;
+  let allCourseModules = [];
+  let isInitializing = false;
+
+  function showLoginError(msg) { loginStatus.className = 'status error'; loginStatus.textContent = msg; }
+
+  document.addEventListener('contextmenu', (e) => {
+    if (e.target.closest('.page-container')) e.preventDefault();
+  });
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span>Connexion…</span>';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      showLoginError('E-mail ou mot de passe incorrect.');
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '<span>Se connecter</span><span class="material-symbols-outlined text-[20px]">login</span>';
+    }
+  });
+
+  async function fetchPdfBuffer(activeCourse, activeModule) {
+    const candidateNames = [];
+
+    if (activeModule.file_path) {
+      const fp = activeModule.file_path.trim();
+      candidateNames.push(fp);
+      if (fp.endsWith('.pptx')) {
+        candidateNames.push(fp.replace(/\.pptx$/i, '.pdf'));
+      }
+    }
+
+    const courseSlug = slugify(activeCourse.title);
+    const modOrder = activeModule.order_index || 1;
+
+    candidateNames.push(`${courseSlug}-module-${modOrder}.pdf`);
+    candidateNames.push(`${courseSlug}_module_${modOrder}.pdf`);
+    candidateNames.push(`module-${modOrder}.pdf`);
+    candidateNames.push(`${activeModule.id}.pdf`);
+
+    const cacheBuster = `?t=${Date.now()}`;
+    const targetBuckets = ['modules', 'courses', 'course-materials'];
+
+    for (const name of candidateNames) {
+      if (!name) continue;
+
+      if (name.startsWith('http://') || name.startsWith('https://')) {
+        try {
+          const fetchUrl = name.includes('?') ? `${name}&_t=${Date.now()}` : `${name}?_t=${Date.now()}`;
+          const res = await fetch(fetchUrl);
+          if (res.ok) return await res.arrayBuffer();
+        } catch (e) {
+          console.warn(`Direct URL fetch failed for "${name}":`, e);
+        }
+      }
+
+      const cleanPath = name.replace(/^\/+/, '');
+
+      for (const bucket of targetBuckets) {
+        try {
+          const { data, error } = await sb.storage.from(bucket).download(cleanPath);
+          if (!error && data) {
+            return await data.arrayBuffer();
+          }
+        } catch (e) {
+          console.warn(`Storage download failed for bucket "${bucket}" path "${cleanPath}":`, e);
+        }
+
+        try {
+          const { data: pubData } = sb.storage.from(bucket).getPublicUrl(cleanPath);
+          if (pubData && pubData.publicUrl) {
+            const res = await fetch(`${pubData.publicUrl}${cacheBuster}`);
+            if (res.ok) return await res.arrayBuffer();
+          }
+        } catch (e) {
+          console.warn(`Public URL fetch failed for bucket "${bucket}" path "${cleanPath}":`, e);
+        }
+      }
+    }
+    return null;
+  }
+
+async function init() {
+    if (isInitializing) return;
+    isInitializing = true;
+
+    try {
+      loadingMsg.classList.remove('hidden');
+      lockedMsg.classList.add('hidden');
+      viewerWrap.classList.add('hidden');
+      navBar.classList.add('hidden');
+      moduleCompletionCard.classList.add('hidden');
+      quizWrap.classList.add('hidden');
+
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        loginScreen.classList.remove('hidden');
+        viewerScreen.classList.add('hidden');
+        authLoader.classList.add('hidden');
+        return;
+      }
+
+      const { data: profile } = await sb.from('profiles').select('full_name, email').eq('id', session.user.id).maybeSingle();
+      const userName = profile?.full_name || session.user.email.split('@')[0];
+      const userEmail = profile?.email || session.user.email;
+      watermarkText = `${userName} · ${userEmail} · ${new Date().toLocaleDateString('fr-FR')}`;
+
+      const params = new URLSearchParams(window.location.search);
+      const courseParam = params.get('course') || params.get('course_id');
+      const moduleParam = params.get('module') || params.get('module_order');
+      let targetModuleId = params.get('module_id');
+
+      // 1. Resolve target module ID if only order or course is provided
+      if (!targetModuleId && courseParam && moduleParam) {
+        const reqOrder = parseInt(moduleParam, 10);
+        const { data: resolvedMod } = await sb.from('modules')
+          .select('id')
+          .eq('course_id', courseParam)
+          .eq('order_index', isNaN(reqOrder) ? 1 : reqOrder)
+          .maybeSingle();
+        if (resolvedMod) targetModuleId = resolvedMod.id;
+      }
+
+      if (!targetModuleId) {
+        // Fallback to first module of the course if unspecific
+        const { data: defaultMod } = await sb.from('modules').select('id').limit(1).maybeSingle();
+        if (defaultMod) targetModuleId = defaultMod.id;
+      }
+
+      if (!targetModuleId) {
+        loadingMsg.classList.add('hidden');
+        lockedDetails.textContent = "Aucun module valide spécifié.";
+        lockedMsg.classList.remove('hidden');
+        authLoader.classList.add('hidden');
+        return;
+      }
+
+      // 2. CRITICAL SECURITY CHECK: Execute server-side RPC validation
+      const { data: accessData, error: rpcErr } = await sb.rpc('verify_module_access', {
+        p_user_id: session.user.id,
+        p_module_id: targetModuleId
+      });
+
+      if (rpcErr || !accessData || accessData.length === 0 || !accessData[0].has_access) {
+        loadingMsg.classList.add('hidden');
+        lockedDetails.textContent = "Ce module est verrouillé. Veuillez valider votre parcours ou contacter l'administration de votre entreprise pour activer votre place.";
+        lockedMsg.classList.remove('hidden');
+        authLoader.classList.add('hidden');
+        return;
+      }
+
+      const moduleInfo = accessData[0];
+      moduleId = targetModuleId;
+      moduleOrder = moduleInfo.order_index || 1; // Ensure order is tracked
+      moduleTitle.textContent = moduleInfo.module_title;
+
+      // Fetch course details for header
+      const { data: activeCourse } = await sb.from('courses').select('*').eq('id', moduleInfo.course_id).maybeSingle();
+      if (activeCourse) {
+        activeCourseGlobal = activeCourse;
+        courseTitle.textContent = activeCourse.title;
+      }
+
+      // Fetch all modules for navigation dropdowns
+      const { data: mods } = await sb.from('modules')
+        .select('*')
+        .eq('course_id', moduleInfo.course_id)
+        .order('order_index');
+
+      if (mods) {
+        allCourseModules = mods;
+        populateModuleSelects(mods, moduleOrder);
+      }
+
+      loginScreen.classList.add('hidden');
+      viewerScreen.classList.remove('hidden');
+
+      // 3. Fetch PDF buffer via verified module object
+      const activeModuleRecord = mods?.find(m => m.id === targetModuleId) || { id: targetModuleId, file_path: moduleInfo.file_path };
+      const arrayBuffer = await fetchPdfBuffer(activeCourse, activeModuleRecord);
+
+      loadingMsg.classList.add('hidden');
+
+      if (!arrayBuffer) {
+        lockedDetails.textContent = `Le support PDF pour ce module n'est pas encore accessible ou à jour.`;
+        lockedMsg.classList.remove('hidden');
+        authLoader.classList.add('hidden');
+        return;
+      }
+
+      try {
+        pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        viewerWrap.classList.remove('hidden');
+        navBar.classList.remove('hidden');
+        zoomMultiplier = 1.0;
+        await renderPage(1);
+      } catch (err) {
+        console.error("PDF Parsing error:", err);
+        lockedDetails.textContent = "Erreur lors du traitement du document PDF.";
+        lockedMsg.classList.remove('hidden');
+      }
+    } finally {
+      authLoader.classList.add('hidden');
+      isInitializing = false;
+    }
+  }
+
+  function populateModuleSelects(mods, currentOrder) {
+    const optionsHtml = mods.map(m => `
+      <option value="${m.order_index}" ${m.order_index === currentOrder ? 'selected' : ''}>
+        Module ${m.order_index}: ${escapeHtml(m.title)}
+      </option>
+    `).join('');
+
+    moduleSelect.innerHTML = optionsHtml;
+    mobileModuleSelect.innerHTML = optionsHtml;
+  }
+
+  function switchModule(newOrder) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('module', newOrder);
+    url.searchParams.delete('module_id');
+    window.history.pushState({}, '', url);
+    init();
+  }
+
+  moduleSelect.addEventListener('change', (e) => switchModule(parseInt(e.target.value, 10)));
+  mobileModuleSelect.addEventListener('change', (e) => switchModule(parseInt(e.target.value, 10)));
+
+  async function renderPage(num) {
+    if (!pdfDoc) return;
+    currentPage = num;
+
+    const page = await pdfDoc.getPage(num);
+    
+    const containerMaxWidth = Math.min(window.innerWidth - 32, 850);
+    const unscaledViewport = page.getViewport({ scale: 1.0 });
+    let fitScale = containerMaxWidth / unscaledViewport.width;
+    if (fitScale < 0.4) fitScale = 0.4;
+    if (fitScale > 1.8) fitScale = 1.8;
+
+    const totalScale = fitScale * zoomMultiplier;
+    const viewport = page.getViewport({ scale: totalScale });
+
+    const dpr = window.devicePixelRatio || 1;
+
+    viewerWrap.innerHTML = '';
+    const container = document.createElement('div');
+    container.className = 'page-container';
+    container.style.width = viewport.width + 'px';
+    container.style.height = viewport.height + 'px';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width * dpr;
+    canvas.height = viewport.height * dpr;
+    canvas.style.width = viewport.width + 'px';
+    canvas.style.height = viewport.height + 'px';
+    
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    container.appendChild(canvas);
+
+    const watermarkLayer = document.createElement('div');
+    watermarkLayer.className = 'watermark-layer';
+    for (let y = 60; y < viewport.height; y += 150) {
+      for (let x = -60; x < viewport.width; x += 260) {
+        const span = document.createElement('span');
+        span.textContent = watermarkText;
+        span.style.left = x + 'px';
+        span.style.top = y + 'px';
+        watermarkLayer.appendChild(span);
+      }
+    }
+    container.appendChild(watermarkLayer);
+    viewerWrap.appendChild(container);
+
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    pageIndicator.textContent = `Page ${num} / ${pdfDoc.numPages}`;
+    prevBtn.disabled = num <= 1;
+    nextBtn.disabled = num >= pdfDoc.numPages;
+
+    if (num === pdfDoc.numPages) {
+      moduleCompletionCard.classList.remove('hidden');
+      loadQuiz();
+    } else {
+      moduleCompletionCard.classList.add('hidden');
+      quizWrap.classList.add('hidden');
+    }
+  }
+
+  gotoQuizBtn.addEventListener('click', () => {
+    quizWrap.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  async function loadQuiz() {
+    if (!moduleId) return;
+
+    const { data: questions, error } = await sb
+      .from('quiz_questions')
+      .select('id, question, options, order_index')
+      .eq('module_id', moduleId)
+      .order('order_index', { ascending: true });
+
+    if (error || !questions || questions.length === 0) {
+      quizWrap.classList.add('hidden');
+      return;
+    }
+
+    quizWrap.classList.remove('hidden');
+    quizWrap.innerHTML = `
+      <div class="bg-surface-container-lowest border border-primary/10 rounded-3xl p-6 sm:p-8 shadow-md">
+        <div class="flex items-center gap-2.5 mb-6 pb-4 border-b border-primary/10">
+          <div class="w-10 h-10 rounded-xl bg-gold/20 text-gold-deep flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[22px]">quiz</span>
+          </div>
+          <div>
+            <h2 class="font-headline text-xl font-bold text-primary m-0">Quiz de validation</h2>
+            <p class="text-xs text-on-surface-variant mt-0.5">Répondez aux questions ci-dessous mis à jour par vos formateurs.</p>
+          </div>
+        </div>
+        <form id="quiz-form" class="space-y-6"></form>
+        <div id="quiz-result" class="status"></div>
+      </div>
+    `;
+
+    const form = document.getElementById('quiz-form');
+    questions.forEach((q, idx) => {
+      const opts = Array.isArray(q.options) ? q.options : (typeof q.options === 'string' ? JSON.parse(q.options) : []);
+      const optionsHtml = opts.map((opt, i) => `
+        <label class="flex items-start gap-3 p-3.5 rounded-xl border border-outline-variant/80 bg-surface-container-low hover:bg-surface-container hover:border-gold/50 cursor-pointer transition-all text-xs sm:text-sm text-on-surface">
+          <input type="radio" name="q_${q.id}" value="${i}" required class="mt-0.5 text-primary focus:ring-gold border-outline-variant">
+          <span class="leading-snug">${escapeHtml(opt)}</span>
+        </label>
+      `).join('');
+      const block = document.createElement('div');
+      block.className = 'space-y-2.5';
+      block.innerHTML = `<p class="font-semibold text-xs sm:text-sm text-primary leading-relaxed">${idx + 1}. ${escapeHtml(q.question)}</p><div class="space-y-2">${optionsHtml}</div>`;
+      form.appendChild(block);
+    });
+
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.className = 'primary mt-4';
+    submitBtn.innerHTML = `<span>Valider mes réponses</span><span class="material-symbols-outlined text-[18px]">check_circle</span>`;
+    form.appendChild(submitBtn);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Validation en cours…</span>';
+
+      const answers = {};
+      questions.forEach(q => {
+        const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
+        answers[q.id] = checked ? parseInt(checked.value, 10) : -1;
+      });
+
+      const { data, error: submitErr } = await sb.rpc('submit_quiz', {
+        p_module_id: moduleId,
+        p_answers: answers
+      });
+
+      const resultEl = document.getElementById('quiz-result');
+
+      if (submitErr) {
+        resultEl.className = 'status error';
+        resultEl.textContent = "Erreur lors de la validation. Veuillez vérifier vos réponses et réessayer.";
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Valider mes réponses</span><span class="material-symbols-outlined text-[18px]">check_circle</span>`;
+        return;
+      }
+
+      const resultData = Array.isArray(data) ? data[0] : data;
+
+      if (resultData) {
+        const isPassed = resultData.passed;
+        resultEl.className = 'status ' + (isPassed ? 'success' : 'error');
+        
+        let message = isPassed
+          ? `🎉 Félicitations ! Votre score est de ${resultData.score}/${resultData.total}. Le module est validé avec succès.`
+          : `Score : ${resultData.score}/${resultData.total} — Un minimum de 70% est requis pour valider ce module. Réessayez ci-dessus.`;
+
+        const nextMod = allCourseModules.find(m => m.order_index === moduleOrder + 1);
+        if (isPassed && nextMod) {
+          message += `<div class="mt-3 pt-3 border-t border-success/20 flex justify-end">
+            <button type="button" onclick="switchModule(${nextMod.order_index})" class="px-4 py-2 bg-primary text-gold-light rounded-xl font-bold text-xs hover:bg-gold hover:text-primary transition-all flex items-center gap-1.5 cursor-pointer">
+              <span>Passer au Module ${nextMod.order_index}</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+          </div>`;
+        }
+
+        resultEl.innerHTML = message;
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<span>Valider mes réponses</span><span class="material-symbols-outlined text-[18px]">check_circle</span>`;
+    });
+  }
+
+  prevBtn.addEventListener('click', () => { if (currentPage > 1) renderPage(currentPage - 1); });
+  nextBtn.addEventListener('click', () => { if (currentPage < pdfDoc.numPages) renderPage(currentPage + 1); });
+
+  zoomInBtn.addEventListener('click', () => {
+    if (zoomMultiplier < 2.5) {
+      zoomMultiplier += 0.25;
+      renderPage(currentPage);
+    }
+  });
+
+  zoomOutBtn.addEventListener('click', () => {
+    if (zoomMultiplier > 0.5) {
+      zoomMultiplier -= 0.25;
+      renderPage(currentPage);
+    }
+  });
+
+  zoomResetBtn.addEventListener('click', () => {
+    zoomMultiplier = 1.0;
+    renderPage(currentPage);
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (pdfDoc && !viewerWrap.classList.contains('hidden')) {
+        renderPage(currentPage);
+      }
+    }, 200);
+  });
+
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+      loginScreen.classList.add('hidden');
+      viewerScreen.classList.remove('hidden');
+      await init();
+    } else if (event === 'SIGNED_OUT') {
+      authLoader.classList.add('hidden');
+      loginScreen.classList.remove('hidden');
+      viewerScreen.classList.add('hidden');
+    }
+  });
+</script>
+
+</body>
+</html>
