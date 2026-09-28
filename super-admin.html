@@ -411,7 +411,48 @@
       window.location.href = 'index.html';
     });
 
-    window.addEventListener('DOMContentLoaded', initDashboard);
+    document.addEventListener('DOMContentLoaded', async () => {
+  const authLoader = document.getElementById('auth-loader'); // Ensure you have a loader element in HTML
+
+  try {
+    // 1. Wait for Supabase to resolve the active session from storage
+    const { data: { session }, error: sessionError } = await sb.auth.getSession();
+
+    if (sessionError || !session) {
+      // No valid session found, redirect to login/index
+      window.location.href = 'index.html';
+      return;
+    }
+
+    // 2. Fetch the user's profile role to verify admin privileges
+    const { data: profile, error: profileError } = await sb
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .maybeSingle();
+
+    if (profileError || !profile || profile.role !== 'super_admin') {
+      alert("Accès refusé : privilèges administrateur requis.");
+      window.location.href = 'index.html';
+      return;
+    }
+
+    // 3. Access granted: hide loader and initialize the dashboard
+    if (authLoader) authLoader.classList.add('hidden');
+    initSuperAdminDashboard();
+
+  } catch (err) {
+    console.error("Auth guard error:", err);
+    window.location.href = 'index.html';
+  }
+});
+
+    async function initSuperAdminDashboard() {
+      await refreshData();
+    }
+
+    // Initialize the dashboard on page load
+    initDashboard();
   </script>
 </body>
 </html>

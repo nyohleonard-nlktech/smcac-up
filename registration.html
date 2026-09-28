@@ -392,9 +392,9 @@
       if (enrData && enrData.courses) courseTitle = enrData.courses.title;
 
       showStatus('success', `
-        <h2>Compte créé</h2>
+      <h2>Compte créé</h2>
         <p>Bienvenue, ${full_name}. Vous êtes inscrit(e) au cours <strong>${courseTitle}</strong> — le premier module est déjà accessible.</p>
-        <p>Vérifiez votre e-mail pour confirmer votre compte avant de vous connecter.</p>
+<p class="mt-2">Accédez directement à votre espace : <a href="individual-dashboard.html" class="text-gold-deep font-semibold underline hover:text-primary transition-all">Accéder à mon tableau de bord individuel</a></p>
       `);
       form.reset();
       courseCardsWrap.classList.remove('hidden');
