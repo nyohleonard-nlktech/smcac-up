@@ -8,7 +8,32 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
-<body class="bg-stone-50 text-stone-800 font-sans min-h-screen">
+<body class="bg-stone-50 text-stone-800 font-sans min-h-screen flex flex-col justify-between">
+
+  <!-- Direct Login Modal (Shown automatically if not logged in on any device/route) -->
+  <div id="login-view" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 border border-stone-200">
+      <div class="text-center space-y-2">
+        <span class="material-symbols-outlined text-emerald-900 text-5xl">admin_panel_settings</span>
+        <h2 class="text-xl font-bold text-emerald-900">Accès Super-Admin</h2>
+        <p class="text-xs text-stone-500">Connectez-vous avec vos identifiants administrateur pour accéder à cette route.</p>
+      </div>
+      <div id="login-status" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Email</label>
+          <input type="email" id="login-email" required placeholder="admin@smcac.com" class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-800 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Mot de passe</label>
+          <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-800 outline-none">
+        </div>
+        <button type="submit" id="login-btn" class="w-full py-3 bg-emerald-900 hover:bg-emerald-800 text-amber-300 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-sm">login</span> Se connecter
+        </button>
+      </form>
+    </div>
+  </div>
 
   <!-- Top Navbar -->
   <header class="bg-emerald-900 text-white py-4 px-6 shadow-md flex justify-between items-center">
@@ -25,7 +50,7 @@
     </button>
   </header>
 
-  <main class="max-w-7xl mx-auto p-6 space-y-6">
+  <main class="max-w-7xl mx-auto p-6 space-y-6 flex-1 w-full">
     <!-- Status Alert Bar -->
     <div id="status-bar" class="hidden p-4 rounded-xl text-xs font-semibold transition-all"></div>
 
@@ -120,13 +145,17 @@
     setTimeout(() => statusBar.classList.add('hidden'), 5000);
   }
 
-  // Single unified initialization entry point on DOM load
+  // Initialization & Authentication Check
   document.addEventListener('DOMContentLoaded', async () => {
+    await checkAndLoadAuth();
+  });
+
+  async function checkAndLoadAuth() {
     try {
       const { data: { session }, error: authErr } = await sb.auth.getSession();
-      if (authErr || !session) { 
-        window.location.href = 'index.html'; 
-        return; 
+      if (authErr || !session) {
+        showLoginView();
+        return;
       }
 
       const { data: profile, error: profErr } = await sb
@@ -136,15 +165,77 @@
         .single();
 
       if (profErr || !profile || profile.role !== 'super_admin') {
-        alert('Accès non autorisé. Droits de Super-Admin requis.');
+        showLoginView('Accès non autorisé. Droits de Super-Admin requis.', true);
         await sb.auth.signOut();
-        window.location.href = 'index.html';
         return;
       }
 
+      hideLoginView();
       await refreshData();
     } catch (err) {
-      showStatus('Erreur d\'initialisation: ' + err.message, true);
+      showLoginView('Erreur d\'initialisation: ' + err.message, true);
+    }
+  }
+
+  function showLoginView(msg = '', isError = false) {
+    const loginView = document.getElementById('login-view');
+    loginView.classList.remove('hidden');
+    if (msg) {
+      const loginStatus = document.getElementById('login-status');
+      loginStatus.className = `p-3 rounded-xl text-xs font-semibold ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}`;
+      loginStatus.textContent = msg;
+      loginStatus.classList.remove('hidden');
+    }
+  }
+
+  function hideLoginView() {
+    document.getElementById('login-view').classList.add('hidden');
+  }
+
+  // Handle Login Form Submission
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const loginBtn = document.getElementById('login-btn');
+    const loginStatus = document.getElementById('login-status');
+
+    loginBtn.disabled = true;
+    loginBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        loginStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
+        loginStatus.textContent = 'Erreur de connexion : ' + error.message;
+        loginStatus.classList.remove('hidden');
+        return;
+      }
+
+      const { data: profile, error: profErr } = await sb
+        .from('profiles')
+        .select('role')
+        .eq('id', data.session.user.id)
+        .single();
+
+      if (profErr || !profile || profile.role !== 'super_admin') {
+        loginStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
+        loginStatus.textContent = 'Accès non autorisé. Droits de Super-Admin requis.';
+        loginStatus.classList.remove('hidden');
+        await sb.auth.signOut();
+        return;
+      }
+
+      hideLoginView();
+      await refreshData();
+      showStatus('Connexion réussie ! Bienvenue sur le tableau de bord.');
+    } catch (err) {
+      loginStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
+      loginStatus.textContent = 'Erreur : ' + err.message;
+      loginStatus.classList.remove('hidden');
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
   });
 
@@ -375,7 +466,7 @@
 
     if (error) {
       console.error("Delete error:", error);
-      showStatus("Erreur : " + error.message, true); // Fixed function call from showNotification to showStatus
+      showStatus("Erreur : " + error.message, true);
       return;
     }
 
@@ -400,7 +491,7 @@
 
   document.getElementById('logout-btn').addEventListener('click', async () => {
     await sb.auth.signOut();
-    window.location.href = 'index.html';
+    window.location.reload();
   });
 </script>
 </body>

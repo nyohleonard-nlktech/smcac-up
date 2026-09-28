@@ -89,7 +89,8 @@
   .badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.25rem 0.65rem;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -97,6 +98,8 @@
   }
   .badge.unlocked { background-color: #dcfce7; color: #166534; }
   .badge.locked { background-color: #f3f4f6; color: #4b5563; border: 1px solid rgba(20, 62, 46, 0.1); }
+  .badge.pending { background-color: #fef3c7; color: #92400e; border: 1px solid rgba(245, 158, 11, 0.3); }
+  
   a.primary, button.primary {
     display: inline-flex;
     align-items: center;
@@ -388,6 +391,7 @@
   let isCompanyWorker = false;
   let moduleTwoTitle = 'Module 2';
   let activeEnrollmentId = null;
+  let hasPendingPayment = false;
 
   function fmtDate(iso) {
     if (!iso) return null;
@@ -405,7 +409,7 @@
       .maybeSingle();
 
     if (error || !profile || profile.role !== 'learner') {
-      showLoginError('Ce compte n\u2019est pas un compte apprenant valide.');
+      showLoginError('Ce compte n’est pas un compte apprenant valide.');
       await sb.auth.signOut();
       showLogin();
       return;
@@ -429,8 +433,27 @@
     }
 
     showDashboard();
+    await checkPendingPayments(session.user.id);
     loadModules(session.user.id);
     loadAttestations(session.user.id);
+  }
+
+  async function checkPendingPayments(userId) {
+    try {
+      const { data } = await sb
+        .from('payment_batches')
+        .select('id, status')
+        .eq('profile_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (data && data.length > 0) {
+        // If there is an unapproved request, flag it
+        hasPendingPayment = data[0].status === 'pending' || !data[0].status;
+      }
+    } catch (e) {
+      console.log('Payment check note:', e);
+    }
   }
 
   loginForm.addEventListener('submit', async (e) => {
@@ -506,13 +529,21 @@
           ? `<div class="meta">Accès valable jusqu'au ${fmtDate(activeEnrollment.expires_at)}</div>`
           : '';
 
-        const action = (isModule2 && !mp.unlocked)
-          ? (isCompanyWorker
-              ? `<span class="badge locked">Contactez votre responsable formation</span>`
-              : `<button class="wa-btn" id="request-payment-btn">Demander le paiement</button>`)
-          : (mp.unlocked
-              ? `<a class="primary" style="text-decoration:none;" href="module-viewer.html?course=${activeEnrollment.course_id || ''}&module=${mod.order_index}&module_id=${mp.module_id}">Ouvrir le module</a>`
-              : `<span class="badge locked">Verrouillé</span>`);
+        let action = '';
+
+        if (mp.unlocked) {
+          action = `<a class="primary" style="text-decoration:none;" href="module-viewer.html?course=${activeEnrollment.course_id || ''}&module=${mod.order_index}&module_id=${mp.module_id}">Ouvrir le module</a>`;
+        } else if (isModule2) {
+          if (isCompanyWorker) {
+            action = `<span class="badge locked"><span class="material-symbols-outlined text-[15px]">info</span> Contactez votre responsable formation</span>`;
+          } else if (hasPendingPayment) {
+            action = `<span class="badge pending"><span class="material-symbols-outlined text-[15px]">schedule</span> En attente de validation admin</span>`;
+          } else {
+            action = `<button class="wa-btn" id="request-payment-btn"><span class="material-symbols-outlined text-[18px]">payments</span> Demander le paiement</button>`;
+          }
+        } else {
+          action = `<span class="badge locked"><span class="material-symbols-outlined text-[15px]">lock</span> Verrouillé</span>`;
+        }
 
         return `<div class="module-row">
           <div>
@@ -612,7 +643,8 @@
 
     const { error } = await sb.from('payment_batches').insert({
       profile_id: session.user.id,
-      seats_requested: 1
+      seats_requested: 1,
+      status: 'pending'
     });
 
     if (error) {
@@ -621,11 +653,14 @@
       return;
     }
 
+    hasPendingPayment = true;
+    await loadModules(session.user.id);
+
     const msg = `Bonjour SMCAC Academy, je souhaite régler les frais pour débloquer le Module 2 (${moduleTwoTitle}).`;
     window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 
     dashStatus.className = 'status success';
-    dashStatus.textContent = 'Demande de paiement transmise avec succès.';
+    dashStatus.textContent = 'Demande de paiement transmise avec succès. En attente de validation administrateur.';
   }
 
   document.getElementById('send-whatsapp-btn').addEventListener('click', async () => {
