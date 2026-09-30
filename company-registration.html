@@ -358,16 +358,17 @@
       const userId = authData.user?.id;
       if (!userId) throw new Error("Impossible d'obtenir l'identifiant utilisateur.");
 
-      // 2. Invoke the atomic server-side RPC procedure
-      const { data: rpcData, error: rpcError } = await sb.rpc('register_company', {
-        p_user_id: userId,
-        p_name: company_name,
-        p_phone: company_phone,
-        p_city: company_city,
-        p_course_id: course_id,
-        p_admin_name: admin_name,
-        p_slug: companySlug
-      });
+      // Inside form submission listener in company-registration.html
+const { data: rpcData, error: rpcError } = await sb.rpc('register_company', {
+  p_user_id: userId,
+  p_name: company_name,
+  p_phone: company_phone,
+  p_city: company_city,
+  p_course_id: course_id,
+  p_admin_name: admin_name,
+  p_email: email,      // <--- Added missing email argument
+  p_slug: companySlug
+});
 
       if (rpcError) throw rpcError;
 

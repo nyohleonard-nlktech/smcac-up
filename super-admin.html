@@ -1,498 +1,595 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="h-full bg-surface">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de bord Super-Admin - SMCAC Academy</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contenu des modules — SMCAC Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e",
+          "primary-container": "#0d2b1f",
+          "primary-light": "#1d5540",
+          "secondary": "#795900",
+          "secondary-container": "#f3c242",
+          "surface": "#fbf9f4",
+          "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2",
+          "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e",
+          "on-surface-variant": "#49554e",
+          "outline": "#7a877e",
+          "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c" },
+          "error": "#b3261e",
+          "success": "#2c5e2c"
+        },
+        fontFamily: {
+          "display": ["Newsreader", "Georgia", "serif"],
+          "headline": ["Newsreader", "Georgia", "serif"],
+          "body": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .status {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .status.error {
+    display: block;
+    background-color: #fbeceb;
+    border: 1px solid #f1c9c6;
+    color: #b3261e;
+  }
+  .status.success {
+    display: block;
+    background-color: #eef4ee;
+    border: 1px solid #cfe3cf;
+    color: #2c5e2c;
+  }
+  .card-empty {
+    padding: 2rem;
+    text-align: center;
+    color: #49554e;
+    font-size: 0.875rem;
+    background: #ffffff;
+    border: 1px solid rgba(20, 62, 46, 0.1);
+    border-radius: 1rem;
+    font-weight: 500;
+  }
+  .hidden { display: none !important; }
+</style>
 </head>
-<body class="bg-stone-50 text-stone-800 font-sans min-h-screen flex flex-col justify-between">
+<body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
 
-  <!-- Direct Login Modal (Shown automatically if not logged in on any device/route) -->
-  <div id="login-view" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 border border-stone-200">
-      <div class="text-center space-y-2">
-        <span class="material-symbols-outlined text-emerald-900 text-5xl">admin_panel_settings</span>
-        <h2 class="text-xl font-bold text-emerald-900">Accès Super-Admin</h2>
-        <p class="text-xs text-stone-500">Connectez-vous avec vos identifiants administrateur pour accéder à cette route.</p>
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-3xl border border-primary/10 shadow-xl p-8 sm:p-10">
+      <div class="text-center mb-8">
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-16 w-16 rounded-full object-cover border-2 border-gold/40 mx-auto mb-4 shadow-sm" onerror="this.src='https://via.placeholder.com/64'">
+        <p class="text-xs uppercase tracking-widest text-gold-deep font-bold mb-1">SMCAC Academy</p>
+        <h1 class="font-headline text-2xl sm:text-3xl font-medium text-primary">Connexion super-admin</h1>
+        <p class="text-xs text-on-surface-variant mt-2">Gestion du contenu pédagogique et des quiz.</p>
       </div>
-      <div id="login-status" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+
       <form id="login-form" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Email</label>
-          <input type="email" id="login-email" required placeholder="admin@smcac.com" class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-800 outline-none">
+          <label for="email" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Adresse e-mail</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">admin_panel_settings</span>
+            <input type="email" id="email" required autocomplete="email" placeholder="admin@smcac.cm" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
         </div>
+
         <div>
-          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Mot de passe</label>
-          <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-800 outline-none">
+          <label for="password" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Mot de passe</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">key</span>
+            <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
+          </div>
         </div>
-        <button type="submit" id="login-btn" class="w-full py-3 bg-emerald-900 hover:bg-emerald-800 text-amber-300 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
-          <span class="material-symbols-outlined text-sm">login</span> Se connecter
+
+        <button type="submit" id="login-btn" class="w-full mt-2 bg-primary text-gold-light hover:bg-gold hover:text-primary transition-all font-semibold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 text-sm">
+          <span>Se connecter</span>
+          <span class="material-symbols-outlined text-[18px]">login</span>
         </button>
+
+        <div id="login-status" class="status" role="status" aria-live="polite"></div>
       </form>
     </div>
   </div>
 
-  <!-- Top Navbar -->
-  <header class="bg-emerald-900 text-white py-4 px-6 shadow-md flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <span class="material-symbols-outlined text-amber-400 text-3xl">admin_panel_settings</span>
-      <div>
-        <h1 class="text-xl font-bold leading-none">SMCAC ACADEMY</h1>
-        <p class="text-xs text-amber-300">Tableau de bord super-admin</p>
-      </div>
-    </div>
-    <button id="logout-btn" class="bg-emerald-800 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all">
-      <span class="material-symbols-outlined text-sm">logout</span>
-      Déconnexion
-    </button>
-  </header>
-
-  <main class="max-w-7xl mx-auto p-6 space-y-6 flex-1 w-full">
-    <!-- Status Alert Bar -->
-    <div id="status-bar" class="hidden p-4 rounded-xl text-xs font-semibold transition-all"></div>
-
-    <!-- Overview Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-3xl font-extrabold text-emerald-900" id="stat-total-learners">0</p>
-          <p class="text-xs uppercase font-bold text-stone-400 tracking-wider mt-1">Total Apprenants</p>
+  <!-- APP SCREEN -->
+  <div id="app-screen" class="hidden flex-1 flex flex-col w-full">
+    
+    <header class="w-full bg-primary text-surface border-b border-gold/20 sticky top-0 z-40 shadow-md">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 rounded-full object-cover border-2 border-gold/40" onerror="this.src='https://via.placeholder.com/40'">
+          <div>
+            <p class="text-[10px] sm:text-xs uppercase tracking-widest text-gold font-semibold">SMCAC Academy</p>
+            <h1 class="font-headline text-lg sm:text-2xl font-medium text-surface">Contenu des cours</h1>
+          </div>
         </div>
-        <span class="material-symbols-outlined text-4xl text-emerald-100">groups</span>
-      </div>
 
-      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-3xl font-extrabold text-emerald-900" id="stat-active-companies">0</p>
-          <p class="text-xs uppercase font-bold text-stone-400 tracking-wider mt-1">Entreprises Actives</p>
+        <nav class="flex items-center gap-3">
+          <a href="super-admin.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-light hover:bg-gold hover:text-primary text-gold-light border border-gold/20 text-xs sm:text-sm font-medium transition-all text-decoration-none">
+            <span class="material-symbols-outlined text-[18px]">dashboard</span>
+            <span class="hidden sm:inline">Tableau de bord</span>
+          </a>
+          <button id="logout-btn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-surface/20 hover:bg-surface/10 text-surface text-xs sm:text-sm font-medium transition-all">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+            <span class="hidden sm:inline">Se déconnecter</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-10">
+      
+      <div id="dash-status" class="status" role="status" aria-live="polite"></div>
+
+      <!-- SECTION 1: PRESENTATION FILES (PDF & PPTX) -->
+      <section class="space-y-6">
+        <div class="flex items-center gap-2.5 pb-2 border-b border-primary/10">
+          <span class="material-symbols-outlined text-gold-deep text-[24px]">slideshow</span>
+          <div>
+            <h2 class="font-headline text-xl font-medium text-primary m-0">Supports de cours (PDF, PowerPoint)</h2>
+            <p class="text-xs text-on-surface-variant m-0 mt-0.5">Formats acceptés : <code class="bg-surface-container px-1.5 py-0.5 rounded text-primary font-mono">.pdf, .pptx, .ppt</code></p>
+          </div>
         </div>
-        <span class="material-symbols-outlined text-4xl text-amber-100">domain</span>
-      </div>
 
-      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-3xl font-extrabold text-amber-600" id="stat-pending-seats">0</p>
-          <p class="text-xs uppercase font-bold text-stone-400 tracking-wider mt-1">Places en Attente</p>
+        <div id="uploads-wrap" class="space-y-8">
+          <div class="card-empty">Chargement des cours...</div>
         </div>
-        <span class="material-symbols-outlined text-4xl text-amber-100">pending_actions</span>
-      </div>
-    </div>
+      </section>
 
-    <!-- Navigation Tabs -->
-    <div class="flex border-b border-stone-200 gap-4 text-xs font-bold">
-      <button id="tab-btn-companies" class="py-3 px-4 text-emerald-900 border-b-2 border-emerald-900 flex items-center gap-2">
-        <span class="material-symbols-outlined text-base">business</span> Entreprises & Validateur de Places
-      </button>
-      <button id="tab-btn-individuals" class="py-3 px-4 text-stone-500 hover:text-emerald-900 flex items-center gap-2">
-        <span class="material-symbols-outlined text-base">person</span> Apprenants Individuels
-      </button>
-    </div>
+      <!-- SECTION 2: QUIZ QUESTIONS -->
+      <section class="space-y-6">
+        <div class="flex items-center gap-2.5 pb-2 border-b border-primary/10">
+          <span class="material-symbols-outlined text-gold-deep text-[24px]">quiz</span>
+          <div>
+            <h2 class="font-headline text-xl font-medium text-primary m-0">Questions du quiz</h2>
+            <p class="text-xs text-on-surface-variant m-0 mt-0.5">Gestion des questions associées à chaque module d'évaluation.</p>
+          </div>
+        </div>
 
-    <!-- Section: Companies -->
-    <section id="tab-companies" class="space-y-4">
-      <h2 class="text-lg font-bold text-emerald-900">Gestion des Entreprises et Validation des Places Payées</h2>
-      <div id="companies-container" class="space-y-4">
-        <div class="p-8 text-center text-stone-400 bg-white rounded-2xl border border-stone-200 text-xs">Chargement...</div>
-      </div>
-    </section>
+        <div id="quiz-wrap" class="space-y-8">
+          <div class="card-empty">Chargement des modules et questions...</div>
+        </div>
+      </section>
 
-    <!-- Section: Individuals -->
-    <section id="tab-individuals" class="hidden space-y-4">
-      <h2 class="text-lg font-bold text-emerald-900">Apprenants Individuels</h2>
-      <div class="bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden">
-        <table class="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 uppercase font-bold">
-              <th class="p-4">Nom / Email</th>
-              <th class="p-4">Date d'inscription</th>
-              <th class="p-4">Statut</th>
-              <th class="p-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="individuals-table-body" class="divide-y divide-stone-100">
-            <tr><td colspan="4" class="p-6 text-center text-stone-400">Chargement...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+    </main>
+  </div>
 
 <script>
-  const SUPABASE_URL = 'https://fbogkyrrnyawbdgwratl.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI';
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = supabase.createClient('https://fbogkyrrnyawbdgwratl.supabase.co', 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI');
   
-  const statusBar = document.getElementById('status-bar');
+  const loginScreen = document.getElementById('login-screen');
+  const appScreen = document.getElementById('app-screen');
+  const loginForm = document.getElementById('login-form');
+  const loginStatus = document.getElementById('login-status');
+  const loginBtn = document.getElementById('login-btn');
+  const dashStatus = document.getElementById('dash-status');
+  const uploadsWrap = document.getElementById('uploads-wrap');
+  const quizWrap = document.getElementById('quiz-wrap');
 
-  function escapeHtml(str) {
+  let coursesList = [];
+  let modulesList = [];
+
+  function escapeHTML(str) {
     if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
   }
 
-  function showStatus(msg, isError = false) {
-    statusBar.className = `p-4 rounded-xl text-xs font-semibold ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}`;
-    statusBar.textContent = msg;
-    statusBar.classList.remove('hidden');
+  function slugify(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]+/g, '')
+      .replace(/\-\-+/g, '-');
+  }
+
+  function showStatus(msg, type = 'error') {
+    dashStatus.className = `status ${type}`;
+    dashStatus.textContent = msg;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => statusBar.classList.add('hidden'), 5000);
   }
 
-  // Initialization & Authentication Check
-  document.addEventListener('DOMContentLoaded', async () => {
-    await checkAndLoadAuth();
-  });
+  function showLoginError(m) { loginStatus.className = 'status error'; loginStatus.textContent = m; }
+  function showLogin() { loginScreen.classList.remove('hidden'); appScreen.classList.add('hidden'); }
+  function showApp() { loginScreen.classList.add('hidden'); appScreen.classList.remove('hidden'); }
 
-  async function checkAndLoadAuth() {
-    try {
-      const { data: { session }, error: authErr } = await sb.auth.getSession();
-      if (authErr || !session) {
-        showLoginView();
-        return;
-      }
-
-      const { data: profile, error: profErr } = await sb
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-
-      if (profErr || !profile || profile.role !== 'super_admin') {
-        showLoginView('Accès non autorisé. Droits de Super-Admin requis.', true);
-        await sb.auth.signOut();
-        return;
-      }
-
-      hideLoginView();
-      await refreshData();
-    } catch (err) {
-      showLoginView('Erreur d\'initialisation: ' + err.message, true);
+  async function checkSessionAndRoute() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { showLogin(); return; }
+    
+    const { data: profile, error } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+    if (error || !profile || profile.role !== 'super_admin') {
+      showLoginError('Ce compte n\'a pas les droits super-admin.');
+      await sb.auth.signOut(); 
+      showLogin(); 
+      return;
     }
+    showApp();
+    loadAll();
   }
 
-  function showLoginView(msg = '', isError = false) {
-    const loginView = document.getElementById('login-view');
-    loginView.classList.remove('hidden');
-    if (msg) {
-      const loginStatus = document.getElementById('login-status');
-      loginStatus.className = `p-3 rounded-xl text-xs font-semibold ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}`;
-      loginStatus.textContent = msg;
-      loginStatus.classList.remove('hidden');
-    }
-  }
-
-  function hideLoginView() {
-    document.getElementById('login-view').classList.add('hidden');
-  }
-
-  // Handle Login Form Submission
-  document.getElementById('login-form').addEventListener('submit', async (e) => {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const loginBtn = document.getElementById('login-btn');
-    const loginStatus = document.getElementById('login-status');
-
     loginBtn.disabled = true;
-    loginBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-    try {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) {
-        loginStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
-        loginStatus.textContent = 'Erreur de connexion : ' + error.message;
-        loginStatus.classList.remove('hidden');
-        return;
-      }
-
-      const { data: profile, error: profErr } = await sb
-        .from('profiles')
-        .select('role')
-        .eq('id', data.session.user.id)
-        .single();
-
-      if (profErr || !profile || profile.role !== 'super_admin') {
-        loginStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
-        loginStatus.textContent = 'Accès non autorisé. Droits de Super-Admin requis.';
-        loginStatus.classList.remove('hidden');
-        await sb.auth.signOut();
-        return;
-      }
-
-      hideLoginView();
-      await refreshData();
-      showStatus('Connexion réussie ! Bienvenue sur le tableau de bord.');
-    } catch (err) {
-      loginStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
-      loginStatus.textContent = 'Erreur : ' + err.message;
-      loginStatus.classList.remove('hidden');
-    } finally {
-      loginBtn.disabled = false;
-      loginBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) { 
+      showLoginError('E-mail ou mot de passe incorrect.'); 
+      loginBtn.disabled = false; 
+    } else { 
+      await checkSessionAndRoute(); 
+      loginBtn.disabled = false; 
     }
   });
 
-  async function refreshData() {
-    await Promise.all([
-      loadStats(),
-      loadCompanies(),
-      loadIndividualLearners()
-    ]);
-  }
+  document.getElementById('logout-btn').addEventListener('click', async (e) => {
+    e.preventDefault(); 
+    await sb.auth.signOut(); 
+    showLogin();
+  });
 
-  async function loadStats() {
-    const [{ count: learnersCount }, { count: companiesCount }, { data: pendingRequests }] = await Promise.all([
-      sb.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student'),
-      sb.from('companies').select('*', { count: 'exact', head: true }),
-      sb.from('seat_requests').select('requested_seats').eq('status', 'pending')
-    ]);
-
-    const totalPending = (pendingRequests || []).reduce((acc, r) => acc + (r.requested_seats || 0), 0);
-
-    document.getElementById('stat-total-learners').textContent = learnersCount || 0;
-    document.getElementById('stat-active-companies').textContent = companiesCount || 0;
-    document.getElementById('stat-pending-seats').textContent = totalPending;
-  }
-
-  async function loadCompanies() {
-    const container = document.getElementById('companies-container');
-    const { data: companies, error } = await sb.from('companies').select('*, seat_requests(*)');
-
-    if (error) { 
-      showStatus('Erreur chargement entreprises: ' + error.message, true); 
+  async function loadAll() {
+    const { data: courses, error: cErr } = await sb.from('courses').select('id, title, order_index').order('order_index');
+    if (cErr) { 
+      showStatus('Erreur Base de données (courses): ' + cErr.message, 'error'); 
       return; 
     }
+    coursesList = courses || [];
 
-    if (!companies || companies.length === 0) {
-      container.innerHTML = `<div class="p-8 text-center text-stone-400 bg-white rounded-2xl border border-stone-200 text-xs">Aucune entreprise enregistrée.</div>`;
+    // Safe query excluding non-existent columns
+    const { data: mods, error: mErr } = await sb
+      .from('modules')
+      .select('id, title, order_index, course_id, file_path, original_file_path, mime_type')
+      .not('course_id', 'is', null);
+
+    if (mErr) { 
+      showStatus('Erreur Base de données (modules): ' + mErr.message, 'error'); 
+      return; 
+    }
+    modulesList = mods || [];
+
+    renderUploads();
+    loadQuestions();
+  }
+
+  function modulesForCourse(courseId) {
+    return modulesList
+      .filter(m => m.course_id === courseId)
+      .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+  }
+
+  function renderUploads() {
+    if (coursesList.length === 0) {
+      uploadsWrap.innerHTML = '<div class="card-empty">Aucun cours disponible en base de données.</div>';
       return;
     }
 
-    container.innerHTML = companies.map(c => {
-      const requests = c.seat_requests || [];
-      const pending = requests.filter(r => r.status === 'pending');
-      const companyId = escapeHtml(c.id);
+    uploadsWrap.innerHTML = coursesList.map(c => {
+      const mods = modulesForCourse(c.id);
       
+      const moduleCards = mods.length > 0 ? mods.map((m, index) => {
+        const activePath = m.file_path || m.original_file_path;
+        const hasFile = Boolean(activePath);
+        const fileExt = hasFile ? activePath.split('.').pop().toLowerCase() : '';
+        const iconName = fileExt === 'pdf' ? 'picture_as_pdf' : (['pptx', 'ppt'].includes(fileExt) ? 'slideshow' : 'description');
+
+        return `
+          <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 overflow-hidden">
+                <span class="material-symbols-outlined text-gold-deep text-2xl shrink-0">${iconName}</span>
+                <div class="truncate">
+                  <h4 class="font-headline text-base font-medium text-primary m-0 truncate">${escapeHTML(m.title)}</h4>
+                  <p class="text-[11px] text-outline font-mono m-0 truncate">${hasFile ? activePath : 'Aucun fichier associé'}</p>
+                </div>
+              </div>
+              <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0 ${hasFile ? 'bg-success/10 text-success' : 'bg-surface-container text-on-surface-variant'}">
+                ${hasFile ? fileExt.toUpperCase() : 'Aucun fichier'}
+              </span>
+            </div>
+            <div class="space-y-3">
+              <input type="file" accept=".pdf,.pptx,.ppt" data-moduleid="${m.id}" class="file-input block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-surface-container file:text-primary hover:file:bg-gold/20 cursor-pointer border border-outline-variant/60 rounded-xl p-1 bg-surface">
+              <div class="flex gap-2">
+                <button class="primary flex-1 px-4 py-2 bg-primary text-gold-light hover:bg-gold hover:text-primary font-semibold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5" data-moduleid="${m.id}" data-btn="upload">
+                  <span class="material-symbols-outlined text-[16px]">upload_file</span>
+                  <span>${hasFile ? 'Remplacer le support' : 'Envoyer le support'}</span>
+                </button>
+                ${hasFile ? `
+                <button class="px-3 py-2 border border-error/30 text-error hover:bg-error/10 font-semibold text-xs rounded-xl transition-all flex items-center gap-1" data-moduleid="${m.id}" data-filepath="${activePath}" data-btn="delete">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('') : '<p class="text-xs text-on-surface-variant italic py-2">Aucun module assigné à ce cours.</p>';
+
       return `
-        <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-100">
-            <div>
-              <div class="flex items-center gap-2">
-                <h3 class="font-bold text-base text-emerald-900">${escapeHtml(c.name || 'Entreprise sans nom')}</h3>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'}">
-                  ${escapeHtml(c.status || 'Active')}
-                </span>
-              </div>
-              <p class="text-xs text-stone-500 mt-0.5">Places Payées & Validées : <strong class="text-emerald-900">${c.total_seats_paid || 0}</strong></p>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <button id="btn-del-comp-${companyId}" onclick="deleteCompany('${companyId}')" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition-all flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">delete</span> Supprimer
-              </button>
-            </div>
+        <div class="bg-surface-container-low/50 border border-primary/10 rounded-3xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-2 border-b border-primary/10">
+            <span class="text-gold-deep text-base font-bold bg-gold/10 px-3 py-1 rounded-lg">Cours 0${c.order_index || 1}</span>
+            <h3 class="font-headline text-lg font-semibold text-primary m-0">${escapeHTML(c.title)}</h3>
           </div>
-
-          <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 flex flex-col sm:flex-row items-end gap-3">
-            <div class="flex-1 w-full">
-              <label class="block text-[11px] font-bold text-stone-600 uppercase tracking-wider mb-1">Ajouter / Valider des places payées</label>
-              <input type="number" id="seats-input-${companyId}" min="1" placeholder="Ex: 5" class="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-800 outline-none">
-            </div>
-            <button id="btn-val-${companyId}" onclick="validateSeats('${companyId}')" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-amber-300 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5">
-              <span class="material-symbols-outlined text-sm">check_circle</span> Valider le paiement
-            </button>
-          </div>
-
-          ${pending.length > 0 ? `
-            <div class="space-y-2 pt-2">
-              <p class="text-xs font-bold text-amber-700 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">pending</span> Demandes en attente (${pending.length})
-              </p>
-              <div class="space-y-1">
-                ${pending.map(r => {
-                  const reqId = escapeHtml(r.id);
-                  const seats = parseInt(r.requested_seats, 10) || 0;
-                  return `
-                    <div class="flex items-center justify-between text-xs bg-amber-50 border border-amber-200/60 p-2.5 rounded-lg">
-                      <span>Demande de <strong>${seats} places</strong> (${new Date(r.created_at).toLocaleDateString()})</span>
-                      <button id="btn-app-${reqId}" onclick="approveRequest('${reqId}', '${companyId}', ${seats})" class="px-2.5 py-1 bg-emerald-800 text-white rounded-md text-[11px] font-bold hover:bg-emerald-700 transition-all">Approuver</button>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-          ` : ''}
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${moduleCards}</div>
         </div>
       `;
     }).join('');
+
+    uploadsWrap.querySelectorAll('button[data-btn="upload"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const moduleId = btn.dataset.moduleid;
+        const input = uploadsWrap.querySelector(`input[data-moduleid="${moduleId}"]`);
+        const file = input ? input.files[0] : null;
+        if (!file) { showStatus('Veuillez choisir un fichier (PDF ou PowerPoint).', 'error'); return; }
+        
+        btn.disabled = true; 
+        btn.textContent = 'Envoi en cours…';
+
+        const fileExt = file.name.split('.').pop().toLowerCase();
+        const targetModule = modulesList.find(m => String(m.id) === String(moduleId));
+        const course = coursesList.find(c => c.id === targetModule.course_id);
+        
+        const courseSlug = slugify(course ? course.title : 'course');
+        const modNum = targetModule.order_index || 1;
+        const storagePath = `${courseSlug}-module-${modNum}.${fileExt}`;
+        
+        // 1. Upload to Supabase Storage
+        const { error: uploadError } = await sb.storage.from('modules').upload(storagePath, file, { upsert: true });
+        if (uploadError) {
+          showStatus('Erreur de téléversement : ' + uploadError.message, 'error');
+          btn.disabled = false;
+          return;
+        }
+
+        // 2. Persist metadata in database based on extension
+        const isPdf = fileExt === 'pdf';
+        const isPpt = ['pptx', 'ppt'].includes(fileExt);
+        const mimeType = file.type || (isPdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+
+        const dbUpdate = {
+          mime_type: mimeType,
+          file_path: isPdf ? storagePath : (targetModule.file_path || storagePath),
+          original_file_path: isPpt ? storagePath : targetModule.original_file_path,
+          processing_status: 'completed'
+        };
+
+        const { error: dbError } = await sb.from('modules').update(dbUpdate).eq('id', moduleId);
+        if (dbError) {
+          showStatus('Erreur mise à jour base de données : ' + dbError.message, 'error');
+          btn.disabled = false;
+        } else {
+          showStatus('Fichier téléversé et associé avec succès.', 'success');
+          loadAll();
+        }
+      });
+    });
+
+    uploadsWrap.querySelectorAll('button[data-btn="delete"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Supprimer ce support de cours ?')) return;
+        const moduleId = btn.dataset.moduleid;
+        const filePath = btn.dataset.filepath;
+        btn.disabled = true;
+
+        if (filePath) {
+          await sb.storage.from('modules').remove([filePath]);
+        }
+
+        const { error: dbError } = await sb.from('modules').update({ file_path: null, original_file_path: null }).eq('id', moduleId);
+        if (dbError) {
+          showStatus('Erreur lors de la suppression : ' + dbError.message, 'error');
+          btn.disabled = false;
+        } else {
+          showStatus('Support supprimé avec succès.', 'success');
+          loadAll();
+        }
+      });
+    });
   }
 
-  async function validateSeats(companyId) {
-    const btn = document.getElementById(`btn-val-${companyId}`);
-    const input = document.getElementById(`seats-input-${companyId}`);
-    const addedSeats = parseInt(input.value, 10);
+  async function loadQuestions() {
+    const { data: questions, error } = await sb
+      .from('quiz_questions')
+      .select('id, module_id, question, options, correct_option_index, order_index')
+      .order('order_index');
 
-    if (isNaN(addedSeats) || addedSeats <= 0) {
-      showStatus('Veuillez entrer un nombre valide de places.', true);
+    if (error) { quizWrap.innerHTML = `<div class="card-empty">Erreur : ${escapeHTML(error.message)}</div>`; return; }
+
+    if (coursesList.length === 0) {
+      quizWrap.innerHTML = '<div class="card-empty">Aucun cours configuré.</div>';
       return;
     }
 
-    btn.disabled = true;
-    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    quizWrap.innerHTML = coursesList.map(c => {
+      const mods = modulesForCourse(c.id);
+      
+      const moduleBlocks = mods.length > 0 ? mods.map((m, idx) => {
+        const qs = (questions || []).filter(q => q.module_id === m.id);
+        const rows = qs.map(q => {
+          const correctIdx = q.correct_option_index !== undefined ? q.correct_option_index : q.correct_index;
+          return `
+            <div class="q-row py-3.5 border-b border-primary/10 last:border-b-0 flex items-start justify-between gap-4">
+              <div class="space-y-1">
+                <div class="q-text text-sm font-medium text-primary">${escapeHTML(q.question)}</div>
+                <div class="q-opts text-xs text-on-surface-variant flex flex-wrap gap-1.5 mt-1">
+                  ${q.options.map((o, i) => (i === correctIdx
+                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-success/10 text-success border border-success/20 font-semibold"><span class="material-symbols-outlined text-[12px]">check_circle</span>${escapeHTML(o)}</span>`
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-surface-container text-on-surface-variant">${escapeHTML(o)}</span>`)).join('')}
+                </div>
+              </div>
+              <button class="btn-delete-q px-2.5 py-1.5 text-xs font-semibold text-error border border-error/30 hover:bg-error/10 rounded-lg transition-all flex items-center gap-1 shrink-0" data-id="${q.id}">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+                <span>Supprimer</span>
+              </button>
+            </div>
+          `;
+        }).join('') || '<p class="text-xs text-on-surface-variant py-2 m-0 italic">Aucune question configurée pour ce module.</p>';
 
-    try {
-      const { data, error } = await sb.rpc('increment_company_seats', {
-        p_company_id: companyId,
-        p_seats_to_add: addedSeats
-      });
-
-      if (error) {
-        showStatus('Erreur lors de la validation: ' + error.message, true);
-      } else {
-        showStatus(`Succès: ${addedSeats} place(s) ajoutée(s). Nouveau total: ${data}`);
-        await refreshData();
-      }
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-    }
-  }
-
-  async function approveRequest(requestId, companyId, requestedSeats) {
-    const btn = document.getElementById(`btn-app-${requestId}`);
-    if (btn) {
-      btn.disabled = true;
-      btn.classList.add('opacity-50', 'cursor-not-allowed');
-    }
-
-    try {
-      const { error } = await sb.rpc('approve_seat_request', {
-        p_request_id: requestId,
-        p_company_id: companyId,
-        p_seats_to_add: requestedSeats
-      });
-
-      if (error) {
-        showStatus('Erreur lors de l\'approbation: ' + error.message, true);
-      } else {
-        showStatus(`Demande approuvée. ${requestedSeats} places ajoutées.`);
-        await refreshData();
-      }
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-    }
-  }
-
-  async function loadIndividualLearners() {
-    const tbody = document.getElementById('individuals-table-body');
-    const { data: learners, error } = await sb.from('profiles').select('*').eq('role', 'student');
-
-    if (error) { 
-      showStatus('Erreur chargement apprenants: ' + error.message, true); 
-      return; 
-    }
-
-    if (!learners || learners.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-stone-400">Aucun apprenant trouvé.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = learners.map(l => {
-      const userId = escapeHtml(l.id);
-      return `
-        <tr class="hover:bg-stone-50">
-          <td class="p-4">
-            <p class="font-bold text-stone-800">${escapeHtml(l.full_name || 'Sans Nom')}</p>
-            <p class="text-stone-400 text-[11px]">${escapeHtml(l.email || '')}</p>
-          </td>
-          <td class="p-4 text-stone-500">${new Date(l.created_at).toLocaleDateString()}</td>
-          <td class="p-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Actif</span></td>
-          <td class="p-4 text-right">
-            <button id="btn-del-usr-${userId}" onclick="hardDeleteUser('${userId}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition-all inline-flex items-center gap-1">
-              <span class="material-symbols-outlined text-sm">delete</span> Supprimer
+        return `
+          <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-primary/10">
+              <h4 class="font-headline text-base font-medium text-primary m-0">${escapeHTML(m.title)} (Module ${m.order_index || idx + 1})</h4>
+              <span class="text-xs text-outline font-semibold bg-surface-container px-2.5 py-1 rounded-full">${qs.length} question(s)</span>
+            </div>
+            <div class="divide-y divide-primary/10">${rows}</div>
+            <button class="btn-add-q px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-gold-light font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 mt-4" data-add="${m.id}">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              <span>Ajouter une question</span>
             </button>
-          </td>
-        </tr>
+            <div class="new-q-form" data-form="${m.id}"></div>
+          </div>
+        `;
+      }).join('') : '<p class="text-xs text-on-surface-variant italic py-2">Aucun module disponible.</p>';
+
+      return `
+        <div class="bg-surface-container-low/50 border border-primary/10 rounded-3xl p-6 space-y-4">
+          <div class="flex items-center gap-3 pb-2 border-b border-primary/10">
+            <span class="text-gold-deep text-base font-bold bg-gold/10 px-3 py-1 rounded-lg">Cours 0${c.order_index || 1}</span>
+            <h3 class="font-headline text-lg font-semibold text-primary m-0">${escapeHTML(c.title)}</h3>
+          </div>
+          <div class="space-y-4">${moduleBlocks}</div>
+        </div>
       `;
     }).join('');
+
+    quizWrap.querySelectorAll('.btn-delete-q').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Supprimer cette question ?')) return;
+        const { error: delErr } = await sb.from('quiz_questions').delete().eq('id', btn.dataset.id);
+        if (delErr) { showStatus('Erreur de suppression: ' + delErr.message, 'error'); }
+        else { showStatus('Question supprimée.', 'success'); loadQuestions(); }
+      });
+    });
+
+    quizWrap.querySelectorAll('.btn-add-q').forEach(btn => {
+      btn.addEventListener('click', () => renderNewQuestionForm(btn.dataset.add));
+    });
   }
 
-  async function hardDeleteUser(userId) {
-    if (!confirm('ATTENTION : Supprimer définitivement cet apprenant et son compte d\'authentification ?')) return;
+  function renderNewQuestionForm(moduleId) {
+    const container = quizWrap.querySelector(`div[data-form="${moduleId}"]`);
+    if (!container) return;
 
-    const btn = document.getElementById(`btn-del-usr-${userId}`);
-    if (btn) {
-      btn.disabled = true;
-      btn.classList.add('opacity-50', 'cursor-not-allowed');
-    }
+    container.innerHTML = `
+      <div class="mt-4 pt-4 border-t border-primary/10 bg-surface-container/40 p-4 sm:p-5 rounded-2xl space-y-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Libellé de la question</label>
+          <textarea rows="2" class="new-q-text w-full p-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all" placeholder="Entrez la question ici…"></textarea>
+        </div>
 
-    try {
-      const { error } = await sb.from('profiles').delete().eq('id', userId);
-      if (error) {
-        showStatus('Erreur lors de la suppression : ' + error.message, true);
-      } else {
-        showStatus('Apprenant et identité auth supprimés définitivement.');
-        await refreshData();
+        <div class="space-y-2">
+          <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-1">Options de réponse (Cochez la bonne réponse)</label>
+
+          <div class="opt-row flex items-center gap-3">
+            <input type="radio" name="correct-${moduleId}" value="0" checked class="text-primary focus:ring-gold">
+            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 1">
+          </div>
+
+          <div class="opt-row flex items-center gap-3">
+            <input type="radio" name="correct-${moduleId}" value="1" class="text-primary focus:ring-gold">
+            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 2">
+          </div>
+
+          <div class="opt-row flex items-center gap-3">
+            <input type="radio" name="correct-${moduleId}" value="2" class="text-primary focus:ring-gold">
+            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 3 (optionnel)">
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
+          <p class="text-xs text-on-surface-variant m-0">Sélectionnez le bouton radio correspondant à la réponse correcte.</p>
+          <button class="save-q-btn px-4 py-2.5 bg-primary text-gold-light hover:bg-gold hover:text-primary font-semibold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0">
+            <span class="material-symbols-outlined text-[16px]">save</span>
+            <span>Enregistrer la question</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    const saveBtn = container.querySelector('.save-q-btn');
+    saveBtn.addEventListener('click', async () => {
+      const questionText = container.querySelector('.new-q-text').value.trim();
+      const rawInputs = [...container.querySelectorAll('.new-q-opt')];
+      const checkedRadio = container.querySelector(`input[name="correct-${moduleId}"]:checked`);
+      const checkedRawIndex = parseInt(checkedRadio.value, 10);
+      
+      const validOpts = [];
+      let mappedCorrectIndex = -1;
+
+      rawInputs.forEach((input, idx) => {
+        const val = input.value.trim();
+        if (val !== '') {
+          validOpts.push(val);
+          if (idx === checkedRawIndex) {
+            mappedCorrectIndex = validOpts.length - 1;
+          }
+        }
+      });
+
+      if (!questionText || validOpts.length < 2) {
+        showStatus('Veuillez saisir une question et au moins 2 réponses valides.', 'error');
+        return;
       }
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      if (mappedCorrectIndex === -1) {
+        showStatus('La réponse sélectionnée comme correcte ne peut pas être vide.', 'error');
+        return;
       }
-    }
+
+      saveBtn.disabled = true;
+
+      const { data: existing } = await sb.from('quiz_questions').select('order_index').eq('module_id', moduleId);
+      const nextOrder = (existing || []).length + 1;
+
+      const { error } = await sb.from('quiz_questions').insert({
+        module_id: moduleId,
+        question: questionText,
+        options: validOpts,
+        correct_option_index: mappedCorrectIndex,
+        order_index: nextOrder
+      });
+
+      if (error) { 
+        showStatus('Erreur lors de la sauvegarde : ' + error.message, 'error'); 
+        saveBtn.disabled = false;
+      } else { 
+        showStatus('Question ajoutée avec succès.', 'success'); 
+        loadQuestions(); 
+      }
+    });
   }
 
-  async function deleteCompany(companyId) {
-    if (!confirm("Voulez-vous vraiment supprimer cette entreprise et toutes ses données associées ?")) {
-      return;
-    }
-
-    const { error } = await sb
-      .from('companies')
-      .delete()
-      .eq('id', companyId);
-
-    if (error) {
-      console.error("Delete error:", error);
-      showStatus("Erreur : " + error.message, true);
-      return;
-    }
-
-    showStatus("Entreprise supprimée avec succès.", false);
-    await refreshData();
-  }
-
-  // UI Tab Controls
-  document.getElementById('tab-btn-companies').addEventListener('click', () => {
-    document.getElementById('tab-companies').classList.remove('hidden');
-    document.getElementById('tab-individuals').classList.add('hidden');
-    document.getElementById('tab-btn-companies').className = 'py-3 px-4 text-emerald-900 border-b-2 border-emerald-900 flex items-center gap-2';
-    document.getElementById('tab-btn-individuals').className = 'py-3 px-4 text-stone-500 hover:text-emerald-900 flex items-center gap-2';
-  });
-
-  document.getElementById('tab-btn-individuals').addEventListener('click', () => {
-    document.getElementById('tab-individuals').classList.remove('hidden');
-    document.getElementById('tab-companies').classList.add('hidden');
-    document.getElementById('tab-btn-individuals').className = 'py-3 px-4 text-emerald-900 border-b-2 border-emerald-900 flex items-center gap-2';
-    document.getElementById('tab-btn-companies').className = 'py-3 px-4 text-stone-500 hover:text-emerald-900 flex items-center gap-2';
-  });
-
-  document.getElementById('logout-btn').addEventListener('click', async () => {
-    await sb.auth.signOut();
-    window.location.reload();
-  });
+  checkSessionAndRoute();
 </script>
 </body>
 </html>

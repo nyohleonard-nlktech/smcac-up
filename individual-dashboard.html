@@ -448,7 +448,6 @@
         .limit(1);
       
       if (data && data.length > 0) {
-        // If there is an unapproved request, flag it
         hasPendingPayment = data[0].status === 'pending' || !data[0].status;
       }
     } catch (e) {

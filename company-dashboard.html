@@ -171,9 +171,50 @@
       <div class="p-5 rounded-2xl bg-surface-container-low border border-primary/10 flex items-start gap-4">
         <span class="material-symbols-outlined text-gold-deep text-[28px] shrink-0 mt-0.5">info</span>
         <p class="text-sm text-on-surface-variant leading-relaxed">
-          Cours de formation assigné à votre entreprise : <strong id="course-name-label" class="text-primary">Chargement…</strong>. Ajoutez vos employés, suivez leur inscription, demandez l'activation du Module 2 pour ceux qui sont prêts, et choisissez le mode d'évaluation finale pour l'obtention de leurs certificats.
+          Formation active assignée à votre entreprise : <strong id="course-name-label" class="text-primary">Chargement…</strong>. Choisissez ou changez de thématique ci-dessous, ajoutez vos employés, suivez leur inscription, et demandez l'activation du Module 2.
         </p>
       </div>
+
+     
+        <!-- Two interactive cards referencing the formation page / catalog -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          
+          <!-- Card 1: Explore Catalog & Formations -->
+          <div class="p-6 rounded-2xl border border-primary/15 bg-surface hover:border-gold transition-all flex flex-col justify-between space-y-4">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 border border-primary/20">
+                <span class="material-symbols-outlined">explore</span>
+              </div>
+              <h3 class="font-headline text-lg font-bold text-primary mb-1">Explorer le catalogue des formations</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                Consultez l'ensemble de nos programmes et thématiques spécialisées pour former vos équipes aux compétences de pointe.
+              </p>
+            </div>
+            <a href="index.html#formations" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-gold-deep transition-colors">
+              <span>Voir le catalogue complet</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Card 2: Multi-Cohort / Session Management -->
+          <div class="p-6 rounded-2xl border border-gold/40 bg-gradient-to-br from-surface to-gold/5 hover:border-gold transition-all flex flex-col justify-between space-y-4">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-gold text-primary flex items-center justify-center mb-3 shadow-sm">
+                <span class="material-symbols-outlined">groups</span>
+              </div>
+              <h3 class="font-headline text-lg font-bold text-primary mb-1">Créer une nouvelle cohorte</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                Besoin de former des équipes en parallèle sur une autre thématique ? Créez un compte distinct avec un suffixe (ex: <code class="code-cell">MonEntreprise - Session 2</code>).
+              </p>
+            </div>
+            <a href="company-registration.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-gold-deep transition-colors">
+              <span>Inscrire une nouvelle session</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </a>
+          </div>
+
+        </div>
+      </section>
 
       <!-- SECTION: EXPLICATION DU PARCOURS DE FORMATION -->
       <section class="space-y-4 pt-2 pb-4">
@@ -195,7 +236,7 @@
               </div>
               <h3 class="font-headline text-lg font-bold text-primary mb-2">1. Inscription &amp; Accès Module 1</h3>
               <p class="text-sm text-on-surface-variant leading-relaxed">
-                Ajoutez vos employés ci-dessous pour leur générer un code d'accès unique. L'employé reçoit son code par WhatsApp et accède gratuitement au premier module théorique du cours.
+                Ajoutez vos employés ci-dessous pour leur générer un code d'accès unique. L'employé reçoit son code par WhatsApp et accède gratuitement au premier module théorique de la thématique choisie.
               </p>
             </div>
           </div>
@@ -211,7 +252,7 @@
               </div>
               <h3 class="font-headline text-lg font-bold text-primary mb-2">2. Paiement &amp; Activation Module 2</h3>
               <p class="text-sm text-on-surface-variant leading-relaxed">
-                Remplissez le formulaire <em>"Demander le paiement"</em> en précisant le nombre de places. Un message WhatsApp pré-rempli s'ouvre avec l'administrateur pour finaliser le règlement. Une fois validé, attribuez ces places pour débloquer le Module 2.
+                Remplissez le formulaire <em>"Demander le paiement"</em> en précisant le nombre de places. Un message WhatsApp pré-rempli s'ouvre avec l'administrateur. Une fois validé, attribuez ces places pour débloquer le Module 2.
               </p>
             </div>
           </div>
@@ -227,7 +268,7 @@
               </div>
               <h3 class="font-headline text-lg font-bold text-primary mb-2">3. Choix d'Évaluation Finale</h3>
               <p class="text-sm text-on-surface-variant mb-3 leading-relaxed">
-                Une fois la théorie terminée, cochez le mode d'évaluation finale souhaité pour vos collaborateurs dans la section dédiée et transmettez votre demande sur WhatsApp :
+                Une fois la théorie terminée, cochez le mode d'évaluation finale souhaité pour vos collaborateurs dans la section dédiée et transmettez votre demande sur WhatsApp.
               </p>
               <ul class="text-xs text-on-surface-variant space-y-2 list-none font-medium">
                 <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-deep">location_on</span> Présentiel (locaux SMCAC)</li>
@@ -244,7 +285,7 @@
       <div id="no-course-warning" class="hidden p-5 rounded-2xl warning-banner flex items-start gap-4">
         <span class="material-symbols-outlined text-[26px] shrink-0 mt-0.5">warning</span>
         <p class="text-sm leading-relaxed">
-          Aucun cours n'a encore été assigné à votre entreprise par le super-admin. Vos employés peuvent être ajoutés, mais leur inscription échouera tant qu'un cours n'est pas défini. Contactez SMCAC Academy pour le faire assigner.
+          Aucune formation n'a été sélectionnée pour votre entreprise. Veuillez choisir une formation ou thématique dans la liste ci-dessus pour activer l'inscription de vos employés.
         </p>
       </div>
 
@@ -258,7 +299,7 @@
               <span class="material-symbols-outlined text-gold-deep text-[22px]">person_add</span>
               <h2 class="font-headline text-2xl font-medium text-primary">Ajouter un employé</h2>
             </div>
-            <p class="text-xs text-on-surface-variant mb-6">Générez un code d'inscription unique pour votre collaborateur.</p>
+            <p class="text-xs text-on-surface-variant mb-6">Générez un code d'inscription unique pour votre collaborateur sur la thématique active.</p>
             
             <form id="add-worker-form" class="add-form space-y-4">
               <div>
@@ -294,7 +335,7 @@
               <span class="material-symbols-outlined text-gold-deep text-[22px]">workspace_premium</span>
               <h2 class="font-headline text-2xl font-medium text-primary">Demander l'activation du Module 2</h2>
             </div>
-            <p class="text-xs text-on-surface-variant mb-6">Indiquez le nombre d'employés à inscrire. Cliquez sur le bouton pour ouvrir WhatsApp avec le numéro de l'administrateur, votre entreprise et le nombre de personnes sélectionnées.</p>
+            <p class="text-xs text-on-surface-variant mb-6">Indiquez le nombre d'employés à inscrire. Cliquez sur le bouton pour ouvrir WhatsApp avec le numéro de l'administrateur et votre sélection.</p>
 
             <form id="batch-form" class="add-form space-y-4">
               <div>
@@ -341,11 +382,11 @@
         </div>
       </section>
 
-      <!-- SECTION 5: LEADERBOARD -->
+      <!-- SECTION 5: LEADERBOARD & STAR WORKERS -->
       <section class="space-y-4">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-gold-deep text-[22px]">leaderboard</span>
-          <h2 class="font-headline text-2xl font-medium text-primary">Classement &amp; Progression des employés</h2>
+          <h2 class="font-headline text-2xl font-medium text-primary">Classement &amp; Étoiles (Star Workers)</h2>
         </div>
         <div id="leaderboard-wrap" class="overflow-x-auto">
           <div class="empty">Chargement du classement…</div>
@@ -360,77 +401,6 @@
         </div>
         <div id="final-eval-wrap" class="bg-surface-container-lowest p-6 sm:p-8 rounded-3xl border border-primary/10 shadow-sm">
           <div class="empty">Chargement…</div>
-        </div>
-      </section>
-
-      <!-- SECTION 7: AUTRES FORMATIONS DISPONIBLES -->
-      <section class="mt-12 pt-10 pb-6 border-t border-primary/10 space-y-6">
-        
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          <div class="flex items-center gap-2.5">
-            <span class="material-symbols-outlined text-gold-deep text-[24px] shrink-0">auto_stories</span>
-            <h2 class="font-headline text-2xl sm:text-3xl font-medium text-primary">Autres formations disponibles</h2>
-          </div>
-          <button type="button" id="btn-catalog-all" class="self-start sm:self-auto text-xs sm:text-sm text-primary font-bold hover:text-gold-deep transition-colors inline-flex items-center gap-1.5 cursor-pointer bg-transparent border-none p-0">
-            <span>Voir tout le catalogue</span>
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-          </button>
-        </div>
-
-        <p class="text-xs sm:text-sm text-on-surface-variant max-w-3xl leading-relaxed mt-1">
-          Vous souhaitez former vos employés sur un autre module ? Cliquez sur une formation ci-dessous pour demander son activation directement au super-admin via WhatsApp.
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 pt-4">
-          
-          <!-- Course Card 1 -->
-          <div id="card-course-leadership" class="relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl group cursor-pointer border border-primary/10 min-h-[300px] sm:min-h-[320px] flex flex-col justify-end p-6 sm:p-8 bg-primary text-white transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Développement Personnel & Leadership" class="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/75 to-transparent"></div>
-            
-            <div class="relative z-10 space-y-3">
-              <div>
-                <span class="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider uppercase bg-gold/20 text-gold-light border border-gold/30 backdrop-blur-sm">
-                  Catalogue SMCAC
-                </span>
-              </div>
-              <h3 class="font-headline text-xl sm:text-2xl font-bold text-surface-container-lowest leading-snug">
-                Développement Personnel &amp; Leadership
-              </h3>
-              <p class="text-xs sm:text-sm text-surface-container-low/85 leading-relaxed line-clamp-2">
-                Maîtrisez la communication persuasive, la prise de parole et le leadership d'équipe.
-              </p>
-              <div class="pt-2 flex items-center gap-2 text-gold-light text-xs sm:text-sm font-semibold group-hover:translate-x-1.5 transition-transform">
-                <span>Accéder à la formation</span>
-                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Course Card 2 -->
-          <div id="card-course-all" class="relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl group cursor-pointer border border-primary/10 min-h-[300px] sm:min-h-[320px] flex flex-col justify-end p-6 sm:p-8 bg-primary text-white transition-all duration-300">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop" alt="Découvrir tous nos parcours" class="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/75 to-transparent"></div>
-            
-            <div class="relative z-10 space-y-3">
-              <div>
-                <span class="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider uppercase bg-wa/20 text-wa border border-wa/30 backdrop-blur-sm">
-                  Inscriptions Ouvertes
-                </span>
-              </div>
-              <h3 class="font-headline text-xl sm:text-2xl font-bold text-surface-container-lowest leading-snug">
-                Découvrir tous nos parcours
-              </h3>
-              <p class="text-xs sm:text-sm text-surface-container-low/85 leading-relaxed line-clamp-2">
-                Parcourez l'ensemble des modules certifiants et sélectionnez votre prochaine formation.
-              </p>
-              <div class="pt-2 flex items-center gap-2 text-gold-light text-xs sm:text-sm font-semibold group-hover:translate-x-1.5 transition-transform">
-                <span>Accéder aux formations</span>
-                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-              </div>
-            </div>
-          </div>
-
         </div>
       </section>
 
@@ -462,12 +432,17 @@
   const noCourseWarning = document.getElementById('no-course-warning');
   const refreshBtn = document.getElementById('refresh-btn');
 
+  const courseSelect = document.getElementById('course-select');
+  const selectCourseForm = document.getElementById('select-course-form');
+  const updateCourseBtn = document.getElementById('update-course-btn');
+
   const togglePasswordBtn = document.getElementById('toggle-password');
   const passwordInput = document.getElementById('password');
   const togglePasswordIcon = document.getElementById('toggle-password-icon');
 
   let myCompanyId = null;
   let myCompanyName = '';
+  let myCourseId = null;
   let myCourseTitle = null;
   let lastLeaderboardRows = [];
 
@@ -507,7 +482,7 @@
   async function ensureCompanyAdminSession() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return false;
-    const { data: profile } = await sb.from('profiles').select('role, company_id').eq('id', session.user.id).single();
+    const { data: profile } = await sb.from('profiles').select('role, company_id').eq('id', session.user.id).maybeSingle();
     return !!(profile && profile.role === 'company_admin' && profile.company_id === myCompanyId);
   }
 
@@ -524,25 +499,10 @@
       .from('profiles')
       .select('role, company_id')
       .eq('id', session.user.id)
-      .single();
+      .maybeSingle();
 
-    if (error) {
-      console.error("Profile retrieval error:", error);
-      setStatus(loginStatus, 'error', 'Erreur d\'accès au profil. Vérifiez la configuration RLS dans Supabase.');
-      await sb.auth.signOut();
-      showLogin();
-      return;
-    }
-
-    if (!profile || profile.role !== 'company_admin') {
-      setStatus(loginStatus, 'error', 'Ce compte ne possède pas les droits administrateur d\'entreprise.');
-      await sb.auth.signOut();
-      showLogin();
-      return;
-    }
-
-    if (!profile.company_id) {
-      setStatus(loginStatus, 'error', 'Ce compte administrateur n\'est associé à aucune entreprise enregistrée.');
+    if (error || !profile || profile.role !== 'company_admin' || !profile.company_id) {
+      setStatus(loginStatus, 'error', 'Accès non autorisé ou profil administrateur introuvable.');
       await sb.auth.signOut();
       showLogin();
       return;
@@ -554,24 +514,27 @@
       .from('companies')
       .select('name, course_id, courses(title)')
       .eq('id', myCompanyId)
-      .single();
+      .maybeSingle();
 
-    if (compErr) {
-      console.warn("Company load warning:", compErr);
+    if (compErr || !company) {
+      setStatus(loginStatus, 'error', 'Impossible de charger les données de l\'entreprise.');
+      await sb.auth.signOut();
+      showLogin();
+      return;
     }
 
-    if (company) {
-      myCompanyName = company.name || 'Entreprise';
-      companyNameLabel.textContent = myCompanyName;
+    myCompanyName = company.name || 'Entreprise';
+    companyNameLabel.textContent = myCompanyName;
+    myCourseId = company.course_id || null;
 
-      const courseData = Array.isArray(company.courses) ? company.courses[0] : company.courses;
-      myCourseTitle = courseData?.title || null;
+    const courseData = Array.isArray(company.courses) ? company.courses[0] : company.courses;
+    myCourseTitle = courseData?.title || null;
 
-      courseNameLabel.textContent = myCourseTitle || 'Aucun cours assigné';
-      noCourseWarning.classList.toggle('hidden', !!(company.course_id && myCourseTitle));
-    }
+    courseNameLabel.textContent = myCourseTitle || 'Aucune formation sélectionnée';
+    noCourseWarning.classList.toggle('hidden', !!(myCourseId && myCourseTitle));
 
     showDashboard();
+    await loadCoursesDropdown();
     await loadAllDashboardData();
   }
 
@@ -602,6 +565,7 @@
       loginBtn.disabled = false;
       loginBtn.innerHTML = '<span>Se connecter</span><span class="material-symbols-outlined text-[20px]">login</span>';
     } else {
+      await new Promise(resolve => setTimeout(resolve, 300));
       await checkSessionAndRoute();
       loginBtn.disabled = false;
       loginBtn.innerHTML = '<span>Se connecter</span><span class="material-symbols-outlined text-[20px]">login</span>';
@@ -615,6 +579,7 @@
 
   refreshBtn.addEventListener('click', async () => {
     refreshBtn.disabled = true;
+    await loadCoursesDropdown();
     await loadAllDashboardData();
     refreshBtn.disabled = false;
   });
@@ -626,12 +591,80 @@
   });
 
   // ============================================================
+  // COURSE / TOPIC SELECTION MANAGEMENT
+  // ============================================================
+  async function loadCoursesDropdown() {
+    if (!courseSelect) return;
+    const { data: courses, error } = await sb
+      .from('courses')
+      .select('id, title')
+      .order('title', { ascending: true });
+
+    if (error || !courses) {
+      courseSelect.innerHTML = '<option value="" disabled selected>Erreur de chargement des formations</option>';
+      return;
+    }
+
+    let html = '<option value="" disabled>-- Sélectionnez une thématique / formation --</option>';
+    courses.forEach(c => {
+      const selected = c.id === myCourseId ? 'selected' : '';
+      html += `<option value="${escapeHtml(c.id)}" ${selected}>${escapeHtml(c.title)}</option>`;
+    });
+    courseSelect.innerHTML = html;
+  }
+
+  if (selectCourseForm) {
+    selectCourseForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!(await ensureCompanyAdminSession())) { handleSessionMismatch(); return; }
+
+      const selectedCourseId = courseSelect.value;
+      if (!selectedCourseId) {
+        setStatus(dashStatus, 'error', 'Veuillez sélectionner un cours ou une thématique.');
+        return;
+      }
+
+      updateCourseBtn.disabled = true;
+      updateCourseBtn.innerHTML = '<span>Mise à jour…</span>';
+      setStatus(dashStatus, null, '');
+
+      const { error } = await sb
+        .from('companies')
+        .update({ course_id: selectedCourseId })
+        .eq('id', myCompanyId);
+
+      if (error) {
+        setStatus(dashStatus, 'error', 'Erreur lors de la mise à jour de la formation : ' + error.message);
+      } else {
+        myCourseId = selectedCourseId;
+        const { data: updatedComp } = await sb
+          .from('companies')
+          .select('courses(title)')
+          .eq('id', myCompanyId)
+          .maybeSingle();
+
+        const courseData = updatedComp ? (Array.isArray(updatedComp.courses) ? updatedComp.courses[0] : updatedComp.courses) : null;
+        myCourseTitle = courseData?.title || 'Formation active';
+
+        courseNameLabel.textContent = myCourseTitle;
+        noCourseWarning.classList.add('hidden');
+
+        setStatus(dashStatus, 'success', `Formation mise à jour avec succès : "${myCourseTitle}". Le flux de formation et les codes d'accès sont prêts.`);
+        await loadAllDashboardData();
+      }
+
+      updateCourseBtn.disabled = false;
+      updateCourseBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span><span>Appliquer cette formation</span>';
+    });
+  }
+
+  // ============================================================
   // WORKER MANAGEMENT
   // ============================================================
   async function loadWorkers() {
     const { data, error } = await sb
       .from('company_seats')
-      .select('id, seat_number, seat_code, status, assigned_email, assigned_phone, invited_at, redeemed_at, learner_profile_id, profiles(full_name)')
+      .select('id, seat_number, seat_code, status, assigned_email, assigned_phone, invited_at, redeemed_at, learner_profile_id, profiles!company_seats_learner_profile_id_fkey(full_name)')
       .eq('company_id', myCompanyId)
       .order('seat_number', { ascending: true });
 
@@ -644,7 +677,7 @@
   }
 
   function waLink(seat) {
-    const msg = `Bonjour ! Voici votre code d'inscription à la formation SMCAC Academy : *${seat.seat_code}*\n\nInscrivez-vous ici : ${REGISTRATION_URL}`;
+    const msg = `Bonjour ! Voici votre code d'inscription pour la formation "${myCourseTitle || 'SMCAC Academy'}" : *${seat.seat_code}*\n\nInscrivez-vous ici : ${REGISTRATION_URL}`;
     const phoneDigits = (seat.assigned_phone || '').replace(/\D/g, '');
     return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(msg)}`;
   }
@@ -737,11 +770,11 @@
     if (error) {
       setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
     } else {
-      const msg = `Bonjour SMCAC Academy,\n\nJe représente l'entreprise "*${myCompanyName}*".\nNous souhaitons effectuer le paiement pour l'activation du Module 2 de nos collaborateurs.\n\n📊 *Détails de la demande* :\n- Nombre d'employés choisis : *${count}*\n- Cours concerné : *${myCourseTitle || 'Non spécifié'}*\n- Numéro Admin destinataire : *${SUPER_ADMIN_WHATSAPP}*\n\nMerci de nous transmettre la procédure de règlement.`;
+      const msg = `Bonjour SMCAC Academy,\n\nJe représente l'entreprise "*${myCompanyName}*".\nNous souhaitons effectuer le paiement pour l'activation du Module 2 de nos collaborateurs.\n\n📊 *Détails de la demande* :\n- Nombre d'employés : *${count}*\n- Cours concerné : *${myCourseTitle || 'Non spécifié'}*\n- Numéro Admin destinataire : *${SUPER_ADMIN_WHATSAPP}*\n\nMerci de nous transmettre la procédure de règlement.`;
 
       window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 
-      setStatus(dashStatus, 'success', 'Demande de paiement transmise. Le numéro de l\'administrateur et le nombre de personnes sélectionnées (' + count + ') ont été envoyés sur WhatsApp.');
+      setStatus(dashStatus, 'success', 'Demande de paiement transmise pour ' + count + ' personne(s) sur WhatsApp.');
       batchForm.reset();
       await loadBatches();
     }
@@ -750,15 +783,7 @@
     batchBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">chat</span><span>Demander le paiement via WhatsApp</span>';
   });
 
-async function loadBatches() {
-    const { data: compData } = await sb
-      .from('companies')
-      .select('total_seats_paid')
-      .eq('id', myCompanyId)
-      .single();
-
-    const totalPaidSeats = compData?.total_seats_paid || 0;
-
+  async function loadBatches() {
     const { data: batches, error: batchErr } = await sb
       .from('payment_batches')
       .select('id, seats_requested, status, created_at')
@@ -780,16 +805,15 @@ async function loadBatches() {
 
     const { data: eligibleSeats } = await sb
       .from('company_seats')
-      .select('id, seat_code, assigned_email, learner_profile_id, profiles(full_name)')
+      .select('id, seat_code, assigned_email, learner_profile_id, profiles!company_seats_learner_profile_id_fkey(full_name)')
       .eq('company_id', myCompanyId)
       .eq('status', 'redeemed');
 
     const assignedSeatIds = new Set((allSelections || []).map(s => s.seat_id));
     const unassignedEligible = (eligibleSeats || []).filter(s => !assignedSeatIds.has(s.id));
 
-    // Consider batch confirmed if explicit status is confirmed OR company has paid seats
     batchesWrap.innerHTML = batches.map(b => {
-      const isConfirmed = b.status === 'confirmed' || totalPaidSeats > 0;
+      const isConfirmed = b.status === 'confirmed';
       return renderBatch({ ...b, status: isConfirmed ? 'confirmed' : b.status }, unassignedEligible);
     }).join('');
 
@@ -814,7 +838,7 @@ async function loadBatches() {
     if (eligibleSeats.length === 0) {
       return `<div class="bg-surface-container-lowest p-6 rounded-2xl border border-primary/10 shadow-sm space-y-1">
         <p class="text-sm font-medium text-primary"><strong>${batch.seats_requested}</strong> place(s) confirmée(s) — ${badge}</p>
-        <p class="text-xs text-on-surface-variant">Aucun employé inscrit disponible pour l\u2019instant (l\u2019employé doit d\u2019abord s\u2019inscrire avec son code d'accès).</p>
+        <p class="text-xs text-on-surface-variant">Aucun employé inscrit disponible pour l\u2019instant.</p>
       </div>`;
     }
 
@@ -869,14 +893,14 @@ async function loadBatches() {
   }
 
   // ============================================================
-  // LEADERBOARD & PROGRESS TRACKING
+  // LEADERBOARD & STAR WORKERS PROGRESS TRACKING
   // ============================================================
   async function loadLeaderboard() {
     const wrap = document.getElementById('leaderboard-wrap');
 
     const { data: seats, error } = await sb
       .from('company_seats')
-      .select('seat_code, assigned_email, learner_profile_id, profiles(full_name, enrollments(module_progress(status, modules(title)), quiz_attempts(score, total, passed, modules(title))))')
+      .select('seat_code, assigned_email, learner_profile_id, profiles!company_seats_learner_profile_id_fkey(full_name, enrollments(module_progress(status, modules(title)), quiz_attempts(score, total, passed, modules(title))))')
       .eq('company_id', myCompanyId)
       .eq('status', 'redeemed');
 
@@ -914,17 +938,32 @@ async function loadBatches() {
 
     lastLeaderboardRows = rows;
 
+    const topStarCount = rows.filter(r => r.completed > 0).length;
+
     wrap.innerHTML = `
-      <table>
-        <thead><tr><th>Employé</th><th>Modules terminés</th><th>Scores</th></tr></thead>
-        <tbody>${rows.map(r => `
-          <tr>
-            <td class="font-medium">${escapeHtml(r.name)}</td>
-            <td><span class="font-semibold text-primary">${r.completed}</span> /${r.total || 2}</td>
-            <td class="text-xs font-mono text-on-surface-variant">${escapeHtml(r.bestScores || '—')}</td>
-          </tr>
-        `).join('')}</tbody>
-      </table>
+      <div class="space-y-4">
+        ${topStarCount > 0 ? `
+          <div class="p-4 rounded-2xl bg-gold/10 border border-gold/40 flex items-center gap-3">
+            <span class="material-symbols-outlined text-gold-deep text-[24px]">grade</span>
+            <p class="text-xs sm:text-sm font-medium text-primary">
+              <strong>Superstars identifiées :</strong> ${topStarCount} collaborateur(s) ont validé au moins un module dans cette cohorte.
+            </p>
+          </div>
+        ` : ''}
+        <table>
+          <thead><tr><th>Employé (Star Worker)</th><th>Modules terminés</th><th>Scores aux quiz</th></tr></thead>
+          <tbody>${rows.map((r, idx) => `
+            <tr>
+              <td class="font-medium flex items-center gap-2">
+                ${idx === 0 && r.completed > 0 ? '<span class="material-symbols-outlined text-gold text-[18px]">workspace_premium</span>' : '<span class="text-xs text-outline font-mono">#' + (idx + 1) + '</span>'}
+                <span>${escapeHtml(r.name)}</span>
+              </td>
+              <td><span class="font-semibold text-primary">${r.completed}</span> /${r.total || 2}</td>
+              <td class="text-xs font-mono text-on-surface-variant">${escapeHtml(r.bestScores || '—')}</td>
+            </tr>
+          `).join('')}</tbody>
+        </table>
+      </div>
     `;
 
     renderFinalEval();
@@ -985,7 +1024,7 @@ async function loadBatches() {
             <label for="eval-notes" class="block text-xs uppercase tracking-wider font-bold text-primary mb-2">
               Écrire un court message à l'administrateur
             </label>
-            <textarea id="eval-notes" rows="3" placeholder="Ex: Bonjour, nous aimerions planifier l'évaluation ce samedi matin à nos bureaux de Douala..." class="w-full p-4 bg-surface-container-low border border-outline-variant rounded-2xl text-xs sm:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all resize-none"></textarea>
+            <textarea id="eval-notes" rows="3" placeholder="Ex: Bonjour, nous aimerions planifier l'évaluation ce samedi matin à nos bureaux..." class="w-full p-4 bg-surface-container-low border border-outline-variant rounded-2xl text-xs sm:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all resize-none"></textarea>
           </div>
 
           <button type="submit" class="w-full py-4 px-6 rounded-2xl bg-[#25d366] hover:bg-[#20bd5a] text-white font-bold text-sm sm:text-base shadow-md transition-all duration-200 active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2">
@@ -1005,26 +1044,14 @@ async function loadBatches() {
         const selectedMode = wrap.querySelector('input[name="eval_mode"]:checked')?.value || 'Présentiel';
         const userNotes = document.getElementById('eval-notes').value.trim();
 
-        const msg = `Bonjour SMCAC Academy,\n\nNous souhaitons organiser l'évaluation finale de nos collaborateurs.\n\n🏢 *Entreprise* : ${myCompanyName || 'N/A'}\n📚 *Cours* : ${myCourseTitle || 'N/A'}\n📌 *Option choisie* : *${selectedMode}*\n👥 *Employés concernés (${ready.length})* : ${readyNamesList}\n\n💬 *Message de l'entreprise* :\n"${userNotes || 'Aucune précision supplémentaire'}"\n\nMerci de nous recontacter sur ce numéro Admin (*${SUPER_ADMIN_WHATSAPP}*) pour confirmer la date.`;
+        const msg = `Bonjour SMCAC Academy,\n\nNous souhaitons organiser l'évaluation finale de nos collaborateurs.\n\n🏢 *Entreprise* : ${myCompanyName || 'N/A'}\n📚 *Formation* : ${myCourseTitle || 'N/A'}\n📌 *Option choisie* : *${selectedMode}*\n👥 *Employés concernés (${ready.length})* : ${readyNamesList}\n\n💬 *Message* :\n"${userNotes || 'Aucune précision'}"\n\nMerci de nous recontacter sur ce numéro Admin (*${SUPER_ADMIN_WHATSAPP}*).`;
 
         window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 
-        setStatus(dashStatus, 'success', 'Demande d\'évaluation transmise sur WhatsApp avec l\'option cochée et votre message.');
+        setStatus(dashStatus, 'success', 'Demande d\'évaluation transmise sur WhatsApp avec succès.');
       });
     }
   }
-
-  function contactForOtherCourse(courseTitle) {
-    const company = myCompanyName || 'Notre entreprise';
-    const msg = `Bonjour SMCAC Academy,\n\nNous sommes l'entreprise "*${company}*".\nNous souhaitons obtenir des informations pour inscrire nos collaborateurs à la formation suivante :\n👉 *${courseTitle}*\n\nMerci de nous contacter pour la démarche de souscription.`;
-    
-    window.open(`https://wa.me/${SUPER_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
-  }
-
-  // Bind catalog triggers
-  document.getElementById('btn-catalog-all')?.addEventListener('click', () => contactForOtherCourse('Catalogue Complet SMCAC'));
-  document.getElementById('card-course-leadership')?.addEventListener('click', () => contactForOtherCourse('Développement Personnel & Leadership'));
-  document.getElementById('card-course-all')?.addEventListener('click', () => contactForOtherCourse('Catalogue Tous Parcours SMCAC'));
 
   // Initialize
   checkSessionAndRoute();
