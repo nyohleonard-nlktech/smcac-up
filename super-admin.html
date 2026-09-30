@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contenu des modules — SMCAC Academy</title>
+<title>Super-admin — SMCAC Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
@@ -31,9 +31,10 @@
           "on-surface-variant": "#49554e",
           "outline": "#7a877e",
           "outline-variant": "#c5cec7",
-          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c" },
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c", "glow": "#f6be39" },
           "error": "#b3261e",
-          "success": "#2c5e2c"
+          "success": "#2c5e2c",
+          "wa": "#25d366"
         },
         fontFamily: {
           "display": ["Newsreader", "Georgia", "serif"],
@@ -45,49 +46,53 @@
   };
 </script>
 <style>
-  .status {
-    display: none;
-    margin-top: 1rem;
-    padding: 0.85rem 1.15rem;
-    border-radius: 0.75rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
+  .status { display:none; margin-top:1rem; padding:0.85rem 1.15rem; border-radius:0.75rem; font-size:0.875rem; line-height:1.5; }
+  .status.error { display:block; background:#fbeceb; border:1px solid #f1c9c6; color:#b3261e; }
+  .status.success { display:block; background:#eef4ee; border:1px solid #cfe3cf; color:#2c5e2c; }
+  .hidden { display:none !important; }
+  table {
+    width:100%; border-collapse:separate; border-spacing:0; background:#ffffff;
+    border:1px solid rgba(20,62,46,0.12); border-radius:1rem; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.04);
   }
-  .status.error {
-    display: block;
-    background-color: #fbeceb;
-    border: 1px solid #f1c9c6;
-    color: #b3261e;
+  th {
+    background:#f7f4ed; font-weight:600; color:#143e2e; font-size:0.72rem;
+    text-transform:uppercase; letter-spacing:0.05em; padding:0.8rem 0.9rem; border-bottom:1px solid rgba(20,62,46,0.12); text-align:left;
   }
-  .status.success {
-    display: block;
-    background-color: #eef4ee;
-    border: 1px solid #cfe3cf;
-    color: #2c5e2c;
-  }
-  .card-empty {
-    padding: 2rem;
-    text-align: center;
-    color: #49554e;
-    font-size: 0.875rem;
-    background: #ffffff;
-    border: 1px solid rgba(20, 62, 46, 0.1);
-    border-radius: 1rem;
-    font-weight: 500;
-  }
-  .hidden { display: none !important; }
+  td { padding:0.8rem 0.9rem; font-size:0.85rem; border-bottom:1px solid rgba(20,62,46,0.06); color:#1b231e; vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fbf9f4; }
+  .badge { display:inline-flex; align-items:center; gap:0.3rem; padding:0.2rem 0.6rem; border-radius:9999px; font-size:0.72rem; font-weight:700; white-space:nowrap; }
+  .badge.ok { background:#dcfce7; color:#166534; }
+  .badge.pending { background:#fef3c7; color:#92400e; }
+  .badge.locked { background:#f3f4f6; color:#4b5563; }
+  .badge.suspended { background:#fee2e2; color:#991b1b; }
+  .card-empty { padding:2rem; text-align:center; color:#49554e; font-size:0.875rem; background:#ffffff; border:1px solid rgba(20,62,46,0.1); border-radius:1rem; font-weight:500; }
+  .tab-btn { padding:0.65rem 1.1rem; border-radius:0.85rem 0.85rem 0 0; font-size:0.85rem; font-weight:700; color:#49554e; border:1px solid transparent; cursor:pointer; transition:all .15s ease; }
+  .tab-btn.active { color:#143e2e; background:#ffffff; border-color:rgba(20,62,46,0.12); border-bottom-color:#ffffff; }
+  .kpi-card { background:#ffffff; border:1px solid rgba(20,62,46,0.1); border-radius:1.25rem; padding:1.25rem 1.5rem; }
+  .icon-btn { display:inline-flex; align-items:center; gap:0.3rem; padding:0.4rem 0.75rem; border-radius:0.6rem; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all .15s ease; border:1px solid transparent; }
+  .icon-btn.primary { background:#143e2e; color:#ffdfa0; border-color:rgba(212,160,23,0.3); }
+  .icon-btn.primary:hover:not(:disabled) { background:#d4a017; color:#143e2e; }
+  .icon-btn.danger { background:transparent; color:#b3261e; border-color:rgba(179,38,30,0.3); }
+  .icon-btn.danger:hover { background:rgba(179,38,30,0.08); }
+  .icon-btn.ghost { background:transparent; color:#143e2e; border-color:rgba(20,62,46,0.2); }
+  .icon-btn.ghost:hover { background:rgba(20,62,46,0.06); }
+  .icon-btn:disabled { opacity:0.45; cursor:not-allowed; }
 </style>
 </head>
 <body class="min-h-full font-body bg-surface text-on-surface antialiased flex flex-col">
 
   <!-- LOGIN SCREEN -->
-  <div id="login-screen" class="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
-    <div class="w-full max-w-md bg-surface-container-lowest rounded-3xl border border-primary/10 shadow-xl p-8 sm:p-10">
+  <div id="login-screen" class="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 bg-primary"></div>
+    <div class="absolute inset-0 -z-10 opacity-[0.07]" style="background-image:radial-gradient(circle at 1px 1px, #ffffff 1.4px, transparent 0); background-size: 22px 22px;"></div>
+
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-3xl border border-gold/20 shadow-2xl p-8 sm:p-10 relative">
       <div class="text-center mb-8">
-        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-16 w-16 rounded-full object-cover border-2 border-gold/40 mx-auto mb-4 shadow-sm" onerror="this.src='https://via.placeholder.com/64'">
-        <p class="text-xs uppercase tracking-widest text-gold-deep font-bold mb-1">SMCAC Academy</p>
-        <h1 class="font-headline text-2xl sm:text-3xl font-medium text-primary">Connexion super-admin</h1>
-        <p class="text-xs text-on-surface-variant mt-2">Gestion du contenu pédagogique et des quiz.</p>
+        <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-20 w-20 rounded-full object-cover border-4 border-gold/40 mx-auto mb-4 shadow-lg" onerror="this.src='https://via.placeholder.com/80?text=SMCAC'">
+        <p class="text-xs uppercase tracking-[0.2em] text-gold-deep font-bold mb-1.5">SMCAC Academy</p>
+        <h1 class="font-headline text-3xl font-medium text-primary">Console Super-Admin</h1>
+        <p class="text-xs text-on-surface-variant mt-2.5 leading-relaxed">Validez les paiements, débloquez le Module 2 des apprenants et pilotez les entreprises partenaires.</p>
       </div>
 
       <form id="login-form" class="space-y-4">
@@ -102,38 +107,47 @@
         <div>
           <label for="password" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Mot de passe</label>
           <div class="relative">
-            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">key</span>
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
             <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
           </div>
         </div>
 
-        <button type="submit" id="login-btn" class="w-full mt-2 bg-primary text-gold-light hover:bg-gold hover:text-primary transition-all font-semibold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 text-sm">
+        <button type="submit" id="login-btn" class="w-full mt-2 py-3.5 px-6 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary hover:border-gold font-semibold text-sm shadow-md transition-all duration-200 active:scale-[0.99] disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2">
           <span>Se connecter</span>
-          <span class="material-symbols-outlined text-[18px]">login</span>
+          <span class="material-symbols-outlined text-[20px]">login</span>
         </button>
 
         <div id="login-status" class="status" role="status" aria-live="polite"></div>
       </form>
+
+      <p class="text-center text-[11px] text-outline mt-8 flex items-center justify-center gap-1.5">
+        <span class="material-symbols-outlined text-[14px]">verified_user</span>
+        Accès réservé au personnel administratif SMCAC Academy
+      </p>
     </div>
   </div>
 
   <!-- APP SCREEN -->
   <div id="app-screen" class="hidden flex-1 flex flex-col w-full">
-    
+
     <header class="w-full bg-primary text-surface border-b border-gold/20 sticky top-0 z-40 shadow-md">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
         <div class="flex items-center gap-3">
-          <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 rounded-full object-cover border-2 border-gold/40" onerror="this.src='https://via.placeholder.com/40'">
+          <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-11 w-11 rounded-full object-cover border-2 border-gold/40" onerror="this.src='https://via.placeholder.com/44?text=SMCAC'">
           <div>
             <p class="text-[10px] sm:text-xs uppercase tracking-widest text-gold font-semibold">SMCAC Academy</p>
-            <h1 class="font-headline text-lg sm:text-2xl font-medium text-surface">Contenu des cours</h1>
+            <h1 class="font-headline text-lg sm:text-2xl font-medium text-surface">Console Super-Admin</h1>
           </div>
         </div>
 
-        <nav class="flex items-center gap-3">
-          <a href="super-admin.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-light hover:bg-gold hover:text-primary text-gold-light border border-gold/20 text-xs sm:text-sm font-medium transition-all text-decoration-none">
-            <span class="material-symbols-outlined text-[18px]">dashboard</span>
-            <span class="hidden sm:inline">Tableau de bord</span>
+        <nav class="flex items-center gap-2">
+          <button id="refresh-btn" title="Rafraîchir" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-surface/20 hover:bg-surface/10 text-surface text-xs sm:text-sm font-medium transition-all">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+            <span class="hidden md:inline">Actualiser</span>
+          </button>
+          <a href="admin-content.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-light hover:bg-gold hover:text-primary text-gold-light border border-gold/20 text-xs sm:text-sm font-medium transition-all">
+            <span class="material-symbols-outlined text-[18px]">library_books</span>
+            <span class="hidden sm:inline">Contenu des cours</span>
           </a>
           <button id="logout-btn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-surface/20 hover:bg-surface/10 text-surface text-xs sm:text-sm font-medium transition-all">
             <span class="material-symbols-outlined text-[18px]">logout</span>
@@ -143,453 +157,506 @@
       </div>
     </header>
 
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-10">
-      
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+
       <div id="dash-status" class="status" role="status" aria-live="polite"></div>
 
-      <!-- SECTION 1: PRESENTATION FILES (PDF & PPTX) -->
-      <section class="space-y-6">
-        <div class="flex items-center gap-2.5 pb-2 border-b border-primary/10">
-          <span class="material-symbols-outlined text-gold-deep text-[24px]">slideshow</span>
-          <div>
-            <h2 class="font-headline text-xl font-medium text-primary m-0">Supports de cours (PDF, PowerPoint)</h2>
-            <p class="text-xs text-on-surface-variant m-0 mt-0.5">Formats acceptés : <code class="bg-surface-container px-1.5 py-0.5 rounded text-primary font-mono">.pdf, .pptx, .ppt</code></p>
+      <!-- KPI ROW -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="kpi-card">
+          <p class="text-2xl sm:text-3xl font-extrabold text-primary" id="kpi-learners">—</p>
+          <p class="text-[11px] uppercase font-bold text-on-surface-variant tracking-wide mt-1">Apprenants individuels</p>
+        </div>
+        <div class="kpi-card">
+          <p class="text-2xl sm:text-3xl font-extrabold text-primary" id="kpi-companies">—</p>
+          <p class="text-[11px] uppercase font-bold text-on-surface-variant tracking-wide mt-1">Entreprises</p>
+        </div>
+        <div class="kpi-card">
+          <p class="text-2xl sm:text-3xl font-extrabold text-gold-deep" id="kpi-pending">—</p>
+          <p class="text-[11px] uppercase font-bold text-on-surface-variant tracking-wide mt-1">Paiements en attente</p>
+        </div>
+        <div class="kpi-card">
+          <p class="text-2xl sm:text-3xl font-extrabold text-success" id="kpi-unlocked">—</p>
+          <p class="text-[11px] uppercase font-bold text-on-surface-variant tracking-wide mt-1">Module 2 débloqués</p>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div>
+        <div class="flex gap-1 border-b border-primary/10">
+          <button class="tab-btn active" data-tab="individuals">Apprenants individuels</button>
+          <button class="tab-btn" data-tab="companies">Entreprises</button>
+        </div>
+
+        <!-- TAB: INDIVIDUALS -->
+        <div id="tab-individuals" class="pt-6 space-y-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <p class="text-xs text-on-surface-variant">Apprenants ayant payé et inscrit sans passer par une entreprise. Validez leur Module 2 une fois le paiement WhatsApp confirmé.</p>
+            <div class="relative w-full sm:w-64">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+              <input type="text" id="individual-search" placeholder="Rechercher un apprenant…" class="w-full pl-9 pr-3 py-2 bg-white border border-outline-variant rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold">
+            </div>
+          </div>
+          <div id="individuals-wrap" class="overflow-x-auto">
+            <div class="card-empty">Chargement…</div>
           </div>
         </div>
 
-        <div id="uploads-wrap" class="space-y-8">
-          <div class="card-empty">Chargement des cours...</div>
-        </div>
-      </section>
-
-      <!-- SECTION 2: QUIZ QUESTIONS -->
-      <section class="space-y-6">
-        <div class="flex items-center gap-2.5 pb-2 border-b border-primary/10">
-          <span class="material-symbols-outlined text-gold-deep text-[24px]">quiz</span>
-          <div>
-            <h2 class="font-headline text-xl font-medium text-primary m-0">Questions du quiz</h2>
-            <p class="text-xs text-on-surface-variant m-0 mt-0.5">Gestion des questions associées à chaque module d'évaluation.</p>
+        <!-- TAB: COMPANIES -->
+        <div id="tab-companies" class="hidden pt-6 space-y-6">
+          <p class="text-xs text-on-surface-variant">Confirmez les paiements de lots ; l'entreprise attribue ensuite elle-même les places à ses employés depuis son tableau de bord.</p>
+          <div id="companies-wrap" class="space-y-5">
+            <div class="card-empty">Chargement…</div>
           </div>
         </div>
-
-        <div id="quiz-wrap" class="space-y-8">
-          <div class="card-empty">Chargement des modules et questions...</div>
-        </div>
-      </section>
+      </div>
 
     </main>
   </div>
 
 <script>
   const sb = supabase.createClient('https://fbogkyrrnyawbdgwratl.supabase.co', 'sb_publishable_szPaebKmXjhWZQKOyta7cw_k9PaaeHI');
-  
+
   const loginScreen = document.getElementById('login-screen');
   const appScreen = document.getElementById('app-screen');
   const loginForm = document.getElementById('login-form');
   const loginStatus = document.getElementById('login-status');
   const loginBtn = document.getElementById('login-btn');
   const dashStatus = document.getElementById('dash-status');
-  const uploadsWrap = document.getElementById('uploads-wrap');
-  const quizWrap = document.getElementById('quiz-wrap');
+  const individualsWrap = document.getElementById('individuals-wrap');
+  const companiesWrap = document.getElementById('companies-wrap');
+  const individualSearch = document.getElementById('individual-search');
+  const refreshBtn = document.getElementById('refresh-btn');
 
   let coursesList = [];
-  let modulesList = [];
+  let individualsCache = [];
 
-  function escapeHTML(str) {
-    if (!str) return '';
-    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
-  function slugify(text) {
-    return text
-      .toString()
-      .toLowerCase()
-      .trim()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-');
-  }
-
-  function showStatus(msg, type = 'error') {
-    dashStatus.className = `status ${type}`;
-    dashStatus.textContent = msg;
+  function setStatus(el, type, msg) {
+    if (!msg) { el.className = 'status'; el.textContent = ''; return; }
+    el.className = `status ${type}`;
+    el.textContent = msg;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function showLoginError(m) { loginStatus.className = 'status error'; loginStatus.textContent = m; }
   function showLogin() { loginScreen.classList.remove('hidden'); appScreen.classList.add('hidden'); }
   function showApp() { loginScreen.classList.add('hidden'); appScreen.classList.remove('hidden'); }
 
   async function checkSessionAndRoute() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { showLogin(); return; }
-    
-    const { data: profile, error } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+
+    const { data: profile, error } = await sb.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
     if (error || !profile || profile.role !== 'super_admin') {
-      showLoginError('Ce compte n\'a pas les droits super-admin.');
-      await sb.auth.signOut(); 
-      showLogin(); 
+      setStatus(loginStatus, 'error', "Ce compte n'a pas les droits super-admin.");
+      await sb.auth.signOut();
+      showLogin();
       return;
     }
     showApp();
-    loadAll();
+    await loadAll();
   }
 
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span>Connexion…</span>';
+    setStatus(loginStatus, null, '');
+
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const { error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) { 
-      showLoginError('E-mail ou mot de passe incorrect.'); 
-      loginBtn.disabled = false; 
-    } else { 
-      await checkSessionAndRoute(); 
-      loginBtn.disabled = false; 
+
+    if (error) {
+      setStatus(loginStatus, 'error', error.message.includes('Invalid') ? 'E-mail ou mot de passe incorrect.' : error.message);
+    } else {
+      await checkSessionAndRoute();
     }
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = '<span>Se connecter</span><span class="material-symbols-outlined text-[20px]">login</span>';
   });
 
-  document.getElementById('logout-btn').addEventListener('click', async (e) => {
-    e.preventDefault(); 
-    await sb.auth.signOut(); 
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await sb.auth.signOut();
     showLogin();
   });
 
+  refreshBtn.addEventListener('click', async () => {
+    refreshBtn.disabled = true;
+    await loadAll();
+    refreshBtn.disabled = false;
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-individuals').classList.toggle('hidden', btn.dataset.tab !== 'individuals');
+      document.getElementById('tab-companies').classList.toggle('hidden', btn.dataset.tab !== 'companies');
+    });
+  });
+
   async function loadAll() {
-    const { data: courses, error: cErr } = await sb.from('courses').select('id, title, order_index').order('order_index');
-    if (cErr) { 
-      showStatus('Erreur Base de données (courses): ' + cErr.message, 'error'); 
-      return; 
-    }
+    setStatus(dashStatus, null, '');
+    const { data: courses } = await sb.from('courses').select('id, title, order_index').order('order_index');
     coursesList = courses || [];
 
-    // Safe query excluding non-existent columns
-    const { data: mods, error: mErr } = await sb
-      .from('modules')
-      .select('id, title, order_index, course_id, file_path, original_file_path, mime_type')
-      .not('course_id', 'is', null);
-
-    if (mErr) { 
-      showStatus('Erreur Base de données (modules): ' + mErr.message, 'error'); 
-      return; 
-    }
-    modulesList = mods || [];
-
-    renderUploads();
-    loadQuestions();
+    await Promise.all([loadIndividuals(), loadCompanies()]);
   }
 
-  function modulesForCourse(courseId) {
-    return modulesList
-      .filter(m => m.course_id === courseId)
-      .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
-  }
+  // ============================================================
+  // INDIVIDUALS TAB
+  // ============================================================
+  async function loadIndividuals() {
+    const { data: learners, error } = await sb
+      .from('profiles')
+      .select('id, full_name, email, phone, created_at, enrollments(id, course_id, expires_at, courses(title), module_progress(unlocked, status, modules(order_index)))')
+      .eq('role', 'learner')
+      .is('company_id', null)
+      .order('created_at', { ascending: false });
 
-  function renderUploads() {
-    if (coursesList.length === 0) {
-      uploadsWrap.innerHTML = '<div class="card-empty">Aucun cours disponible en base de données.</div>';
+    if (error) {
+      individualsWrap.innerHTML = `<div class="card-empty">Erreur : ${escapeHtml(error.message)}</div>`;
       return;
     }
 
-    uploadsWrap.innerHTML = coursesList.map(c => {
-      const mods = modulesForCourse(c.id);
-      
-      const moduleCards = mods.length > 0 ? mods.map((m, index) => {
-        const activePath = m.file_path || m.original_file_path;
-        const hasFile = Boolean(activePath);
-        const fileExt = hasFile ? activePath.split('.').pop().toLowerCase() : '';
-        const iconName = fileExt === 'pdf' ? 'picture_as_pdf' : (['pptx', 'ppt'].includes(fileExt) ? 'slideshow' : 'description');
+    const { data: pendingBatches } = await sb
+      .from('payment_batches')
+      .select('id, profile_id, status')
+      .is('company_id', null)
+      .eq('status', 'pending');
 
-        return `
-          <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 shadow-sm space-y-4">
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2 overflow-hidden">
-                <span class="material-symbols-outlined text-gold-deep text-2xl shrink-0">${iconName}</span>
-                <div class="truncate">
-                  <h4 class="font-headline text-base font-medium text-primary m-0 truncate">${escapeHTML(m.title)}</h4>
-                  <p class="text-[11px] text-outline font-mono m-0 truncate">${hasFile ? activePath : 'Aucun fichier associé'}</p>
-                </div>
-              </div>
-              <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0 ${hasFile ? 'bg-success/10 text-success' : 'bg-surface-container text-on-surface-variant'}">
-                ${hasFile ? fileExt.toUpperCase() : 'Aucun fichier'}
-              </span>
-            </div>
-            <div class="space-y-3">
-              <input type="file" accept=".pdf,.pptx,.ppt" data-moduleid="${m.id}" class="file-input block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-surface-container file:text-primary hover:file:bg-gold/20 cursor-pointer border border-outline-variant/60 rounded-xl p-1 bg-surface">
-              <div class="flex gap-2">
-                <button class="primary flex-1 px-4 py-2 bg-primary text-gold-light hover:bg-gold hover:text-primary font-semibold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5" data-moduleid="${m.id}" data-btn="upload">
-                  <span class="material-symbols-outlined text-[16px]">upload_file</span>
-                  <span>${hasFile ? 'Remplacer le support' : 'Envoyer le support'}</span>
-                </button>
-                ${hasFile ? `
-                <button class="px-3 py-2 border border-error/30 text-error hover:bg-error/10 font-semibold text-xs rounded-xl transition-all flex items-center gap-1" data-moduleid="${m.id}" data-filepath="${activePath}" data-btn="delete">
-                  <span class="material-symbols-outlined text-[16px]">delete</span>
-                </button>` : ''}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('') : '<p class="text-xs text-on-surface-variant italic py-2">Aucun module assigné à ce cours.</p>';
+    const pendingByProfile = new Set((pendingBatches || []).map(b => b.profile_id));
 
-      return `
-        <div class="bg-surface-container-low/50 border border-primary/10 rounded-3xl p-6 space-y-4">
-          <div class="flex items-center gap-3 pb-2 border-b border-primary/10">
-            <span class="text-gold-deep text-base font-bold bg-gold/10 px-3 py-1 rounded-lg">Cours 0${c.order_index || 1}</span>
-            <h3 class="font-headline text-lg font-semibold text-primary m-0">${escapeHTML(c.title)}</h3>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${moduleCards}</div>
-        </div>
-      `;
-    }).join('');
+    individualsCache = (learners || []).map(l => {
+      const enrollmentsList = Array.isArray(l.enrollments) ? l.enrollments : (l.enrollments ? [l.enrollments] : []);
+      const enrollment = enrollmentsList[0] || null;
+      const mp = Array.isArray(enrollment?.module_progress) ? enrollment.module_progress : [];
+      const module2 = mp.find(p => p.modules?.order_index === 2);
+      const completed = mp.filter(p => p.status === 'completed').length;
 
-    uploadsWrap.querySelectorAll('button[data-btn="upload"]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const moduleId = btn.dataset.moduleid;
-        const input = uploadsWrap.querySelector(`input[data-moduleid="${moduleId}"]`);
-        const file = input ? input.files[0] : null;
-        if (!file) { showStatus('Veuillez choisir un fichier (PDF ou PowerPoint).', 'error'); return; }
-        
-        btn.disabled = true; 
-        btn.textContent = 'Envoi en cours…';
-
-        const fileExt = file.name.split('.').pop().toLowerCase();
-        const targetModule = modulesList.find(m => String(m.id) === String(moduleId));
-        const course = coursesList.find(c => c.id === targetModule.course_id);
-        
-        const courseSlug = slugify(course ? course.title : 'course');
-        const modNum = targetModule.order_index || 1;
-        const storagePath = `${courseSlug}-module-${modNum}.${fileExt}`;
-        
-        // 1. Upload to Supabase Storage
-        const { error: uploadError } = await sb.storage.from('modules').upload(storagePath, file, { upsert: true });
-        if (uploadError) {
-          showStatus('Erreur de téléversement : ' + uploadError.message, 'error');
-          btn.disabled = false;
-          return;
-        }
-
-        // 2. Persist metadata in database based on extension
-        const isPdf = fileExt === 'pdf';
-        const isPpt = ['pptx', 'ppt'].includes(fileExt);
-        const mimeType = file.type || (isPdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
-
-        const dbUpdate = {
-          mime_type: mimeType,
-          file_path: isPdf ? storagePath : (targetModule.file_path || storagePath),
-          original_file_path: isPpt ? storagePath : targetModule.original_file_path,
-          processing_status: 'completed'
-        };
-
-        const { error: dbError } = await sb.from('modules').update(dbUpdate).eq('id', moduleId);
-        if (dbError) {
-          showStatus('Erreur mise à jour base de données : ' + dbError.message, 'error');
-          btn.disabled = false;
-        } else {
-          showStatus('Fichier téléversé et associé avec succès.', 'success');
-          loadAll();
-        }
-      });
+      return {
+        id: l.id,
+        name: l.full_name || '—',
+        email: l.email || '—',
+        phone: l.phone || '—',
+        courseTitle: enrollment?.courses?.title || 'Aucun',
+        module2Unlocked: !!module2?.unlocked,
+        completed,
+        total: mp.length,
+        hasPendingRequest: pendingByProfile.has(l.id)
+      };
     });
 
-    uploadsWrap.querySelectorAll('button[data-btn="delete"]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Supprimer ce support de cours ?')) return;
-        const moduleId = btn.dataset.moduleid;
-        const filePath = btn.dataset.filepath;
-        btn.disabled = true;
-
-        if (filePath) {
-          await sb.storage.from('modules').remove([filePath]);
-        }
-
-        const { error: dbError } = await sb.from('modules').update({ file_path: null, original_file_path: null }).eq('id', moduleId);
-        if (dbError) {
-          showStatus('Erreur lors de la suppression : ' + dbError.message, 'error');
-          btn.disabled = false;
-        } else {
-          showStatus('Support supprimé avec succès.', 'success');
-          loadAll();
-        }
-      });
-    });
+    renderIndividuals(individualsCache);
+    updateKpis();
   }
 
-  async function loadQuestions() {
-    const { data: questions, error } = await sb
-      .from('quiz_questions')
-      .select('id, module_id, question, options, correct_option_index, order_index')
-      .order('order_index');
-
-    if (error) { quizWrap.innerHTML = `<div class="card-empty">Erreur : ${escapeHTML(error.message)}</div>`; return; }
-
-    if (coursesList.length === 0) {
-      quizWrap.innerHTML = '<div class="card-empty">Aucun cours configuré.</div>';
+  function renderIndividuals(rows) {
+    if (rows.length === 0) {
+      individualsWrap.innerHTML = '<div class="card-empty">Aucun apprenant individuel trouvé.</div>';
       return;
     }
 
-    quizWrap.innerHTML = coursesList.map(c => {
-      const mods = modulesForCourse(c.id);
-      
-      const moduleBlocks = mods.length > 0 ? mods.map((m, idx) => {
-        const qs = (questions || []).filter(q => q.module_id === m.id);
-        const rows = qs.map(q => {
-          const correctIdx = q.correct_option_index !== undefined ? q.correct_option_index : q.correct_index;
-          return `
-            <div class="q-row py-3.5 border-b border-primary/10 last:border-b-0 flex items-start justify-between gap-4">
-              <div class="space-y-1">
-                <div class="q-text text-sm font-medium text-primary">${escapeHTML(q.question)}</div>
-                <div class="q-opts text-xs text-on-surface-variant flex flex-wrap gap-1.5 mt-1">
-                  ${q.options.map((o, i) => (i === correctIdx
-                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-success/10 text-success border border-success/20 font-semibold"><span class="material-symbols-outlined text-[12px]">check_circle</span>${escapeHTML(o)}</span>`
-                    : `<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-surface-container text-on-surface-variant">${escapeHTML(o)}</span>`)).join('')}
+    individualsWrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Apprenant</th>
+            <th>Téléphone</th>
+            <th>Formation</th>
+            <th>Progression</th>
+            <th>Module 2</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td>
+                <p class="font-semibold text-primary m-0">${escapeHtml(r.name)}</p>
+                <p class="text-[11px] text-outline m-0">${escapeHtml(r.email)}</p>
+              </td>
+              <td>${escapeHtml(r.phone)}</td>
+              <td>${escapeHtml(r.courseTitle)}</td>
+              <td><span class="font-semibold text-primary">${r.completed}</span>/${r.total || 2} module(s)</td>
+              <td>
+                ${r.module2Unlocked
+                  ? '<span class="badge ok"><span class="material-symbols-outlined text-[13px]">lock_open</span>Débloqué</span>'
+                  : r.hasPendingRequest
+                    ? '<span class="badge pending"><span class="material-symbols-outlined text-[13px]">pending</span>Paiement en attente</span>'
+                    : '<span class="badge locked"><span class="material-symbols-outlined text-[13px]">lock</span>Verrouillé</span>'}
+              </td>
+              <td class="text-right whitespace-nowrap">
+                <div class="flex justify-end gap-2">
+                  <button class="icon-btn primary" data-action="unlock" data-id="${r.id}" data-name="${escapeHtml(r.name)}" ${r.module2Unlocked ? 'disabled' : ''}>
+                    <span class="material-symbols-outlined text-[15px]">lock_open</span>
+                    Valider Module 2
+                  </button>
+                  <button class="icon-btn danger" data-action="delete-user" data-id="${r.id}" data-name="${escapeHtml(r.name)}">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                  </button>
                 </div>
-              </div>
-              <button class="btn-delete-q px-2.5 py-1.5 text-xs font-semibold text-error border border-error/30 hover:bg-error/10 rounded-lg transition-all flex items-center gap-1 shrink-0" data-id="${q.id}">
-                <span class="material-symbols-outlined text-[16px]">delete</span>
-                <span>Supprimer</span>
-              </button>
-            </div>
-          `;
-        }).join('') || '<p class="text-xs text-on-surface-variant py-2 m-0 italic">Aucune question configurée pour ce module.</p>';
-
-        return `
-          <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
-            <div class="flex items-center justify-between pb-2 border-b border-primary/10">
-              <h4 class="font-headline text-base font-medium text-primary m-0">${escapeHTML(m.title)} (Module ${m.order_index || idx + 1})</h4>
-              <span class="text-xs text-outline font-semibold bg-surface-container px-2.5 py-1 rounded-full">${qs.length} question(s)</span>
-            </div>
-            <div class="divide-y divide-primary/10">${rows}</div>
-            <button class="btn-add-q px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-gold-light font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 mt-4" data-add="${m.id}">
-              <span class="material-symbols-outlined text-[16px]">add_circle</span>
-              <span>Ajouter une question</span>
-            </button>
-            <div class="new-q-form" data-form="${m.id}"></div>
-          </div>
-        `;
-      }).join('') : '<p class="text-xs text-on-surface-variant italic py-2">Aucun module disponible.</p>';
-
-      return `
-        <div class="bg-surface-container-low/50 border border-primary/10 rounded-3xl p-6 space-y-4">
-          <div class="flex items-center gap-3 pb-2 border-b border-primary/10">
-            <span class="text-gold-deep text-base font-bold bg-gold/10 px-3 py-1 rounded-lg">Cours 0${c.order_index || 1}</span>
-            <h3 class="font-headline text-lg font-semibold text-primary m-0">${escapeHTML(c.title)}</h3>
-          </div>
-          <div class="space-y-4">${moduleBlocks}</div>
-        </div>
-      `;
-    }).join('');
-
-    quizWrap.querySelectorAll('.btn-delete-q').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Supprimer cette question ?')) return;
-        const { error: delErr } = await sb.from('quiz_questions').delete().eq('id', btn.dataset.id);
-        if (delErr) { showStatus('Erreur de suppression: ' + delErr.message, 'error'); }
-        else { showStatus('Question supprimée.', 'success'); loadQuestions(); }
-      });
-    });
-
-    quizWrap.querySelectorAll('.btn-add-q').forEach(btn => {
-      btn.addEventListener('click', () => renderNewQuestionForm(btn.dataset.add));
-    });
-  }
-
-  function renderNewQuestionForm(moduleId) {
-    const container = quizWrap.querySelector(`div[data-form="${moduleId}"]`);
-    if (!container) return;
-
-    container.innerHTML = `
-      <div class="mt-4 pt-4 border-t border-primary/10 bg-surface-container/40 p-4 sm:p-5 rounded-2xl space-y-4">
-        <div>
-          <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Libellé de la question</label>
-          <textarea rows="2" class="new-q-text w-full p-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all" placeholder="Entrez la question ici…"></textarea>
-        </div>
-
-        <div class="space-y-2">
-          <label class="block text-xs uppercase tracking-wider font-bold text-primary mb-1">Options de réponse (Cochez la bonne réponse)</label>
-
-          <div class="opt-row flex items-center gap-3">
-            <input type="radio" name="correct-${moduleId}" value="0" checked class="text-primary focus:ring-gold">
-            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 1">
-          </div>
-
-          <div class="opt-row flex items-center gap-3">
-            <input type="radio" name="correct-${moduleId}" value="1" class="text-primary focus:ring-gold">
-            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 2">
-          </div>
-
-          <div class="opt-row flex items-center gap-3">
-            <input type="radio" name="correct-${moduleId}" value="2" class="text-primary focus:ring-gold">
-            <input type="text" class="new-q-opt flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-gold/50" placeholder="Réponse 3 (optionnel)">
-          </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
-          <p class="text-xs text-on-surface-variant m-0">Sélectionnez le bouton radio correspondant à la réponse correcte.</p>
-          <button class="save-q-btn px-4 py-2.5 bg-primary text-gold-light hover:bg-gold hover:text-primary font-semibold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0">
-            <span class="material-symbols-outlined text-[16px]">save</span>
-            <span>Enregistrer la question</span>
-          </button>
-        </div>
-      </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
     `;
 
-    const saveBtn = container.querySelector('.save-q-btn');
-    saveBtn.addEventListener('click', async () => {
-      const questionText = container.querySelector('.new-q-text').value.trim();
-      const rawInputs = [...container.querySelectorAll('.new-q-opt')];
-      const checkedRadio = container.querySelector(`input[name="correct-${moduleId}"]:checked`);
-      const checkedRawIndex = parseInt(checkedRadio.value, 10);
-      
-      const validOpts = [];
-      let mappedCorrectIndex = -1;
-
-      rawInputs.forEach((input, idx) => {
-        const val = input.value.trim();
-        if (val !== '') {
-          validOpts.push(val);
-          if (idx === checkedRawIndex) {
-            mappedCorrectIndex = validOpts.length - 1;
-          }
-        }
-      });
-
-      if (!questionText || validOpts.length < 2) {
-        showStatus('Veuillez saisir une question et au moins 2 réponses valides.', 'error');
-        return;
-      }
-
-      if (mappedCorrectIndex === -1) {
-        showStatus('La réponse sélectionnée comme correcte ne peut pas être vide.', 'error');
-        return;
-      }
-
-      saveBtn.disabled = true;
-
-      const { data: existing } = await sb.from('quiz_questions').select('order_index').eq('module_id', moduleId);
-      const nextOrder = (existing || []).length + 1;
-
-      const { error } = await sb.from('quiz_questions').insert({
-        module_id: moduleId,
-        question: questionText,
-        options: validOpts,
-        correct_option_index: mappedCorrectIndex,
-        order_index: nextOrder
-      });
-
-      if (error) { 
-        showStatus('Erreur lors de la sauvegarde : ' + error.message, 'error'); 
-        saveBtn.disabled = false;
-      } else { 
-        showStatus('Question ajoutée avec succès.', 'success'); 
-        loadQuestions(); 
-      }
+    individualsWrap.querySelectorAll('[data-action="unlock"]').forEach(btn => {
+      btn.addEventListener('click', () => unlockIndividual(btn));
     });
+    individualsWrap.querySelectorAll('[data-action="delete-user"]').forEach(btn => {
+      btn.addEventListener('click', () => deleteUser(btn));
+    });
+  }
+
+  individualSearch.addEventListener('input', () => {
+    const term = individualSearch.value.trim().toLowerCase();
+    if (!term) { renderIndividuals(individualsCache); return; }
+    renderIndividuals(individualsCache.filter(r =>
+      r.name.toLowerCase().includes(term) || r.email.toLowerCase().includes(term) || r.phone.toLowerCase().includes(term)
+    ));
+  });
+
+  async function unlockIndividual(btn) {
+    const profileId = btn.dataset.id;
+    const name = btn.dataset.name;
+    if (!confirm(`Valider le Module 2 pour ${name} ? Son accès de 90 jours démarrera immédiatement.`)) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[15px] animate-spin">progress_activity</span>Validation…';
+
+    const { error } = await sb.rpc('super_admin_direct_unlock', { p_profile_id: profileId });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">lock_open</span>Valider Module 2';
+    } else {
+      setStatus(dashStatus, 'success', `Module 2 débloqué pour ${name}. Il est maintenant visible dans son tableau de bord.`);
+      await loadIndividuals();
+    }
+  }
+
+  async function deleteUser(btn) {
+    const userId = btn.dataset.id;
+    const name = btn.dataset.name;
+    if (!confirm(`SUPPRESSION DÉFINITIVE : effacer le compte de ${name} et toutes ses données (progression, quiz, attestations) ? Cette action est irréversible.`)) return;
+
+    btn.disabled = true;
+    const { error } = await sb.rpc('admin_hard_delete_user', { p_target_user_id: userId });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur lors de la suppression : ' + error.message);
+      btn.disabled = false;
+    } else {
+      setStatus(dashStatus, 'success', `Compte de ${name} supprimé définitivement.`);
+      await loadIndividuals();
+    }
+  }
+
+  // ============================================================
+  // COMPANIES TAB
+  // ============================================================
+  async function loadCompanies() {
+    const { data: companies, error } = await sb
+      .from('companies')
+      .select('id, name, phone, city, status, course_id, courses(title)')
+      .order('name');
+
+    if (error) {
+      companiesWrap.innerHTML = `<div class="card-empty">Erreur : ${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    if (!companies || companies.length === 0) {
+      companiesWrap.innerHTML = '<div class="card-empty">Aucune entreprise enregistrée.</div>';
+      updateKpis(companies?.length || 0, 0);
+      return;
+    }
+
+    const { data: batches } = await sb
+      .from('payment_batches')
+      .select('id, company_id, seats_requested, status, created_at')
+      .not('company_id', 'is', null)
+      .order('created_at', { ascending: false });
+
+    const { data: seats } = await sb
+      .from('company_seats')
+      .select('company_id, status');
+
+    const batchesByCompany = {};
+    (batches || []).forEach(b => {
+      (batchesByCompany[b.company_id] ||= []).push(b);
+    });
+    const seatCounts = {};
+    (seats || []).forEach(s => {
+      seatCounts[s.company_id] ||= { total: 0, redeemed: 0 };
+      seatCounts[s.company_id].total++;
+      if (s.status === 'redeemed') seatCounts[s.company_id].redeemed++;
+    });
+
+    const totalPending = (batches || []).filter(b => b.status === 'pending').length;
+
+    companiesWrap.innerHTML = companies.map(c => {
+      const companyBatches = batchesByCompany[c.id] || [];
+      const pending = companyBatches.filter(b => b.status === 'pending');
+      const counts = seatCounts[c.id] || { total: 0, redeemed: 0 };
+
+      return `
+        <div class="bg-white border border-primary/10 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-primary/10">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h3 class="font-headline text-lg font-semibold text-primary m-0">${escapeHtml(c.name)}</h3>
+                <span class="badge ${c.status === 'suspended' ? 'suspended' : 'ok'}">${c.status === 'suspended' ? 'Suspendue' : 'Active'}</span>
+              </div>
+              <p class="text-[11px] text-outline mt-0.5">${escapeHtml(c.phone || '')}${c.city ? ' · ' + escapeHtml(c.city) : ''}</p>
+              <p class="text-xs text-on-surface-variant mt-1">Employés inscrits : <strong class="text-primary">${counts.redeemed}</strong> / ${counts.total} place(s) générée(s)</p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <select class="course-select text-xs bg-surface-container-low border border-primary/15 rounded-lg px-2.5 py-1.5 font-medium text-primary focus:outline-none focus:ring-2 focus:ring-gold/50" data-company-id="${c.id}">
+                <option value="">— Cours non assigné —</option>
+                ${coursesList.map(co => `<option value="${co.id}" ${co.id === c.course_id ? 'selected' : ''}>${escapeHtml(co.title)}</option>`).join('')}
+              </select>
+              <button class="icon-btn ghost" data-action="toggle-status" data-id="${c.id}" data-status="${c.status || 'active'}">
+                <span class="material-symbols-outlined text-[15px]">${c.status === 'suspended' ? 'play_circle' : 'pause_circle'}</span>
+                ${c.status === 'suspended' ? 'Réactiver' : 'Suspendre'}
+              </button>
+              <button class="icon-btn danger" data-action="delete-company" data-id="${c.id}" data-name="${escapeHtml(c.name)}">
+                <span class="material-symbols-outlined text-[15px]">delete</span>
+              </button>
+            </div>
+          </div>
+
+          ${pending.length > 0 ? `
+            <div class="space-y-2">
+              <p class="text-xs font-bold text-gold-deep flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">pending_actions</span>
+                Demande(s) de paiement en attente (${pending.length})
+              </p>
+              ${pending.map(b => `
+                <div class="flex items-center justify-between gap-3 text-xs bg-surface-container-low border border-gold/20 p-3 rounded-xl">
+                  <span><strong>${b.seats_requested}</strong> place(s) demandée(s) — ${new Date(b.created_at).toLocaleDateString('fr-FR')}</span>
+                  <button class="icon-btn primary" data-action="confirm-batch" data-id="${b.id}" data-seats="${b.seats_requested}" data-company="${escapeHtml(c.name)}">
+                    <span class="material-symbols-outlined text-[15px]">check_circle</span>
+                    Confirmer le paiement
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          ` : '<p class="text-xs text-on-surface-variant italic m-0">Aucune demande de paiement en attente.</p>'}
+        </div>
+      `;
+    }).join('');
+
+    companiesWrap.querySelectorAll('.course-select').forEach(sel => {
+      sel.addEventListener('change', () => setCompanyCourse(sel));
+    });
+    companiesWrap.querySelectorAll('[data-action="toggle-status"]').forEach(btn => {
+      btn.addEventListener('click', () => toggleCompanyStatus(btn));
+    });
+    companiesWrap.querySelectorAll('[data-action="confirm-batch"]').forEach(btn => {
+      btn.addEventListener('click', () => confirmBatch(btn));
+    });
+    companiesWrap.querySelectorAll('[data-action="delete-company"]').forEach(btn => {
+      btn.addEventListener('click', () => deleteCompany(btn));
+    });
+
+    updateKpis(companies.length, totalPending);
+  }
+
+  async function setCompanyCourse(sel) {
+    const companyId = sel.dataset.companyId;
+    const courseId = sel.value || null;
+    sel.disabled = true;
+
+    const { error } = await sb.rpc('set_company_course', { p_company_id: companyId, p_course_id: courseId });
+
+    sel.disabled = false;
+    if (error) {
+      setStatus(dashStatus, 'error', "Erreur lors de l'assignation du cours : " + error.message);
+    } else {
+      setStatus(dashStatus, 'success', 'Cours assigné avec succès.');
+    }
+  }
+
+  async function toggleCompanyStatus(btn) {
+    const companyId = btn.dataset.id;
+    const newStatus = btn.dataset.status === 'suspended' ? 'active' : 'suspended';
+    btn.disabled = true;
+
+    const { error } = await sb.rpc('set_company_status', { p_company_id: companyId, p_status: newStatus });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      btn.disabled = false;
+    } else {
+      setStatus(dashStatus, 'success', `Entreprise ${newStatus === 'suspended' ? 'suspendue' : 'réactivée'} avec succès.`);
+      await loadCompanies();
+    }
+  }
+
+  async function confirmBatch(btn) {
+    const batchId = btn.dataset.id;
+    const seats = btn.dataset.seats;
+    const company = btn.dataset.company;
+    if (!confirm(`Confirmer le paiement de ${seats} place(s) pour ${company} ? L'entreprise pourra ensuite les attribuer à ses employés depuis son tableau de bord.`)) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[15px] animate-spin">progress_activity</span>Confirmation…';
+
+    const { error } = await sb.rpc('confirm_payment_batch', { p_batch_id: batchId });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check_circle</span>Confirmer le paiement';
+    } else {
+      setStatus(dashStatus, 'success', `Paiement confirmé pour ${company}. L'entreprise peut maintenant attribuer les places.`);
+      await loadCompanies();
+    }
+  }
+
+  async function deleteCompany(btn) {
+    const companyId = btn.dataset.id;
+    const name = btn.dataset.name;
+    if (!confirm(`SUPPRESSION DÉFINITIVE : effacer l'entreprise ${name} ? Les employés seront détachés (leurs comptes restent actifs). Cette action est irréversible.`)) return;
+
+    btn.disabled = true;
+    const { error } = await sb.rpc('admin_delete_company', { p_company_id: companyId });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur lors de la suppression : ' + error.message);
+      btn.disabled = false;
+    } else {
+      setStatus(dashStatus, 'success', `Entreprise ${name} supprimée définitivement.`);
+      await loadCompanies();
+    }
+  }
+
+  // ============================================================
+  // KPI SUMMARY
+  // ============================================================
+  function updateKpis(companiesCount, pendingCount) {
+    document.getElementById('kpi-learners').textContent = individualsCache.length;
+    document.getElementById('kpi-unlocked').textContent = individualsCache.filter(r => r.module2Unlocked).length;
+    if (companiesCount !== undefined) document.getElementById('kpi-companies').textContent = companiesCount;
+    if (pendingCount !== undefined) {
+      const individualPending = individualsCache.filter(r => r.hasPendingRequest).length;
+      document.getElementById('kpi-pending').textContent = pendingCount + individualPending;
+    }
   }
 
   checkSessionAndRoute();
 </script>
+
 </body>
 </html>
