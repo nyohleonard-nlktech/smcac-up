@@ -540,7 +540,7 @@
             <div class="space-y-2">
               <p class="text-xs font-bold text-gold-deep flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[16px]">pending_actions</span>
-                Demande(s) de paiement en attente (${pending.length})
+                Demande(s) envoyée(s) depuis le tableau de bord de l'entreprise (${pending.length})
               </p>
               ${pending.map(b => `
                 <div class="flex items-center justify-between gap-3 text-xs bg-surface-container-low border border-gold/20 p-3 rounded-xl">
@@ -552,7 +552,18 @@
                 </div>
               `).join('')}
             </div>
-          ` : '<p class="text-xs text-on-surface-variant italic m-0">Aucune demande de paiement en attente.</p>'}
+          ` : ''}
+
+          <div class="pt-1 border-t border-primary/5">
+            <p class="text-[11px] uppercase font-bold text-on-surface-variant tracking-wide mb-2 mt-3">Valider un règlement reçu directement sur WhatsApp</p>
+            <div class="flex items-center gap-2">
+              <input type="number" min="1" placeholder="Nb. de places" class="manual-seats-input w-32 px-3 py-2 bg-white border border-outline-variant rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold" data-company-id="${c.id}">
+              <button class="icon-btn primary" data-action="manual-confirm" data-id="${c.id}" data-company="${escapeHtml(c.name)}">
+                <span class="material-symbols-outlined text-[15px]">add_task</span>
+                Valider ce nombre de places
+              </button>
+            </div>
+          </div>
         </div>
       `;
     }).join('');
@@ -568,6 +579,9 @@
     });
     companiesWrap.querySelectorAll('[data-action="delete-company"]').forEach(btn => {
       btn.addEventListener('click', () => deleteCompany(btn));
+    });
+    companiesWrap.querySelectorAll('[data-action="manual-confirm"]').forEach(btn => {
+      btn.addEventListener('click', () => manualConfirmSeats(btn));
     });
 
     updateKpis(companies.length, totalPending);
@@ -621,6 +635,35 @@
       btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check_circle</span>Confirmer le paiement';
     } else {
       setStatus(dashStatus, 'success', `Paiement confirmé pour ${company}. L'entreprise peut maintenant attribuer les places.`);
+      await loadCompanies();
+    }
+  }
+
+  async function manualConfirmSeats(btn) {
+    const companyId = btn.dataset.id;
+    const companyName = btn.dataset.company;
+    const input = companiesWrap.querySelector(`.manual-seats-input[data-company-id="${companyId}"]`);
+    const seats = parseInt(input.value, 10);
+
+    if (isNaN(seats) || seats <= 0) {
+      setStatus(dashStatus, 'error', 'Veuillez saisir un nombre de places valide (supérieur à 0).');
+      input.focus();
+      return;
+    }
+
+    if (!confirm(`Valider ${seats} place(s) payée(s) pour ${companyName} ? L'entreprise pourra les attribuer à exactement ${seats} employé(s) depuis son tableau de bord — pas un de plus.`)) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[15px] animate-spin">progress_activity</span>Validation…';
+
+    const { error } = await sb.rpc('super_admin_confirm_company_seats', { p_company_id: companyId, p_seats: seats });
+
+    if (error) {
+      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">add_task</span>Valider ce nombre de places';
+    } else {
+      setStatus(dashStatus, 'success', `${seats} place(s) validée(s) pour ${companyName}. L'entreprise peut maintenant les attribuer à ${seats} employé(s) exactement.`);
       await loadCompanies();
     }
   }
