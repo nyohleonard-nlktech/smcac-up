@@ -19,11 +19,12 @@
       bug — this is the deliberate middle ground, not a full fix.
    ============================================================ */
 
-const SHELL_CACHE = 'smcac-shell-v1';
+const SHELL_CACHE = 'smcac-shell-v2';
 const MODULE_CACHE = 'smcac-modules-v1';
 
 const APP_SHELL_FILES = [
   'index.html',
+  'docs.html',
   'registration.html',
   'company-registration.html',
   'individual-dashboard.html',
