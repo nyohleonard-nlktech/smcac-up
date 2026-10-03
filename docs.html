@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta name="theme-color" content="#143e2e"/>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icon-192.png">
+<title>Guide complet de la formation — SMCAC Academy</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#143e2e", "primary-container": "#0d2b1f", "primary-light": "#1d5540",
+          "surface": "#fbf9f4", "surface-dim": "#f2eee5",
+          "surface-container-lowest": "#ffffff", "surface-container-low": "#f7f4ed",
+          "surface-container": "#f1ede2", "surface-container-high": "#e8e3d5",
+          "on-surface": "#1b231e", "on-surface-variant": "#49554e",
+          "outline": "#7a877e", "outline-variant": "#c5cec7",
+          "gold": { "light": "#ffdfa0", "DEFAULT": "#d4a017", "deep": "#b2840c", "glow": "#f6be39" }
+        },
+        fontFamily: { "display": ["Newsreader", "Georgia", "serif"], "headline": ["Newsreader", "Georgia", "serif"], "body": ["IBM Plex Sans", "sans-serif"] }
+      }
+    }
+  };
+</script>
+<style>
+  header.site-header { padding-top: env(safe-area-inset-top, 0px); }
+  main.site-main { padding-top: calc(5rem + env(safe-area-inset-top, 0px)); }
+  .step-line { position: absolute; left: 1.75rem; top: 3.5rem; bottom: -1.5rem; width: 2px; background: linear-gradient(to bottom, rgba(212,160,23,0.4), rgba(20,62,46,0.1)); }
+  .step:last-child .step-line { display: none; }
+</style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen flex flex-col">
+
+<!-- HEADER -->
+<header class="site-header fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-md border-b border-primary/10 shadow-sm">
+  <div class="h-20 max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
+    <a class="flex items-center gap-2.5 sm:gap-3.5 group min-w-0" href="index.html">
+      <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover border-2 border-gold/40 shrink-0" onerror="this.src='https://via.placeholder.com/44'">
+      <div class="flex flex-col text-left border-l border-primary/15 pl-2.5 sm:pl-3.5 min-w-0">
+        <span class="font-display text-base sm:text-lg text-primary font-bold leading-tight truncate">SMCAC Academy</span>
+        <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-gold-deep font-semibold truncate">Guide de la formation</span>
+      </div>
+    </a>
+    <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-2 sm:px-3.5 rounded-xl border border-primary/15 text-primary hover:bg-primary/5 font-medium text-xs sm:text-sm transition-all shrink-0 min-h-[44px]">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+      <span class="hidden sm:inline">Retour à l'accueil</span>
+    </a>
+  </div>
+</header>
+
+<main class="site-main w-full flex-1">
+
+  <!-- INTRO -->
+  <section class="bg-primary text-white relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-gold/10 blur-[120px] pointer-events-none"></div>
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-gold/40 mb-5">
+        <span class="material-symbols-outlined text-gold-glow text-[16px]">menu_book</span>
+        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gold-light">Guide complet</span>
+      </div>
+      <h1 class="font-headline text-2xl sm:text-4xl font-medium leading-tight mb-3">Comment fonctionne la formation SMCAC Academy ?</h1>
+      <p class="text-sm sm:text-base text-surface-container-high/90 font-light max-w-2xl leading-relaxed">
+        De l'inscription jusqu'à votre certificat, voici exactement ce qui se passe à chaque étape — que vous vous inscriviez seul(e) ou à travers votre entreprise.
+      </p>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="space-y-10">
+
+      <!-- Step 1 -->
+      <div class="step relative pl-16 sm:pl-20">
+        <div class="step-line"></div>
+        <div class="absolute left-0 top-0 w-14 h-14 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center font-display text-xl text-primary font-bold">1</div>
+        <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 sm:p-7 shadow-sm">
+          <h2 class="font-headline text-lg sm:text-2xl text-primary font-semibold mb-2">Inscription</h2>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-3">
+            Deux façons de commencer : vous inscrire vous-même, ou être ajouté(e) par votre entreprise.
+          </p>
+          <ul class="space-y-2 text-xs sm:text-sm text-on-surface-variant">
+            <li class="flex items-start gap-2"><span class="material-symbols-outlined text-gold-deep text-[18px] mt-0.5 shrink-0">person</span><span><strong class="text-primary">Individuel :</strong> créez votre compte, choisissez votre parcours de formation.</span></li>
+            <li class="flex items-start gap-2"><span class="material-symbols-outlined text-gold-deep text-[18px] mt-0.5 shrink-0">apartment</span><span><strong class="text-primary">Entreprise :</strong> votre entreprise s'inscrit d'abord, puis vous recevez un code personnel par WhatsApp pour rejoindre votre espace.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step relative pl-16 sm:pl-20">
+        <div class="step-line"></div>
+        <div class="absolute left-0 top-0 w-14 h-14 rounded-2xl bg-primary text-gold-light border border-gold/40 flex items-center justify-center font-display text-xl font-bold shadow-sm">2</div>
+        <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 sm:p-7 shadow-sm">
+          <h2 class="font-headline text-lg sm:text-2xl text-primary font-semibold mb-2">Module 1 — accès gratuit et immédiat</h2>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+            Dès votre inscription, vous accédez gratuitement au premier module théorique de votre parcours. Vous le suivez à votre rythme, puis validez un court quiz (70% minimum requis) pour obtenir votre attestation du Module 1.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step relative pl-16 sm:pl-20">
+        <div class="step-line"></div>
+        <div class="absolute left-0 top-0 w-14 h-14 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center font-display text-xl text-primary font-bold">3</div>
+        <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 sm:p-7 shadow-sm">
+          <h2 class="font-headline text-lg sm:text-2xl text-primary font-semibold mb-2">Paiement &amp; déblocage du Module 2</h2>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-3">
+            Le règlement se fait directement avec l'équipe SMCAC sur WhatsApp — un bouton dans votre espace pré-remplit le message pour vous.
+          </p>
+          <ul class="space-y-2 text-xs sm:text-sm text-on-surface-variant">
+            <li class="flex items-start gap-2"><span class="material-symbols-outlined text-gold-deep text-[18px] mt-0.5 shrink-0">person</span><span><strong class="text-primary">Individuel :</strong> un tarif unique pour débloquer le Module 2.</span></li>
+            <li class="flex items-start gap-2"><span class="material-symbols-outlined text-gold-deep text-[18px] mt-0.5 shrink-0">groups</span><span><strong class="text-primary">Entreprise :</strong> un tarif dégressif selon le nombre de collaborateurs inscrits. L'entreprise choisit ensuite elle-même quels collaborateurs reçoivent l'accès parmi les places payées.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step relative pl-16 sm:pl-20">
+        <div class="step-line"></div>
+        <div class="absolute left-0 top-0 w-14 h-14 rounded-2xl bg-primary text-gold-light border border-gold/40 flex items-center justify-center font-display text-xl font-bold shadow-sm">4</div>
+        <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 sm:p-7 shadow-sm">
+          <h2 class="font-headline text-lg sm:text-2xl text-primary font-semibold mb-2">Module 2 — 90 jours d'accès</h2>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+            Une fois débloqué, vous disposez de 90 jours pour suivre le second module et valider son quiz de fin de parcours. Comme pour le Module 1, la réussite délivre automatiquement votre attestation, vérifiable en ligne.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step relative pl-16 sm:pl-20">
+        <div class="step-line"></div>
+        <div class="absolute left-0 top-0 w-14 h-14 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center font-display text-xl text-primary font-bold">5</div>
+        <div class="bg-surface-container-lowest border border-primary/10 rounded-2xl p-5 sm:p-7 shadow-sm">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/10 border border-gold/30 text-gold-deep text-[10px] font-bold uppercase tracking-wider mb-3">
+            <span class="material-symbols-outlined text-[14px]">auto_awesome</span>Master Class
+          </div>
+          <h2 class="font-headline text-lg sm:text-2xl text-primary font-semibold mb-2">Formation finale spéciale — Modules 3 &amp; 4</h2>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-3">
+            Les deux premiers modules validés, vous accédez à une formation finale spéciale composée de deux modules supplémentaires — le Module 3 et le Module 4 — de véritables master classes conçues pour approfondir et mettre en pratique tout ce que vous avez appris, en interaction directe avec l'équipe SMCAC. Cette formation finale se déroule selon la formule de votre choix :
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-surface-container-low border border-primary/10 text-xs text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-gold-deep">location_on</span>Présentiel chez SMCAC</div>
+            <div class="p-3.5 rounded-xl bg-surface-container-low border border-primary/10 text-xs text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-gold-deep">business</span>Intra-entreprise</div>
+            <div class="p-3.5 rounded-xl bg-surface-container-low border border-primary/10 text-xs text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-gold-deep">videocam</span>En ligne</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="step relative pl-16 sm:pl-20">
+        <div class="absolute left-0 top-0 w-14 h-14 rounded-2xl bg-gold text-primary-container flex items-center justify-center shadow-md">
+          <span class="material-symbols-outlined text-[26px]">verified</span>
+        </div>
+        <div class="bg-surface-container-lowest border border-gold/30 rounded-2xl p-5 sm:p-7 shadow-sm bg-gradient-to-br from-surface-container-lowest to-gold/5">
+          <h2 class="font-headline text-lg sm:text-2xl text-primary font-semibold mb-2">Certification</h2>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+            Les Modules 3 et 4 complétés, vous recevez votre certificat SMCAC Academy. Chaque attestation porte un code unique, vérifiable à tout moment par n'importe qui via notre page de vérification publique.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+    <div class="bg-primary text-white rounded-3xl p-6 sm:p-10 border border-gold/20 shadow-xl text-center">
+      <h2 class="font-headline text-xl sm:text-2xl font-medium mb-2">Prêt(e) à commencer ?</h2>
+      <p class="text-xs sm:text-sm text-surface-container-high/85 mb-6 max-w-lg mx-auto">Le Module 1 est gratuit — inscrivez-vous et accédez-y dès maintenant.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="registration.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold text-primary-container font-semibold text-sm hover:bg-gold-glow transition-all min-h-[48px]">
+          <span>S'inscrire (individuel)</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </a>
+        <a href="company-registration.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/20 transition-all min-h-[48px]">
+          <span>Inscrire mon entreprise</span>
+          <span class="material-symbols-outlined text-[18px]">apartment</span>
+        </a>
+        <a href="verify.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-white/20 text-white/90 font-medium text-sm hover:bg-white/10 transition-all min-h-[48px]">
+          <span>Vérifier un certificat</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-surface-dim border-t border-primary/10 py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center text-xs text-on-surface-variant">
+      © 2026 SMCAC Academy. Tous droits réservés.
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>

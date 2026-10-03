@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<title>SMCAC Academy — Art oratoire &amp; Développement personnel</title>
+<title>SMCAC Academy — Académie de formation professionnelle</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&amp;display=swap" rel="stylesheet"/>
@@ -44,34 +44,41 @@
     }
   };
 </script>
+<style>
+  /* Keep the fixed header clear of notches / status bars on Android & iOS,
+     and keep the page's own top padding in sync with the header's real height. */
+  header.site-header { padding-top: env(safe-area-inset-top, 0px); }
+  main.site-main { padding-top: calc(5rem + env(safe-area-inset-top, 0px)); }
+</style>
 </head>
 <body class="bg-surface font-body text-on-surface antialiased selection:bg-gold-light selection:text-primary min-h-screen flex flex-col">
 
 <!-- HEADER -->
-<header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-md border-b border-primary/10 shadow-sm transition-all duration-200">
+<header class="site-header fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-md border-b border-primary/10 shadow-sm transition-all duration-200">
   <div class="h-20 max-w-7xl mx-auto px-gutter-mobile lg:px-margin-desktop flex items-center justify-between gap-2">
     
     <!-- Brand Logo -->
-    <a class="flex items-center gap-2.5 sm:gap-3.5 group focus:outline-none focus:ring-2 focus:ring-gold/50 rounded-full shrink-0" href="index.html">
+    <a class="flex items-center gap-2.5 sm:gap-3.5 group focus:outline-none focus:ring-2 focus:ring-gold/50 rounded-full min-w-0" href="index.html">
       <div class="relative shrink-0">
         <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover border-2 border-gold/40 group-hover:border-gold transition-colors duration-200 shadow-sm" onerror="this.src='https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=200&q=80'">
         <span class="absolute inset-0 rounded-full ring-2 ring-gold/20 group-hover:scale-105 transition-transform duration-200"></span>
       </div>
-      <div class="flex flex-col text-left border-l border-primary/15 pl-2.5 sm:pl-3.5">
-        <span class="font-display text-base sm:text-lg text-primary font-bold tracking-tight leading-tight group-hover:text-primary-light transition-colors">SMCAC Academy</span>
-        <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-gold-deep font-semibold">L'Art Oratoire &amp; Présence</span>
+      <div class="flex flex-col text-left border-l border-primary/15 pl-2.5 sm:pl-3.5 min-w-0">
+        <span class="font-display text-base sm:text-lg text-primary font-bold tracking-tight leading-tight group-hover:text-primary-light transition-colors truncate">SMCAC Academy</span>
+        <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-gold-deep font-semibold truncate">Académie de Formation</span>
       </div>
     </a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden md:flex items-center gap-8">
+    <nav class="hidden md:flex items-center gap-8 shrink-0">
       <a class="text-sm font-medium text-on-surface/80 hover:text-primary relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold after:transition-all hover:after:w-full transition-colors duration-150" href="#formations">Formations</a>
       <a class="text-sm font-medium text-on-surface/80 hover:text-primary relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold after:transition-all hover:after:w-full transition-colors duration-150" href="#methode">Comment ça marche</a>
+      <a class="text-sm font-medium text-on-surface/80 hover:text-primary relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold after:transition-all hover:after:w-full transition-colors duration-150" href="docs.html">Guide complet</a>
       <a class="text-sm font-medium text-on-surface/80 hover:text-primary relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold after:transition-all hover:after:w-full transition-colors duration-150" href="#application">Application mobile</a>
     </nav>
 
     <!-- Controls -->
-    <div class="flex items-center gap-2 relative">
+    <div class="flex items-center gap-2 relative shrink-0">
       
       <!-- Login Dropdown Trigger -->
       <div class="relative">
@@ -105,7 +112,7 @@
 <!-- MOBILE NAVIGATION DRAWER -->
 <div id="mobile-drawer" class="fixed inset-0 z-50 hidden md:hidden">
   <div id="mobile-drawer-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
-  <div class="fixed inset-y-0 right-0 w-full max-w-xs bg-surface-container-lowest shadow-2xl p-6 flex flex-col justify-between z-10 transform transition-transform duration-300">
+  <div class="fixed inset-y-0 right-0 w-full max-w-xs bg-surface-container-lowest shadow-2xl p-6 flex flex-col justify-between z-10 transform transition-transform duration-300" style="padding-top: calc(1.5rem + env(safe-area-inset-top, 0px)); padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));">
     <div>
       <div class="flex items-center justify-between pb-6 border-b border-primary/10">
         <div class="flex items-center gap-3">
@@ -126,6 +133,10 @@
           <span class="material-symbols-outlined text-[20px] text-gold-deep">auto_stories</span>
           Comment ça marche
         </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-on-surface hover:bg-surface-container hover:text-primary transition-colors min-h-[48px]" href="docs.html">
+          <span class="material-symbols-outlined text-[20px] text-gold-deep">menu_book</span>
+          Guide complet de la formation
+        </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-on-surface hover:bg-surface-container hover:text-primary transition-colors min-h-[48px]" href="#application">
           <span class="material-symbols-outlined text-[20px] text-gold-deep">smartphone</span>
           Application mobile
@@ -145,7 +156,7 @@
 </div>
 
 <!-- MAIN CONTENT -->
-<main class="w-full pt-20 bg-surface flex-1">
+<main class="site-main w-full bg-surface flex-1">
   <div class="flex flex-col w-full">
 
     <!-- HERO SECTION -->
@@ -167,11 +178,11 @@
             </div>
             
             <h1 class="font-headline text-3xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-white mb-5 leading-[1.2]">
-              Développez votre assurance et maîtrisez <span class="italic text-gold-light drop-shadow-[0_2px_12px_rgba(212,160,23,0.35)]">l'art de convaincre</span>.
+              Développez vos compétences et révélez <span class="italic text-gold-light drop-shadow-[0_2px_12px_rgba(212,160,23,0.35)]">tout votre potentiel</span>.
             </h1>
             
             <p class="text-sm sm:text-lg text-surface-container-high/90 font-light mb-8 max-w-xl leading-relaxed">
-              Des formations concrètes en art oratoire, développement personnel et résilience, conçues pour révéler votre potentiel d'expression et de leadership.
+              Des formations concrètes et accessibles  communication, développement personnel, résilience, et de nouveaux domaines à venir  conçues pour révéler votre confiance, votre expression et votre leadership.
             </p>
 
             <div class="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 mb-8">
@@ -212,7 +223,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>Pédagogie de l'Excellence
           </div>
           <h2 class="font-headline text-2xl sm:text-4xl text-primary font-medium leading-tight">Une méthode simple, progressive et accessible</h2>
-          <p class="text-sm sm:text-base text-on-surface-variant mt-2 sm:mt-3 leading-relaxed">Comment se déroule votre apprentissage chez SMCAC Academy.</p>
+          <p class="text-sm sm:text-base text-on-surface-variant mt-2 sm:mt-3 leading-relaxed">Comment se déroule votre apprentissage chez SMCAC Academy, quel que soit le parcours choisi.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
@@ -245,6 +256,24 @@
           </div>
 
         </div>
+
+        <!-- "Learn the full process" banner -> docs.html -->
+        <div class="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-between gap-5 bg-primary text-white rounded-2xl p-6 sm:p-8 border border-gold/20 shadow-md">
+          <div class="flex items-center gap-4 text-left">
+            <div class="w-12 h-12 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-gold-glow text-[26px]">help</span>
+            </div>
+            <div>
+              <h3 class="font-headline text-lg sm:text-xl font-semibold text-white mb-0.5">Vous voulez tout savoir sur le déroulement complet ?</h3>
+              <p class="text-xs sm:text-sm text-surface-container-high/80">Inscription, paiement, modules, évaluation finale : consultez le guide étape par étape.</p>
+            </div>
+          </div>
+          <a href="docs.html" class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gold text-primary-container font-semibold text-sm hover:bg-gold-glow transition-all min-h-[48px] w-full sm:w-auto justify-center">
+            <span>Consulter le guide</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </a>
+        </div>
+
       </div>
     </section>
 
@@ -257,24 +286,20 @@
             <span class="material-symbols-outlined text-gold text-[18px]">school</span>Parcours Certifiants
           </div>
           <h2 class="font-headline text-2xl sm:text-4xl text-primary font-medium">Nos parcours de formation actuels</h2>
+          <p class="text-xs sm:text-sm text-on-surface-variant mt-2 max-w-xl">Notre catalogue s'enrichit régulièrement de nouveaux domaines de formation.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          <!-- Card 1: Art Oratoire -->
+          <!-- Card 1: Prise de parole en public -->
           <article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-primary/10 shadow-sm hover:shadow-xl hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group">
             <div>
               <div class="relative w-full h-48 overflow-hidden bg-primary">
-                <img alt="Art oratoire" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80" onerror="this.src='assets/module-art-oratoire.png'"/>
+                <img alt="Prise de parole en public" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="assets/module-art-oratoire.png" onerror="this.src='https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80'"/>
                 <div class="absolute inset-0 bg-gradient-to-t from-primary-container via-primary/20 to-transparent"></div>
-                <div class="absolute bottom-3 left-3 right-3">
-                  <span class="px-2.5 py-1 rounded-md bg-gold text-primary-container text-[10px] uppercase tracking-wider font-bold shadow-md inline-block">
-                    Prise de parole &amp; Rhétorique
-                  </span>
-                </div>
               </div>
               <div class="p-5">
-                <h3 class="font-headline text-xl font-semibold text-primary mb-1">Art oratoire</h3>
+                <h3 class="font-headline text-xl font-semibold text-primary mb-1">Prise de parole en public</h3>
                 <h4 class="font-display italic text-gold-deep text-xs font-medium mb-2.5">Captiver, convaincre et émouvoir votre auditoire</h4>
                 <p class="text-xs text-on-surface-variant leading-relaxed">
                   Structurez vos discours, maîtrisez votre souffle, surmontez le trac et imposez votre présence dans vos prises de parole.
@@ -283,7 +308,7 @@
             </div>
             <div class="p-5 pt-0">
               <a class="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary transition-all duration-200 font-semibold text-xs shadow-sm min-h-[44px]" href="registration.html?course=1">
-                <span>S'inscrire — Art oratoire</span>
+                <span>S'inscrire — Prise de parole</span>
                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
               </a>
             </div>
@@ -293,13 +318,8 @@
           <article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-primary/10 shadow-sm hover:shadow-xl hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group">
             <div>
               <div class="relative w-full h-48 overflow-hidden bg-primary">
-                <img alt="Développement personnel" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" onerror="this.src='assets/module-developpement-personnel.png'"/>
+                <img alt="Développement personnel" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="assets/module-developpement-personnel.png" onerror="this.src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80'"/>
                 <div class="absolute inset-0 bg-gradient-to-t from-primary-container via-primary/20 to-transparent"></div>
-                <div class="absolute bottom-3 left-3 right-3">
-                  <span class="px-2.5 py-1 rounded-md bg-gold text-primary-container text-[10px] uppercase tracking-wider font-bold shadow-md inline-block">
-                    Posture &amp; Clarté intérieure
-                  </span>
-                </div>
               </div>
               <div class="p-5">
                 <h3 class="font-headline text-xl font-semibold text-primary mb-1">Développement personnel</h3>
@@ -323,11 +343,6 @@
               <div class="relative w-full h-48 overflow-hidden bg-primary">
                 <img alt="Guérison & Blessures Émotionnelles" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80" onerror="this.src='assets/auditorium.png'"/>
                 <div class="absolute inset-0 bg-gradient-to-t from-primary-container via-primary/20 to-transparent"></div>
-                <div class="absolute bottom-3 left-3 right-3">
-                  <span class="px-2.5 py-1 rounded-md bg-gold text-primary-container text-[10px] uppercase tracking-wider font-bold shadow-md inline-block">
-                    Guérison &amp; Résilience
-                  </span>
-                </div>
               </div>
               <div class="p-5">
                 <h3 class="font-headline text-xl font-semibold text-primary mb-1">Blessures émotionnelles</h3>
@@ -421,7 +436,7 @@
             <img src="assets/logo-full.jpeg" alt="SMCAC Academy" class="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-gold/40" onerror="this.src='https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=200&q=80'">
             <div class="border-l border-primary/15 pl-3.5">
               <h3 class="font-headline text-lg sm:text-xl font-bold text-primary">SMCAC Academy</h3>
-              <p class="text-xs text-on-surface-variant">Académie d'art oratoire et de développement personnel au Cameroun.</p>
+              <p class="text-xs text-on-surface-variant">Académie de formation professionnelle et de développement personnel au Cameroun.</p>
             </div>
           </div>
         </div>
@@ -432,6 +447,7 @@
             <ul class="space-y-2 text-xs sm:text-sm">
               <li><a class="text-on-surface-variant hover:text-primary transition-colors py-1 inline-block" href="individual-dashboard.html">Se connecter à l'espace apprenant</a></li>
               <li><a class="text-primary font-semibold hover:text-gold-deep transition-colors py-1 inline-block" href="verify.html">Vérifier l'authenticité d'un certificat</a></li>
+              <li><a class="text-on-surface-variant hover:text-primary transition-colors py-1 inline-block" href="docs.html">Guide complet de la formation</a></li>
               <li><a class="text-on-surface-variant hover:text-primary transition-colors py-1 inline-block" href="#formations">Nos parcours de formation</a></li>
             </ul>
           </div>
@@ -461,6 +477,14 @@
 
   </div>
 </main>
+
+<!-- FLOATING "HOW IT WORKS" HELP BUTTON -->
+<a href="docs.html" class="fixed z-40 group flex items-center" style="right: 1.25rem; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));" aria-label="Comment fonctionne la formation">
+  <span class="hidden sm:group-hover:inline-block mr-3 px-3 py-2 rounded-lg bg-primary text-white text-xs font-medium shadow-lg whitespace-nowrap">Comment fonctionne la formation ?</span>
+  <span class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gold text-primary-container flex items-center justify-center shadow-xl border-2 border-white/60 hover:scale-105 active:scale-95 transition-all">
+    <span class="material-symbols-outlined text-[24px]">help</span>
+  </span>
+</a>
 
 <script>
   // Login Dropdown Logic
