@@ -19,7 +19,7 @@
       bug — this is the deliberate middle ground, not a full fix.
    ============================================================ */
 
-const SHELL_CACHE = 'smcac-shell-v2';
+const SHELL_CACHE = 'smcac-shell-v3';
 const MODULE_CACHE = 'smcac-modules-v1';
 
 const APP_SHELL_FILES = [
@@ -92,7 +92,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // App shell — cache-first, network fallback, cache whatever's fetched fresh.
+  // HTML navigation — network-first so a new deployment is shown immediately.
+  // If offline, fall back to the cached shell.
+  if (request.mode === 'navigate' || request.destination === 'document') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok && request.url.startsWith(self.location.origin)) {
+            const clone = response.clone();
+            caches.open(SHELL_CACHE).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request).then((cached) =>
+          cached || new Response('Offline', { status: 503, statusText: 'Offline' })
+        ))
+    );
+    return;
+  }
+
+  // Other app-shell assets — cache-first for fast loading.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
