@@ -175,8 +175,8 @@
         </p>
       </div>
 
-     
-        <!-- Two interactive cards referencing the formation page / catalog -->
+      <!-- Two interactive cards referencing the formation page / catalog -->
+      <section>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
           
           <!-- Card 1: Explore Catalog & Formations -->
@@ -299,19 +299,11 @@
               <span class="material-symbols-outlined text-gold-deep text-[22px]">person_add</span>
               <h2 class="font-headline text-2xl font-medium text-primary">Ajouter un employé</h2>
             </div>
-            <p class="text-xs text-on-surface-variant mb-6">Générez un code d'inscription unique pour votre collaborateur sur la thématique active.</p>
+            <p class="text-xs text-on-surface-variant mb-6">Générez un code d'inscription unique pour votre collaborateur sur la thématique active. Il n'a besoin que de son téléphone pour recevoir son code — il saisira ses propres informations en s'inscrivant.</p>
             
             <form id="add-worker-form" class="add-form space-y-4">
               <div>
-                <label for="worker-email" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">E-mail de l'employé</label>
-                <div class="relative">
-                  <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
-                  <input type="email" id="worker-email" required placeholder="employe@entreprise.cm" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
-                </div>
-              </div>
-
-              <div>
-                <label for="worker-phone" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Téléphone WhatsApp</label>
+                <label for="worker-phone" class="block text-xs uppercase tracking-wider font-bold text-primary mb-1.5">Téléphone WhatsApp de l'employé</label>
                 <div class="relative">
                   <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">call</span>
                   <input type="tel" id="worker-phone" required placeholder="6XX XXX XXX" class="w-full pl-11 pr-4 py-3 bg-surface border border-outline-variant rounded-xl text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all">
@@ -723,12 +715,10 @@
     addWorkerBtn.innerHTML = '<span>Ajout en cours…</span>';
     setStatus(dashStatus, null, '');
 
-    const email = document.getElementById('worker-email').value.trim();
     const phone = document.getElementById('worker-phone').value.trim();
 
     const { data, error } = await sb.rpc('add_company_worker', {
       p_company_id: myCompanyId,
-      p_email: email,
       p_phone: phone
     });
 
