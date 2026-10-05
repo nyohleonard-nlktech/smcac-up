@@ -802,9 +802,27 @@
     const assignedSeatIds = new Set((allSelections || []).map(s => s.seat_id));
     const unassignedEligible = (eligibleSeats || []).filter(s => !assignedSeatIds.has(s.id));
 
+    // How many seats each batch has already had assigned, by name of the
+    // worker, so a fully-used batch shows as done instead of a live form.
+    const assignedByBatch = {};
+    (allSelections || []).forEach(sel => {
+      (assignedByBatch[sel.batch_id] ||= []).push(sel.seat_id);
+    });
+    const seatById = {};
+    (eligibleSeats || []).forEach(s => { seatById[s.id] = s; });
+    // also include already-assigned seats (not in eligibleSeats since they're
+    // excluded by the unassigned filter) by re-querying all redeemed seats for names
+    const { data: allRedeemedSeats } = await sb
+      .from('company_seats')
+      .select('id, seat_code, assigned_email, profiles!company_seats_learner_profile_id_fkey(full_name)')
+      .eq('company_id', myCompanyId)
+      .eq('status', 'redeemed');
+    (allRedeemedSeats || []).forEach(s => { seatById[s.id] = s; });
+
     batchesWrap.innerHTML = batches.map(b => {
       const isConfirmed = b.status === 'confirmed';
-      return renderBatch({ ...b, status: isConfirmed ? 'confirmed' : b.status }, unassignedEligible);
+      const assignedSeatIdsForBatch = assignedByBatch[b.id] || [];
+      return renderBatch({ ...b, status: isConfirmed ? 'confirmed' : b.status }, unassignedEligible, assignedSeatIdsForBatch, seatById);
     }).join('');
 
     batches.forEach(b => {
@@ -815,7 +833,7 @@
     });
   }
 
-  function renderBatch(batch, eligibleSeats) {
+  function renderBatch(batch, eligibleSeats, assignedSeatIdsForBatch, seatById) {
     const badge = `<span class="badge ${batch.status === 'confirmed' ? 'redeemed' : 'invited'}">${batch.status === 'confirmed' ? 'Confirmé' : 'En attente'}</span>`;
 
     if (batch.status !== 'confirmed') {
@@ -825,9 +843,25 @@
       </div>`;
     }
 
+    const remaining = batch.seats_requested - assignedSeatIdsForBatch.length;
+
+    if (remaining <= 0) {
+      const names = assignedSeatIdsForBatch.map(id => {
+        const s = seatById[id];
+        return s ? (s.profiles?.full_name || s.assigned_email || s.seat_code) : '—';
+      });
+      return `<div class="bg-surface-container-lowest p-6 rounded-2xl border border-success/20 shadow-sm space-y-1">
+        <p class="text-sm font-medium text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-success text-[18px]">check_circle</span>
+          <strong>${batch.seats_requested}</strong> place(s) — entièrement attribuée(s)
+        </p>
+        <p class="text-xs text-on-surface-variant">Employé(s) : ${names.map(escapeHtml).join(', ')}</p>
+      </div>`;
+    }
+
     if (eligibleSeats.length === 0) {
       return `<div class="bg-surface-container-lowest p-6 rounded-2xl border border-primary/10 shadow-sm space-y-1">
-        <p class="text-sm font-medium text-primary"><strong>${batch.seats_requested}</strong> place(s) confirmée(s) — ${badge}</p>
+        <p class="text-sm font-medium text-primary"><strong>${remaining}</strong> place(s) restante(s) sur ${batch.seats_requested} — ${badge}</p>
         <p class="text-xs text-on-surface-variant">Aucun employé inscrit disponible pour l\u2019instant.</p>
       </div>`;
     }
@@ -836,16 +870,16 @@
       const displayName = s.profiles?.full_name ? s.profiles.full_name : s.assigned_email;
       return `
         <label class="flex items-center gap-2.5 py-1.5 text-sm text-on-surface cursor-pointer">
-          <input type="checkbox" name="seat" value="${escapeHtml(s.id)}" ${i < batch.seats_requested ? 'checked' : ''} class="rounded border-outline-variant text-primary focus:ring-gold/50">
+          <input type="checkbox" name="seat" value="${escapeHtml(s.id)}" ${i < remaining ? 'checked' : ''} class="rounded border-outline-variant text-primary focus:ring-gold/50">
           <span class="code-cell">${escapeHtml(s.seat_code)}</span> — ${escapeHtml(displayName)}
         </label>
       `;
     }).join('');
 
     return `<div class="bg-surface-container-lowest p-6 rounded-2xl border border-primary/10 shadow-sm space-y-3">
-      <p class="text-sm font-medium text-primary"><strong>${batch.seats_requested}</strong> place(s) confirmée(s) — ${badge}</p>
-      <form id="assign-form-${batch.id}" class="space-y-3">
-        <p class="text-xs text-on-surface-variant font-medium">Cochez exactement ${batch.seats_requested} employé(s) pour leur débloquer le Module 2 :</p>
+      <p class="text-sm font-medium text-primary"><strong>${remaining}</strong> place(s) restante(s) sur ${batch.seats_requested} confirmée(s) — ${badge}</p>
+      <form id="assign-form-${batch.id}" data-remaining="${remaining}" class="space-y-3">
+        <p class="text-xs text-on-surface-variant font-medium">Cochez exactement ${remaining} employé(s) pour leur débloquer le Module 2 :</p>
         <div class="space-y-1 bg-surface p-3.5 rounded-xl border border-outline-variant/60">${checkboxes}</div>
         <button type="submit" class="primary px-5 py-2.5 rounded-xl bg-primary text-gold-light border border-gold/30 hover:bg-gold hover:text-primary font-semibold text-xs shadow-sm transition-all cursor-pointer">
           Confirmer l'attribution du Module 2
@@ -859,10 +893,11 @@
     if (!(await ensureCompanyAdminSession())) { handleSessionMismatch(); return; }
 
     const checked = [...e.target.querySelectorAll('input[name="seat"]:checked')].map(cb => cb.value);
+    const remaining = parseInt(e.target.dataset.remaining, 10);
 
     setStatus(dashStatus, null, '');
-    if (checked.length !== batch.seats_requested) {
-      setStatus(dashStatus, 'error', `Vous devez cocher exactement ${batch.seats_requested} employé(s), pas ${checked.length}.`);
+    if (checked.length !== remaining) {
+      setStatus(dashStatus, 'error', `Vous devez cocher exactement ${remaining} employé(s), pas ${checked.length}.`);
       return;
     }
 
@@ -872,7 +907,10 @@
     const { error } = await sb.rpc('assign_batch_seats', { p_batch_id: batch.id, p_seat_ids: checked });
 
     if (error) {
-      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      const msg = error.message.includes('already has')
+        ? 'Ce lot a déjà été entièrement attribué entre-temps (peut-être depuis un autre onglet). Rechargez la page.'
+        : 'Erreur : ' + error.message;
+      setStatus(dashStatus, 'error', msg);
       if (btn) { btn.disabled = false; btn.textContent = 'Confirmer l\'attribution du Module 2'; }
     } else {
       setStatus(dashStatus, 'success', 'Module 2 activé avec succès pour les employés sélectionnés.');

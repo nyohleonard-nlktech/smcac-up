@@ -543,12 +543,16 @@
                 Demande(s) envoyée(s) depuis le tableau de bord de l'entreprise (${pending.length})
               </p>
               ${pending.map(b => `
-                <div class="flex items-center justify-between gap-3 text-xs bg-surface-container-low border border-gold/20 p-3 rounded-xl">
+                <div class="flex items-center justify-between gap-3 text-xs bg-surface-container-low border border-gold/20 p-3 rounded-xl flex-wrap">
                   <span><strong>${b.seats_requested}</strong> place(s) demandée(s) — ${new Date(b.created_at).toLocaleDateString('fr-FR')}</span>
-                  <button class="icon-btn primary" data-action="confirm-batch" data-id="${b.id}" data-seats="${b.seats_requested}" data-company="${escapeHtml(c.name)}">
-                    <span class="material-symbols-outlined text-[15px]">check_circle</span>
-                    Confirmer le paiement
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <label class="text-[10px] text-on-surface-variant font-semibold uppercase tracking-wide">Nombre réellement payé</label>
+                    <input type="number" min="1" value="${b.seats_requested}" class="confirm-seats-input w-20 px-2 py-1.5 bg-white border border-outline-variant rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-gold/50" data-batch-id="${b.id}">
+                    <button class="icon-btn primary" data-action="confirm-batch" data-id="${b.id}" data-company="${escapeHtml(c.name)}">
+                      <span class="material-symbols-outlined text-[15px]">check_circle</span>
+                      Confirmer
+                    </button>
+                  </div>
                 </div>
               `).join('')}
             </div>
@@ -620,21 +624,32 @@
 
   async function confirmBatch(btn) {
     const batchId = btn.dataset.id;
-    const seats = btn.dataset.seats;
     const company = btn.dataset.company;
-    if (!confirm(`Confirmer le paiement de ${seats} place(s) pour ${company} ? L'entreprise pourra ensuite les attribuer à ses employés depuis son tableau de bord.`)) return;
+    const input = companiesWrap.querySelector(`.confirm-seats-input[data-batch-id="${batchId}"]`);
+    const seats = parseInt(input.value, 10);
+
+    if (isNaN(seats) || seats <= 0) {
+      setStatus(dashStatus, 'error', 'Veuillez saisir un nombre de places valide.');
+      input.focus();
+      return;
+    }
+
+    if (!confirm(`Confirmer le paiement de ${seats} place(s) pour ${company} ? L'entreprise pourra ensuite les attribuer à exactement ${seats} employé(s) depuis son tableau de bord.`)) return;
 
     btn.disabled = true;
     btn.innerHTML = '<span class="material-symbols-outlined text-[15px] animate-spin">progress_activity</span>Confirmation…';
 
-    const { error } = await sb.rpc('confirm_payment_batch', { p_batch_id: batchId });
+    const { error } = await sb.rpc('confirm_payment_batch', { p_batch_id: batchId, p_confirmed_seats: seats });
 
     if (error) {
-      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      const msg = error.message.includes('already has an unassigned confirmed batch')
+        ? "Cette entreprise a déjà un lot confirmé que ses employés n'ont pas encore attribué. Demandez-leur d'abord d'attribuer ces places, ou confirmez ce lot existant plutôt que d'en créer un nouveau."
+        : 'Erreur : ' + error.message;
+      setStatus(dashStatus, 'error', msg);
       btn.disabled = false;
-      btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check_circle</span>Confirmer le paiement';
+      btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check_circle</span>Confirmer';
     } else {
-      setStatus(dashStatus, 'success', `Paiement confirmé pour ${company}. L'entreprise peut maintenant attribuer les places.`);
+      setStatus(dashStatus, 'success', `${seats} place(s) confirmée(s) pour ${company}. L'entreprise peut maintenant les attribuer.`);
       await loadCompanies();
     }
   }
@@ -659,7 +674,10 @@
     const { error } = await sb.rpc('super_admin_confirm_company_seats', { p_company_id: companyId, p_seats: seats });
 
     if (error) {
-      setStatus(dashStatus, 'error', 'Erreur : ' + error.message);
+      const msg = error.message.includes('already has an unassigned confirmed batch')
+        ? "Cette entreprise a déjà un lot confirmé que ses employés n'ont pas encore attribué. Demandez-leur d'abord d'attribuer ces places avant d'en valider de nouvelles."
+        : 'Erreur : ' + error.message;
+      setStatus(dashStatus, 'error', msg);
       btn.disabled = false;
       btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">add_task</span>Valider ce nombre de places';
     } else {
