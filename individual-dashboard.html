@@ -604,30 +604,30 @@
       </div>`;
   }
 
-  async function loadAttestations(userId) {
-    const attestationsWrap = document.getElementById('attestations-wrap');
-    const { data, error } = await sb
-      .from('attestations')
-      .select('id, issued_at, verification_token, modules(title)')
-      .eq('profile_id', userId)
-      .order('issued_at', { ascending: false });
+ async function loadAttestations() {
+  const attestationsWrap = document.getElementById('attestations-wrap');
+  const { data, error } = await sb
+    .from('attestations')
+    .select('id, issued_at, verification_token, modules(title)')
+    .order('issued_at', { ascending: false });
 
-    if (error) { attestationsWrap.innerHTML = `<div class="empty">Erreur : ${error.message}</div>`; return; }
-    if (!data || data.length === 0) {
-      attestationsWrap.innerHTML = '<div class="empty">Aucune attestation délivrée pour l\'instant — terminez un module et son quiz pour l\'obtenir.</div>';
-      return;
-    }
-
-    attestationsWrap.innerHTML = data.map(a => `
-      <div class="module-row">
-        <div>
-          <div class="title">${a.modules ? a.modules.title : 'Attestation de Module'}</div>
-          <div class="meta">Délivrée le ${fmtDate(a.issued_at)}</div>
-        </div>
-        <a class="primary" style="text-decoration:none;" href="verify.html?token=${a.verification_token}" target="_blank" rel="noopener">Voir l'attestation</a>
-      </div>
-    `).join('');
+  if (error) { attestationsWrap.innerHTML = `<div class="empty">Erreur : ${error.message}</div>`; return; }
+  if (!data || data.length === 0) {
+    attestationsWrap.innerHTML = '<div class="empty">Aucune attestation pour l\u2019instant — terminez un module et son quiz pour en obtenir une.</div>';
+    return;
   }
+
+  attestationsWrap.innerHTML = data.map(a => `
+    <div class="module-row">
+      <div>
+        <div class="title">${a.modules.title}</div>
+        <div class="meta">Délivrée le ${fmtDate(a.issued_at)}</div>
+      </div>
+      <a class="primary" style="text-decoration:none;" href="verify.html?token=${a.verification_token}" target="_blank" rel="noopener">Voir le certificat</a>
+    </div>
+  `).join('');
+}
+
 
   async function requestPayment() {
     dashStatus.className = 'status';
